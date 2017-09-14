@@ -1,0 +1,6 @@
+framework module Pods_FirstServed_tvOSTests {
+  umbrella header "Pods-FirstServed-tvOSTests-umbrella.h"
+
+  export *
+  module * { export * }
+}

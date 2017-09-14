@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "757786301400",
+    "firebase_url": "https://first-served-c9197.firebaseio.com",
+    "project_id": "first-served-c9197",
+    "storage_bucket": "first-served-c9197.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:757786301400:android:f352842aaf3b9bd1",
+        "android_client_info": {
+          "package_name": "com.firstserved"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "757786301400-hrd7a2tuc0g4akqj95mrqhqr70npq40t.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD5fgOZ-BzYP8LODhU5kF8CfEGDLd4q3W8"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
