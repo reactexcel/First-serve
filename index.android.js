@@ -7,7 +7,9 @@ import * as firebase from "firebase";
 
 import EmailLogin from "./src/views/email_login";
 import UserHome from "./src/views/user_home";
+import AdminHome from "./src/views/admin_home";
 import RestaurantHome from "./src/views/restaurant_home";
+import NewEditRestaurant from "./src/views/new_edit_restaurant";
 import Firebase from "./src/firebase/firebase";
 
 const FBSDK = require('react-native-fbsdk');
@@ -38,15 +40,9 @@ class Landing extends Component {
   componentWillMount(){
     const th = this;
     firestack.auth.listenForAuth(function(evt) {
-      // evt is the authentication event
-      // it contains an `error` key for carrying the
-      // error message in case of an error
-      // and a `user` key upon successful authentication
       if (!evt.authenticated) {
-        // There was an error or there is no user
         // console.error(evt.error)
       } else {
-        // evt.user contains the user details
         console.log('User details', evt.user);
         const resetAction = NavigationActions.reset({
           index: 0,
@@ -56,18 +52,34 @@ class Landing extends Component {
         })
         th.props.navigation.dispatch(resetAction)
       }
+    }).then(() => console.log('Listening for authentication changes'))
+
+    this.unsubscribe = firebase.auth().onAuthStateChanged(function(user) {
+      if (user) {
+        console.log('User details: ', user);
+        let userMobilePath = "/users/" + user.uid;
+        firebase.database().ref(userMobilePath).on('value', (snapshot) => {
+          let routeName = 'RHome';
+          if (snapshot.val().isAdmin) {
+            routeName = 'AHome';
+          }
+          const resetAction = NavigationActions.reset({
+            index: 0,
+            actions: [NavigationActions.navigate({ routeName: routeName, params: {userId: user.uid}})]
+          })
+          th.props.navigation.dispatch(resetAction)
+        });
+      }
     })
-    .then(() => console.log('Listening for authentication changes'))
   }
 
   componentDidMount(){
-    this.setState({
-      loading: false
-    })
+    this.setState({loading: false})
   }
 
   componentWillUnmount(){
     firestack.auth.unlistenForAuth();
+    this.unsubscribe();
   }
 
   render() {
@@ -78,7 +90,7 @@ class Landing extends Component {
             <Image source={require('./src/images/restaurant.png')} />
           </View>
           <View style={styles.headerTextView}>
-            <Text style={styles.headerText}>sdgasdgasdg</Text>
+            <Text style={styles.headerText}>Restaurant Header Text</Text>
           </View>
           <View style={styles.fbButtonView}>
             <LoginButton
@@ -142,6 +154,6 @@ const styles = StyleSheet.create({
     }
 });
 
-const FirstServed = StackNavigator({ Home: {screen: Landing}, ELogin: { screen: EmailLogin }, UHome: { screen: UserHome }, RHome: { screen: RestaurantHome }, });
+const FirstServed = StackNavigator({ Home: {screen: Landing}, ELogin: { screen: EmailLogin }, UHome: { screen: UserHome }, RHome: { screen: RestaurantHome }, AHome: { screen: AdminHome }, NERestaurant: {screen: NewEditRestaurant}});
 
 AppRegistry.registerComponent("FirstServed", () => FirstServed);

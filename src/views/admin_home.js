@@ -1,5 +1,5 @@
 /**
- * @class Home
+ * @class AdminHome
  */
 
 import React, {Component} from "react";
@@ -22,41 +22,8 @@ import Database from "../firebase/database";
 import RestaurantListItem from "./restaurant_list_item"
 import DismissKeyboard from "dismissKeyboard";
 import * as firebase from "firebase";
-import Firestack from 'react-native-firestack';
 
-const firestack = new Firestack();
-const restaurant1 = {
-        "name": "RADIO",
-        "type": "Thai",
-        "phone_number": "1234567890",
-        "short_description": "The Great Kabab Factory",
-        "booking_message": "10 % Discount on all",
-        "long_description": "The word Theos has been taken from the scientific name \"Theobroma Cocoa\" of the tree from which cocoa is obtained. The Greek word literally means ' Food for the Gods'. Well to begin with, our guest is like an ultimate god for us and whatever we serve them should be nothing less than what we would offer god in our prayers. Therefore, at Theos whatever we prepare is with a lot of love, care and most importantly straight from the heart.",
-        "address": "A 22, Sector 39, NOIDA",
-        "website_url": "https://test.firstserved.co/",
-        "booking_url": "https://test.firstserved.co/bookings",
-        "instagram_url": "https://test.firstserved.co/not_found",
-        "fully_booked": false,
-    };
-const restaurant2 = {
-        "name": "THEOS",
-        "type": "Indian",
-        "phone_number": "1234599999",
-        "short_description": "The Great Pizza Factory",
-        "booking_message": "20 % Discount on all",
-        "long_description": "The word Theos has been taken from the scientific name \"Theobroma Cocoa\" of the tree from which cocoa is obtained. The Greek word literally means ' Food for the Gods'. Well to begin with, our guest is like an ultimate god for us and whatever we serve them should be nothing less than what we would offer god in our prayers. Therefore, at Theos whatever we prepare is with a lot of love, care and most importantly straight from the heart.",
-        "address": "A 22, Sector 39, NOIDA",
-        "website_url": "https://test.firstserved.co/",
-        "booking_url": "https://test.firstserved.co/bookings",
-        "instagram_url": "https://test.firstserved.co/not_found",
-        "fully_booked": false,
-};
-const restaurant_image = {
-    "image_url": "https://firebasestorage.googleapis.com/v0/b/first-served-c9197.appspot.com/o/restaurant_images%2Frestaurant.jpg?alt=media&token=b0ca19be-6594-4bb1-bfdb-3c9474a0b234",
-    primary: true
-};
-
-class UserHome extends Component {
+class AdminHome extends Component {
     static navigationOptions = {
         title: 'Restaurant',
         headerTitleStyle :{alignSelf: 'center', color: 'white'},
@@ -85,7 +52,7 @@ class UserHome extends Component {
         this._setUserNoti = this._setUserNoti.bind(this);
     }
 
-    componentWillMount() {
+    componentDidMount() {
         // start listening for firebase updates
         this.listenForRestaurants(this.restaurantRef);
 
@@ -234,4 +201,4 @@ class UserHome extends Component {
     }
 }
 
-module.exports = UserHome;
+module.exports = AdminHome;

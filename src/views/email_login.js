@@ -39,9 +39,7 @@ class EmailLogin extends Component {
     }
 
     async signup() {
-
         DismissKeyboard();
-
         try {
             await firebase.auth().createUserWithEmailAndPassword(this.state.email, this.state.password);
 
@@ -54,42 +52,41 @@ class EmailLogin extends Component {
                     name: "Home"
                 })
             }, 1500);
-
         } catch (error) {
             this.setState({
                 response: error.toString()
             })
         }
-
     }
 
     async login() {
-
         DismissKeyboard();
-
+        const { navigate } = this.props.navigation;
         try {
-            await firebase.auth().signInWithEmailAndPassword(this.state.email, this.state.password);
-
-            this.setState({
-                response: "Logged In!"
-            });
-
-            setTimeout(() => {
-                this.props.navigator.push({
-                    name: "Home"
-                })
-            }, 1500);
-
+          firebase.auth().onAuthStateChanged(function(user) {
+            if (user) {
+              console.log("No user is signed in: " + user.uid);
+              let userMobilePath = "/users/" + user.uid;
+              firebase.database().ref(userMobilePath).on('value', (snapshot) => {
+                navigate('ELogin', { title: 'Login as restaurant' })
+                if (snapshot.val().isAdmin) {
+                  setTimeout(() => {navigate('AHome', { title: 'Restaurants' })}, 1500);
+                }else{
+                  setTimeout(() => {navigate('RHome', { title: 'Restaurants' })}, 1500);
+                }
+              });
+            } else {
+              console.log("No user is signed in.");
+            }
+          });
+          await firebase.auth().signInWithEmailAndPassword(this.state.email, this.state.password);
+          this.setState({response: "Logged In!"});
         } catch (error) {
-            this.setState({
-                response: error.toString()
-            })
+            this.setState({response: error.toString()})
         }
-
     }
 
     render() {
-
         return (
             <TouchableWithoutFeedback onPress={() => {DismissKeyboard()}}>
                 <View style={CommonStyle.container}>
@@ -131,11 +128,9 @@ class EmailLogin extends Component {
 }
 
 const styles = StyleSheet.create({
-
     formGroup: {
         padding: 50
     },
-
     title: {
         paddingBottom: 16,
         textAlign: "center",
@@ -144,11 +139,9 @@ const styles = StyleSheet.create({
         fontWeight: "bold",
         opacity: 0.8,
     },
-
     submit: {
         paddingTop: 30
     },
-
     response: {
         textAlign: "center",
         paddingTop: 0,
