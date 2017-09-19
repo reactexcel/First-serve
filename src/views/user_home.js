@@ -167,6 +167,7 @@ class UserHome extends Component {
         return (
             <RestaurantListItem restaurant={restaurant}
             isRestaurantNotiOn={this.state.isRestaurantNotiOn}
+            isAdmin={false}
             setValue={this._setValue.bind(this)}
             isModelVisible={this.state.isModalVisible}
             setModalVisible={this._setModalVisible.bind(this)} />

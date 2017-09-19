@@ -5,25 +5,29 @@
 import React, {Component} from "react";
 import {
     Text,
+    TextInput,
     Switch,
     View,
     StyleSheet,
     TouchableWithoutFeedback,
-    ListView
+    ListView,
+    ScrollView
 } from "react-native";
 
 import Button from "apsl-react-native-button";
 import {Icon} from "react-native-elements";
 import BottomNavigation, { Tab } from 'react-native-material-bottom-navigation'
 import MIcon from 'react-native-vector-icons/MaterialIcons'
+import {Sae} from "react-native-textinput-effects";
+import FontAwesomeIcon from "react-native-vector-icons/FontAwesome";
 
-import styles from "../styles/common.css";
+import CommonStyle from "../styles/admin.css";
 import Database from "../firebase/database";
 import RestaurantListItem from "./restaurant_list_item"
 import DismissKeyboard from "dismissKeyboard";
 import * as firebase from "firebase";
 
-class AdminHome extends Component {
+class NewEditRestaurant extends Component {
   static navigationOptions = {
       title: 'New Restaurant',
       headerTitleStyle :{alignSelf: 'center', color: 'white'},
@@ -36,8 +40,13 @@ class AdminHome extends Component {
       this.restaurantRef = firebase.database().ref("/restaurants");
 
       this.state = {
-          restaurant: {}
+          restaurant: {fully_booked: true},
+          email: "",
+          password: "",
+          confirmPassword: ""
       };
+
+      this.setVal = this.setVal.bind(this);
   }
 
   componentWillMount() {
@@ -47,167 +56,211 @@ class AdminHome extends Component {
   }
 
   render() {
-      return (
         return (
-          <TouchableWithoutFeedback onPress={() => {DismissKeyboard()}}>
-              <View style={CommonStyle.container}>
-                  <View style={styles.formGroup}>
-                      <Text style={styles.title}>First Served</Text>
-                      <Sae
-                          label={"Restaurant Name"}
-                          iconClass={FontAwesomeIcon}
-                          iconName={"pencil"}
-                          iconColor={"white"}
-                          onChangeText={(name) => this.setState({name})}
-                          keyboardType="default"
-                          autoCapitalize="none"/>
-                      <Sae
-                          label={"Email Address"}
-                          iconClass={FontAwesomeIcon}
-                          iconName={"pencil"}
-                          iconColor={"white"}
-                          onChangeText={(email) => this.setState({email})}
-                          keyboardType="email-address"
-                          autoCapitalize="none"/>
-                      <Sae
-                          label={"Password"}
-                          iconClass={FontAwesomeIcon}
-                          iconName={"key"}
-                          iconColor={"white"}
-                          onChangeText={(password) => this.setState({password})}
-                          password={true}
-                          secureTextEntry={true}
-                          autoCapitalize="none"/>
+          <ScrollView keyboardDismissMode={'none'}>
+            <View style={CommonStyle.container}>
+                <View style={{padding: 15}}>
+                    <Sae
+                        label={"Restaurant Name"}
+                        iconClass={FontAwesomeIcon}
+                        iconName={"pencil"}
+                        iconColor={"#98866F"}
+                        inputStyle={{ color: '#98866F' }}
+                        onChangeText={(name) => this.setVal("name", name)}
+                        value={this.state.restaurant.name}
+                        keyboardType="default"
+                        autoCapitalize="none"/>
+                    <Sae
+                        label={"Email Address"}
+                        iconClass={FontAwesomeIcon}
+                        iconName={"pencil"}
+                        iconColor={"#98866F"}
+                        inputStyle={{ color: '#98866F' }}
+                        onChangeText={(email) => this.setState({email: email})}
+                        value={this.state.email}
+                        keyboardType="email-address"
+                        autoCapitalize="none"/>
+                    <Sae
+                        label={"Password"}
+                        iconClass={FontAwesomeIcon}
+                        iconName={"key"}
+                        iconColor={"#98866F"}
+                        inputStyle={{ color: '#98866F' }}
+                        onChangeText={(password) => this.setState({password: password})}
+                        value={this.state.password}
+                        password={true}
+                        secureTextEntry={true}
+                        autoCapitalize="none"/>
 
-                      <Sae
-                          label={"Confirm Password"}
-                          iconClass={FontAwesomeIcon}
-                          iconName={"key"}
-                          iconColor={"white"}
-                          onChangeText={(confirmPassword) => this.setState({confirmPassword})}
-                          password={true}
-                          secureTextEntry={true}
-                          autoCapitalize="none"/>
+                    <Sae
+                        label={"Confirm Password"}
+                        iconClass={FontAwesomeIcon}
+                        iconName={"key"}
+                        iconColor={"#98866F"}
+                        inputStyle={{ color: '#98866F' }}
+                        onChangeText={(confirmPassword) => this.setState({confirmPassword: confirmPassword})}
+                        value={this.state.confirmPassword}
+                        password={true}
+                        secureTextEntry={true}
+                        autoCapitalize="none"/>
 
-                      <Sae
-                          label={"Address"}
-                          iconClass={FontAwesomeIcon}
-                          iconName={"key"}
-                          iconColor={"white"}
-                          onChangeText={(address) => this.setState({address})}
-                          keyboardType="default"
-                          autoCapitalize="none"/>
+                    <Sae
+                        label={"Address"}
+                        iconClass={FontAwesomeIcon}
+                        iconName={"pencil"}
+                        iconColor={"#98866F"}
+                        inputStyle={{ color: '#98866F' }}
+                        onChangeText={(address) => this.setVal("address", address)}
+                        value={this.state.restaurant.address}
+                        keyboardType="default"
+                        autoCapitalize="none"/>
 
-                      <Sae
-                          label={"Phone Number"}
-                          iconClass={FontAwesomeIcon}
-                          iconName={"key"}
-                          iconColor={"white"}
-                          onChangeText={(phone_number) => this.setState({phone_number})}
-                          keyboardType="phone-pad"
-                          autoCapitalize="none"/>
+                    <Sae
+                        label={"Phone Number"}
+                        iconClass={FontAwesomeIcon}
+                        iconName={"pencil"}
+                        iconColor={"#98866F"}
+                        inputStyle={{ color: '#98866F' }}
+                        onChangeText={(phone_number) => this.setVal("phone_number", phone_number)}
+                        value={this.state.restaurant.phone_number}
+                        keyboardType="phone-pad"
+                        autoCapitalize="none"/>
 
-                      <Sae
-                          label={"Website"}
-                          iconClass={FontAwesomeIcon}
-                          iconName={"key"}
-                          iconColor={"white"}
-                          onChangeText={(website_url) => this.setState({website_url})}
-                          keyboardType="url"
-                          autoCapitalize="none"/>
+                    <Sae
+                        label={"Website"}
+                        iconClass={FontAwesomeIcon}
+                        iconName={"pencil"}
+                        iconColor={"#98866F"}
+                        inputStyle={{ color: '#98866F' }}
+                        onChangeText={(website_url) => this.setVal("website_url", website_url)}
+                        value={this.state.restaurant.website_url}
+                        keyboardType="url"
+                        autoCapitalize="none"/>
 
-                      <Sae
-                          label={"Link to Instagram"}
-                          iconClass={FontAwesomeIcon}
-                          iconName={"key"}
-                          iconColor={"white"}
-                          onChangeText={(instagram_url) => this.setState({instagram_url})}
-                          keyboardType="url"
-                          autoCapitalize="none"/>
+                    <Sae
+                        label={"Link to Instagram"}
+                        iconClass={FontAwesomeIcon}
+                        iconName={"pencil"}
+                        iconColor={"#98866F"}
+                        inputStyle={{ color: '#98866F' }}
+                        onChangeText={(instagram_url) => this.setVal("instagram_url", instagram_url)}
+                        value={this.state.restaurant.instagram_url}
+                        keyboardType="url"
+                        autoCapitalize="none"/>
 
-                      <Sae
-                          label={"Restaurant Kitchen Type"}
-                          iconClass={FontAwesomeIcon}
-                          iconName={"key"}
-                          iconColor={"white"}
-                          onChangeText={(type) => this.setState({type})}
-                          keyboardType="default"
-                          autoCapitalize="none"/>
+                    <Sae
+                        label={"Restaurant Kitchen Type"}
+                        iconClass={FontAwesomeIcon}
+                        iconName={"pencil"}
+                        iconColor={"#98866F"}
+                        inputStyle={{ color: '#98866F' }}
+                        onChangeText={(type) => this.setVal("type", type)}
+                        value={this.state.restaurant.type}
+                        keyboardType="default"
+                        autoCapitalize="none"/>
 
-                      <Sae
-                          label={"Booking URL"}
-                          iconClass={FontAwesomeIcon}
-                          iconName={"key"}
-                          iconColor={"white"}
-                          onChangeText={(booking_url) => this.setState({booking_url})}
-                          keyboardType="url"
-                          autoCapitalize="none"/>
+                    <Sae
+                        label={"Booking URL"}
+                        iconClass={FontAwesomeIcon}
+                        iconName={"pencil"}
+                        iconColor={"#98866F"}
+                        inputStyle={{ color: '#98866F' }}
+                        onChangeText={(booking_url) => this.setVal("booking_url", booking_url)}
+                        value={this.state.restaurant.booking_url}
+                        keyboardType="url"
+                        autoCapitalize="none"/>
 
-                      <Sae
-                          label={"Short Description"}
-                          iconClass={FontAwesomeIcon}
-                          iconName={"key"}
-                          iconColor={"white"}
-                          onChangeText={(short_description) => this.setState({short_description})}
-                          keyboardType="default"
-                          autoCapitalize="none"/>
+                    <Text style={{color: '#7873B1', fontSize: 18, fontWeight: 'bold', paddingTop: 16}}>Short Description</Text>
+                    <TextInput
+                        style={{color: '#9A886F', fontSize: 18}}
+                        multiline={true}
+                        numberOfLines={4}
+                        onChangeText={(short_description) => this.setVal("short_description", short_description)}
+                        value={this.state.restaurant.short_description}/>
 
-                      <Sae
-                          label={"Short Description"}
-                          iconClass={FontAwesomeIcon}
-                          iconName={"key"}
-                          iconColor={"white"}
-                          onChangeText={(short_description) => this.setState({short_description})}
-                          keyboardType="default"
-                          multiline={true}
-                          numberOfLines={4}
-                          autoCapitalize="none"/>
+                    <Text style={{color: '#7873B1', fontSize: 18, fontWeight: 'bold', paddingTop: 16}}>Long Description</Text>
+                    <TextInput
+                        style={{color: '#9A886F', fontSize: 18}}
+                        multiline={true}
+                        numberOfLines={8}
+                        onChangeText={(long_description) => this.setVal("long_description", long_description)}
+                        value={this.state.restaurant.long_description}/>
 
-                      <Sae
-                          label={"Long Description"}
-                          iconClass={FontAwesomeIcon}
-                          iconName={"key"}
-                          iconColor={"white"}
-                          onChangeText={(long_description) => this.setState({long_description})}
-                          keyboardType="default"
-                          multiline={true}
-                          numberOfLines={8}
-                          autoCapitalize="none"/>
+                    <Text style={{color: '#7873B1', fontSize: 18, fontWeight: 'bold', paddingTop: 16}}>Booking Message</Text>
+                    <TextInput
+                        style={{color: '#9A886F', fontSize: 18}}
+                        multiline={true}
+                        numberOfLines={3}
+                        onChangeText={(booking_message) => this.setVal("booking_message", booking_message)}
+                        value={this.state.restaurant.booking_message}/>
 
-                      <Sae
-                          label={"Booking Message"}
-                          iconClass={FontAwesomeIcon}
-                          iconName={"key"}
-                          iconColor={"white"}
-                          onChangeText={(booking_message) => this.setState({booking_message})}
-                          keyboardType="default"
-                          multiline={true}
-                          numberOfLines={4}
-                          autoCapitalize="none"/>
+                    <Sae
+                        label={"Price Range"}
+                        iconClass={FontAwesomeIcon}
+                        iconName={"pencil"}
+                        iconColor={"#98866F"}
+                        inputStyle={{ color: '#98866F' }}
+                        onChangeText={(price_range) => this.setVal("price_range", price_range)}
+                        value={this.state.restaurant.price_range}
+                        keyboardType="default"
+                        autoCapitalize="none"/>
 
-                      <Sae
-                          label={"Price Range"}
-                          iconClass={FontAwesomeIcon}
-                          iconName={"key"}
-                          iconColor={"white"}
-                          onChangeText={(price_range) => this.setState({price_range})}
-                          keyboardType="default"
-                          autoCapitalize="none"/>
+                    <View style={styles.submit}>
+                        <Button onPress={this.save.bind(this)} style={CommonStyle.buttons} textStyle={{fontSize: 18}}>
+                            Save
+                        </Button>
+                        <Button onPress={this.cancel.bind(this)} style={styles.buttons} textStyle={{fontSize: 18}}>
+                            Cancel
+                        </Button>
+                    </View>
+                </View>
+                <View>
+                    <Text style={styles.response}>{this.state.response}</Text>
+                </View>
+            </View>
+        </ScrollView>
+    );
+  }
 
-                      <View style={styles.submit}>
-                          <Button onPress={this.save} style={CommonStyle.buttons} textStyle={{fontSize: 18}}>
-                              Save
-                          </Button>
-                          <Button onPress={this.cancel} style={styles.buttons} textStyle={{fontSize: 18}}>
-                              Cancel
-                          </Button>
-                      </View>
-                  </View>
-                  <View>
-                      <Text style={styles.response}>{this.state.response}</Text>
-                  </View>
-              </View>
-          </TouchableWithoutFeedback>
-      );
+  setVal(propName, val){
+    rest = this.state.restaurant;
+    rest[propName] = val;
+    this.setState({restaurant: rest});
+  }
+
+  save(){
+    if(this.state.password == this.state.confirmPassword){
+      Database.addRestaurant(this.state.email, this.state.password, this.state.restaurant, function(restaurantKey){
+        console.log("Restaurant Key", restaurantKey);
+      })
+      this.props.navigation.goBack();
+    }else{
+      alert('Password and confirm password are not matched!');
+      this.setState({password: "", confirmPassword: ""});
+    }
+  }
+
+  cancel(){
+    this.props.navigation.goBack();
   }
 }
+
+const styles = StyleSheet.create({
+    title: {
+        paddingBottom: 16,
+        textAlign: "center",
+        color: "#000",
+        fontSize: 35,
+        fontWeight: "bold",
+        opacity: 0.8,
+    },
+    submit: {
+        paddingTop: 30
+    },
+    response: {
+        textAlign: "center",
+        paddingTop: 0
+    }
+});
+
+module.exports = NewEditRestaurant;

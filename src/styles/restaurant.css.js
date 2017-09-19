@@ -1,7 +1,7 @@
-const Common = {
+const RestaurantCss = {
 	container: {
 		flex: 1,
-		backgroundColor: "#F1F0EC"
+		backgroundColor: "#0F1D28"
 	},
 
 	rowContainer: {
@@ -95,4 +95,4 @@ const Common = {
   }
 };
 
-module.exports = Common;
+module.exports = RestaurantCss;

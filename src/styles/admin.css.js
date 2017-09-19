@@ -1,4 +1,4 @@
-const Common = {
+const AdminCss = {
 	container: {
 		flex: 1,
 		backgroundColor: "#F1F0EC"
@@ -32,6 +32,7 @@ const Common = {
 	},
 
 	listNotiView: {
+    flex: 1,
 		flexDirection: 'row',
 		alignItems: 'center',
 		justifyContent: 'space-around',
@@ -95,4 +96,4 @@ const Common = {
   }
 };
 
-module.exports = Common;
+module.exports = AdminCss;

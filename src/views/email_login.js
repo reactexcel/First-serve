@@ -11,7 +11,7 @@ import {
     dismissKeyboard,
     TouchableWithoutFeedback
 } from "react-native";
-
+import {NavigationActions,} from 'react-navigation';
 import React, {Component} from "react";
 import * as firebase from "firebase";
 import Button from "apsl-react-native-button";
@@ -36,6 +36,7 @@ class EmailLogin extends Component {
 
         this.signup = this.signup.bind(this);
         this.login = this.login.bind(this);
+        this.unsubscribe = null;
     }
 
     async signup() {
@@ -61,19 +62,26 @@ class EmailLogin extends Component {
 
     async login() {
         DismissKeyboard();
-        const { navigate } = this.props.navigation;
+        const th = this;
         try {
-          firebase.auth().onAuthStateChanged(function(user) {
+          this.unsubscribe = firebase.auth().onAuthStateChanged(function(user) {
             if (user) {
               console.log("No user is signed in: " + user.uid);
               let userMobilePath = "/users/" + user.uid;
               firebase.database().ref(userMobilePath).on('value', (snapshot) => {
-                navigate('ELogin', { title: 'Login as restaurant' })
-                if (snapshot.val().isAdmin) {
-                  setTimeout(() => {navigate('AHome', { title: 'Restaurants' })}, 1500);
-                }else{
-                  setTimeout(() => {navigate('RHome', { title: 'Restaurants' })}, 1500);
+                let routeName = 'RHome';
+                if (snapshot.exists() && snapshot.val().isAdmin) {
+                  routeName = 'AHome';
                 }
+                const resetAction = NavigationActions.reset({
+                  index: 0,
+                  actions: [NavigationActions.navigate({ routeName: routeName, params: {userId: user.uid}})]
+                })
+                if (th.unsubscribe) {
+                  th.unsubscribe();
+                  th.unsubscribe = null;
+                }
+                th.props.navigation.dispatch(resetAction)
               });
             } else {
               console.log("No user is signed in.");
@@ -86,17 +94,24 @@ class EmailLogin extends Component {
         }
     }
 
+    componentWillUnmount(){
+      if (this.unsubscribe) {
+        this.unsubscribe();
+        this.unsubscribe = null;
+      }
+    }
+
     render() {
         return (
             <TouchableWithoutFeedback onPress={() => {DismissKeyboard()}}>
                 <View style={CommonStyle.container}>
                     <View style={styles.formGroup}>
-                        <Text style={styles.title}>First Served</Text>
                         <Sae
                             label={"Email Address"}
                             iconClass={FontAwesomeIcon}
                             iconName={"pencil"}
-                            iconColor={"white"}
+                            iconColor={"#98866F"}
+                            inputStyle={{ color: '#98866F' }}
                             onChangeText={(email) => this.setState({email})}
                             keyboardType="email-address"
                             autoCapitalize="none"/>
@@ -104,15 +119,14 @@ class EmailLogin extends Component {
                             label={"Password"}
                             iconClass={FontAwesomeIcon}
                             iconName={"key"}
-                            iconColor={"white"}
+                            iconColor={"#98866F"}
+                            inputStyle={{ color: '#98866F' }}
                             onChangeText={(password) => this.setState({password})}
                             password={true}
+                            secureTextEntry={true}
                             autoCapitalize="none"/>
 
                         <View style={styles.submit}>
-                            <Button onPress={this.signup} style={CommonStyle.buttons} textStyle={{fontSize: 18}}>
-                                Sign up
-                            </Button>
                             <Button onPress={this.login} style={styles.buttons} textStyle={{fontSize: 18}}>
                                 Login
                             </Button>

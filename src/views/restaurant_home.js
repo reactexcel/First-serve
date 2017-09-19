@@ -14,7 +14,7 @@ import Button from "apsl-react-native-button";
 import FontAwesomeIcon from "react-native-vector-icons/FontAwesome";
 import {Hideo} from "react-native-textinput-effects";
 
-import CommonStyle from "../styles/common.css";
+import CommonStyle from "../styles/restaurant.css";
 import Database from "../firebase/database";
 import DismissKeyboard from "dismissKeyboard";
 import * as firebase from "firebase";
@@ -22,7 +22,6 @@ import * as firebase from "firebase";
 class RestaurantHome extends Component {
     constructor(props) {
         super(props);
-
         this.state = {
             uid: "",
             mobile: "",
@@ -39,11 +38,9 @@ class RestaurantHome extends Component {
             this.props.navigator.push({
                 name: "Login"
             })
-
         } catch (error) {
             console.log(error);
         }
-
     }
 
     async componentDidMount() {
@@ -78,8 +75,14 @@ class RestaurantHome extends Component {
         return (
             <TouchableWithoutFeedback onPress={() => {DismissKeyboard()}}>
                 <View style={CommonStyle.container}>
-                    <Text style={styles.heading}>Hello UserId: {this.state.uid}</Text>
-                    <Text style={styles.heading}>Mobile Number (From Database): {this.state.mobile}</Text>
+                  <View style={CommonStyle.rowContainerLF}>
+                    <Text style={CommonStyle.headingLeft}>Available tables</Text>
+                    <Text style={CommonStyle.headingRight}>Aug 29 2017, 03:03</Text>
+                  </View>
+                  <View style={CommonStyle.rowContainerLF}>
+                    <Text style={CommonStyle.headingLeft}>Booked tables</Text>
+                    <Text style={CommonStyle.headingRight}>Aug 29 2017, 03:03</Text>
+                  </View>
                     <View style={styles.form}>
                         <Hideo
                             iconClass={FontAwesomeIcon}
@@ -105,19 +108,15 @@ class RestaurantHome extends Component {
 }
 
 const styles = StyleSheet.create({
-
     heading: {
         textAlign: "center"
     },
-
     logout: {
         padding: 50
     },
-
     form: {
         paddingTop: 50
     }
-
 });
 
 module.exports = RestaurantHome;

@@ -3,6 +3,9 @@
  */
 
 import * as firebase from "firebase";
+import Firebase from "./firebase";
+import Firestack from 'react-native-firestack';
+const firestack = new Firestack();
 
 class Database {
 
@@ -44,7 +47,7 @@ class Database {
     static setUserNotiSetting(userId, notiOn){
       let userMobilePath = "/users/" + userId;
 
-      return firebase.database().ref(userMobilePath).set({
+      firebase.database().ref(userMobilePath).update({
           notiOn: notiOn
       });
     }
@@ -57,7 +60,7 @@ class Database {
     static listenUserNotiSetting(userId, callback) {
         let userMobilePath = "/users/" + userId;
 
-        firebase.database().ref(userMobilePath).on('value', (snapshot) => {
+        firebase.database().ref(userMobilePath).once('value', (snapshot) => {
             var notiOn = false;
             if (snapshot.val()) {
                 notiOn = snapshot.val().notiOn
@@ -70,7 +73,7 @@ class Database {
     static setUserRestaurantNotiSetting(restaurantId, userId, notiOn){
       let userMobilePath = "/users/" + userId + "/restaurants_noti/" + restaurantId;
 
-      return firebase.database().ref(userMobilePath).set({
+      firebase.database().ref(userMobilePath).set({
           notiOn: notiOn
       });
     }
@@ -84,6 +87,7 @@ class Database {
         let userMobilePath = "/users/" + userId + "/restaurants_noti";
 
         firebase.database().ref(userMobilePath).on('value', (snapshot) => {
+          firebase.database().ref(userMobilePath).off('value');
             callback(snapshot)
         });
     }
@@ -96,6 +100,7 @@ class Database {
         let userMobilePath = "/users/" + userId;
 
         firebase.database().ref(userMobilePath).on('value', (snapshot) => {
+          firebase.database().ref(userMobilePath).off('value');
             var notiOn = false;
             if (snapshot.val()) {
                 notiOn = snapshot.val().notiOn
@@ -105,11 +110,25 @@ class Database {
         });
     }
 
-    static addRestaurant(userId, restaurant){
-        let restaurantPath = "/restaurants/" + userId;
+    static addRestaurant(email, password, restaurant, callback){
+      firestack.auth.createUserWithEmail(email, password)
+      .then((user) => {
+        console.log('user created', user)
+        let userMobilePath = "/users/" + user.user.uid;
+        firebase.database().ref(userMobilePath).update({
+            isRestaurantAdmin: true
+        });
+
+        let restaurantPath = "/restaurants/" + user.user.uid;
         let ref = firebase.database().ref(restaurantPath).push();
         ref.set(restaurant);
-        return ref.key;
+        callback(ref.key);
+        // alert('Your account was created!');
+      }).catch((err) => {
+        debugger
+        callback("error");
+        console.error('An error occurred', err);
+      });
     }
 
     static addRestaurantImage(restaurantId, imageData){
