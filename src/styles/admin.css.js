@@ -55,7 +55,7 @@ const AdminCss = {
 		flexDirection:'row',
 		alignItems:'center',
 		justifyContent: 'center',
-		padding:20
+		paddingBottom:10
 	},
 
 	listItemTitle: {
@@ -65,6 +65,16 @@ const AdminCss = {
 	submit:{
 		marginRight:40,
 		marginLeft:40,
+		marginTop:10,
+		paddingTop:10,
+		paddingBottom:10,
+		backgroundColor:'#68a0cf',
+		borderRadius:20,
+		borderWidth: 1,
+		borderColor: '#fff'
+	},
+  btn:{
+		marginLeft:5,
 		marginTop:10,
 		paddingTop:10,
 		paddingBottom:10,

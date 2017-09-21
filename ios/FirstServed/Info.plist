@@ -2,6 +2,12 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>To make video for restaurant if required to upload video.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>To capture image for restaurant images</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>For pick images for restaurant images</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>

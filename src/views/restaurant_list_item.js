@@ -14,7 +14,6 @@ import {
 import styles from "../styles/admin.css";
 import {Icon} from "react-native-elements";
 import FullWidthImage from "../components/full_width_image"
-import Toolbar from 'react-native-toolbar';
 
 class RestaurantListItem extends Component {
   render() {
@@ -30,44 +29,6 @@ class RestaurantListItem extends Component {
             onRequestClose={() => {this.props.setModalVisible(this.props.restaurant._key, false)}}>
 
             <View style={styles.container}>
-              <Toolbar ref={(toolbar) => {this.toolbar = toolbar}} presets={{
-                            toolbar1: {
-                                hover: true,
-                                rightButton: {
-                                    icon: 'bars',
-                                    iconStyle: {color: 'blue', fontSize: 25,},
-                                    iconFontFamily: 'FontAwesome',
-                                    onPress: () => {},
-                                },
-                                search: {
-                                    placeholderText: 'Where to Next?',
-                                    placeholderTextColor: 'blue',
-                                    textStyle: {color: 'grey', fontSize: 14},
-                                    onSubmit: () => {},
-                                    onFocus: () => {this.onSearchFocused()},
-                                    onTextChanged: (text) => {console.log(text)},
-                                    icon: 'search',
-                                    iconStyle: {color: 'blue', fontSize: 18,},
-                                    iconFontFamily: 'FontAwesome',
-                                }
-                            },
-                            toolbar2: {
-                                leftButton: {
-                                    icon: 'chevron-circle-left',
-                                    iconStyle: {color: 'blue', fontSize: 25,},
-                                    iconFontFamily: 'FontAwesome',
-                                    text: 'Back',
-                                    textStyle: {color: 'blue', fontSize: 14,},
-                                    onPress: () => {},
-                                },
-                                rightButton: {
-                                    icon: 'bars',
-                                    iconStyle: {color: 'blue', fontSize: 25,},
-                                    iconFontFamily: 'FontAwesome',
-                                    onPress: () => {},
-                                },
-                            },
-                        }}/>
               <View>
                 <Text>Hello World!</Text>
 

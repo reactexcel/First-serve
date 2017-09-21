@@ -131,7 +131,37 @@ class Database {
       });
     }
 
+    static editRestaurant(restaurantId, restaurant, callback){
+      firestack.auth.createUserWithEmail(email, password)
+      .then((user) => {
+        console.log('user created', user)
+        let userMobilePath = "/users/" + user.user.uid;
+        firebase.database().ref(userMobilePath).update({
+            isRestaurantAdmin: true
+        });
+
+        let restaurantPath = "/restaurants/" + user.user.uid + "/" + restaurantId;
+        let ref = firebase.database().ref(restaurantPath);
+        ref.update(restaurant);
+        callback(ref.key);
+        // alert('Your account was created!');
+      }).catch((err) => {
+        debugger
+        callback("error");
+        console.error('An error occurred', err);
+      });
+    }
+
     static addRestaurantImage(restaurantId, imageData){
+        let restaurantImagesPath = "/restaurant_images/" + restaurantId;
+        let sRef = firebase.database().ref(restaurantImagesPath);
+        firebase.database().ref(restaurantImagesPath).push(imageData);
+    }
+    static addRestaurantImage(restaurantId, imageData){
+        let restaurantImagesPath = "/restaurant_images/" + restaurantId;
+        firebase.database().ref(restaurantImagesPath).push(imageData);
+    }
+    static deleteRestaurantImage(restaurantId, imageId, imageData){
         let restaurantImagesPath = "/restaurant_images/" + restaurantId;
         firebase.database().ref(restaurantImagesPath).push(imageData);
     }

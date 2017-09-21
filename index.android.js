@@ -123,18 +123,16 @@ class Landing extends Component {
                   } else if (result.isCancelled) {
                     console.log("login is cancelled.");
                   } else {
-                    AccessToken.getCurrentAccessToken().then(
-                      (data) => {
-                        firestack.auth.signInWithProvider('facebook', data.accessToken, '').then((user)=>{ // facebook will need only access token.
-                          console.log(user);
-                          let userMobilePath = "/users/" + user.uid;
-                          firebase.database().ref(userMobilePath).update({
-                              isUser: true
-                          });
-                        })
-                        console.log(data);
-                      }
-                    )
+                    AccessToken.getCurrentAccessToken().then((data) => {
+                      firestack.auth.signInWithProvider('facebook', data.accessToken, '').then((user)=>{ // facebook will need only access token.
+                        console.log(user);
+                        let userMobilePath = "/users/" + user.user.uid;
+                        firebase.database().ref(userMobilePath).update({
+                            isUser: true
+                        });
+                      })
+                      console.log(data);
+                    })
                   }
                 }
               }

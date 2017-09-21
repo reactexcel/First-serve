@@ -9,6 +9,7 @@ import {
     Switch,
     View,
     StyleSheet,
+    Image,
     TouchableWithoutFeedback,
     ListView,
     ScrollView
@@ -16,6 +17,8 @@ import {
 
 import Button from "apsl-react-native-button";
 import {Icon} from "react-native-elements";
+import ImagePicker from 'react-native-image-picker';
+import * as Progress from 'react-native-progress';
 import BottomNavigation, { Tab } from 'react-native-material-bottom-navigation'
 import MIcon from 'react-native-vector-icons/MaterialIcons'
 import {Sae} from "react-native-textinput-effects";
@@ -23,9 +26,36 @@ import FontAwesomeIcon from "react-native-vector-icons/FontAwesome";
 
 import CommonStyle from "../styles/admin.css";
 import Database from "../firebase/database";
-import RestaurantListItem from "./restaurant_list_item"
+import ImageListItem from "./image_list_item"
 import DismissKeyboard from "dismissKeyboard";
 import * as firebase from "firebase";
+
+const uploadImage = (uri, mime = 'application/octet-stream') => {
+  return new Promise((resolve, reject) => {
+    this.setState({uploading: true});
+    const uploadUri = Platform.OS === 'ios' ? uri.replace('file://', '') : uri
+    const sessionId = new Date().getTime()
+    let uploadBlob = null
+    const imageRef = storage.ref('restaurant_images').child(`${sessionId}`)
+
+debugger
+    fs.readFile(uploadUri, 'base64').then((data) => {
+        return Blob.build(data, { type: `${mime};BASE64` })
+      }).then((blob) => {
+        uploadBlob = blob
+        return imageRef.put(blob, { contentType: mime })
+      }).then(() => {
+        uploadBlob.close();
+        return imageRef.getDownloadURL();
+      }).then((url) => {
+        this.setState({uploading: false});
+        resolve(url, sessionId);
+      }).catch((error) => {
+        this.setState({uploading: false});
+        reject(error);
+    })
+  })
+}
 
 class NewEditRestaurant extends Component {
   static navigationOptions = {
@@ -37,13 +67,14 @@ class NewEditRestaurant extends Component {
   };
   constructor(props) {
       super(props);
-      this.restaurantRef = firebase.database().ref("/restaurants");
-
+      const dataSource = new ListView.DataSource({rowHasChanged: (row1, row2) => row1.storageId !== row2.storageId});
       this.state = {
-          restaurant: {fully_booked: true},
+          restaurant: this.props.navigation.state.params.restaurant,
           email: "",
           password: "",
-          confirmPassword: ""
+          confirmPassword: "",
+          uploading: false,
+          dataSource: dataSource.cloneWithRows(this.props.navigation.state.params.restaurant.images)
       };
 
       this.setVal = this.setVal.bind(this);
@@ -204,8 +235,22 @@ class NewEditRestaurant extends Component {
                         value={this.state.restaurant.price_range}
                         keyboardType="default"
                         autoCapitalize="none"/>
+                    <View>
+                      <Text style={{color: '#7873B1', fontSize: 18, fontWeight: 'bold', paddingTop: 16}}>Restaurant Images:</Text>
+                      <ListView
+                        style={{paddingTop: 10}}
+                        dataSource={this.state.dataSource}
+                        enableEmptySections={true}
+                        renderRow={this._renderItem.bind(this)}
+                        style={CommonStyle.listView}/>
+                    </View>
+
+                    {this.state.uploading && <Progress.CircleSnail color={['red', 'green', 'blue']} />}
 
                     <View style={styles.submit}>
+                      <Button onPress={this.addImage.bind(this)} style={CommonStyle.buttons} textStyle={{fontSize: 18}}>
+                          Add Image
+                      </Button>
                         <Button onPress={this.save.bind(this)} style={CommonStyle.buttons} textStyle={{fontSize: 18}}>
                             Save
                         </Button>
@@ -228,6 +273,40 @@ class NewEditRestaurant extends Component {
     this.setState({restaurant: rest});
   }
 
+  addImage(){
+    var options = {
+      title: 'Select Avatar',
+      customButtons: [
+        {name: 'fb', title: 'Choose Photo from Facebook'},
+      ],
+      storageOptions: {
+        skipBackup: true,
+        path: 'images'
+      }
+    };
+
+    ImagePicker.showImagePicker(options, (response) => {
+      console.log('Response = ', response);
+
+      if (response.didCancel) {
+        console.log('User cancelled image picker');
+      }else if (response.error) {
+        console.log('ImagePicker Error: ', response.error);
+      }else if (response.customButton) {
+        console.log('User tapped custom button: ', response.customButton);
+      }else {
+        uploadImage(response.uri).then((url, sessionId) => {
+
+          this.setState({ uploadURL: url });
+        }).catch(error => console.log(error))
+        let source = { uri: response.uri };
+        // You can also display the image using data:
+        // let source = { uri: 'data:image/jpeg;base64,' + response.data };
+        this.setState({avatarSource: source});
+      }
+    });
+  }
+
   save(){
     if(this.state.password == this.state.confirmPassword){
       Database.addRestaurant(this.state.email, this.state.password, this.state.restaurant, function(restaurantKey){
@@ -242,6 +321,22 @@ class NewEditRestaurant extends Component {
 
   cancel(){
     this.props.navigation.goBack();
+  }
+
+  deleteImage(){
+
+  }
+
+  primaryImage(){
+
+  }
+
+  _renderItem(image) {
+    return (
+      <ImageListItem image={image}
+      deleteImage={this.deleteImage.bind(this)}
+      primaryImage={this.primaryImage.bind(this)} />
+    );
   }
 }
 

@@ -143,7 +143,8 @@ class AdminHome extends Component {
 
     _addRestaurant(){
       const { navigate } = this.props.navigation;
-      navigate('NERestaurant', { title: 'Create Restaurant', userId: this.props.navigation.state.params.userId })
+      navigate('NERestaurant', { title: 'Create Restaurant', userId: this.props.navigation.state.params.userId,
+      restaurant: {fully_booked: true, images: [{imageUrl: 'https://firebasestorage.googleapis.com/v0/b/first-served-c9197.appspot.com/o/restaurant_images%2Frestaurant.jpg?alt=media&token=b0ca19be-6594-4bb1-bfdb-3c9474a0b234', primary: true, storageId: '493892473492'}, {imageUrl: 'https://firebasestorage.googleapis.com/v0/b/first-served-c9197.appspot.com/o/restaurant_images%2Frestaurant.jpg?alt=media&token=b0ca19be-6594-4bb1-bfdb-3c9474a0b234', primary: false, storageId: '493892473492'}]},})
     }
 
     _editRestaurant(restaurant){
@@ -176,43 +177,38 @@ class AdminHome extends Component {
       // dataSnapshot from firebase
       restaurantRef.on('value', (dataSnapshot) => {
         // transform the children to an array
-        console.log("listenForRestaurants", "called");
         var restaurants = [];
         var count = 0;
         restaurants.push({isAddButton: true});
-        console.log("listenForRestaurants", "called===========");
         dataSnapshot.forEach((child) => {
-            child.forEach((ch) => {
-                let restaurantImageRef = firebase.database().ref("/restaurant_images/" + ch.key);
-                restaurantImageRef.once('value').then(imageSnap => {
-                  var images = [];
-                  imageSnap.forEach((img) => {
-                     images.push({imageUrl: img.val().image_url});
-                  });
-                  console.log("listenForRestaurants before", "called" + restaurants.length);
-                  restaurants.splice((restaurants.length - 1), 0, {
-                      name: ch.val().name,
-                      type: ch.val().type,
-                      phone_number: ch.val().phone_number,
-                      short_description: ch.val().short_description,
-                      booking_message: ch.val().long_description,
-                      address: ch.val().address,
-                      website_url: ch.val().website_url,
-                      booking_url: ch.val().booking_url,
-                      instagram_url: ch.val().instagram_url,
-                      fully_booked: ch.val().fully_booked,
-                      images: images,
-                      _key: ch.key
-                  });
-
-                  console.log("listenForRestaurants after", "called" + restaurants.length);
-                  var source = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
-                  this.setState({
-                    restaurants: restaurants,
-                    dataSource: source.cloneWithRows(this.state.restaurants)
-                  });
-                });
+          child.forEach((ch) => {
+            var images = [];
+            if(ch.val().images !== undefined){
+              for (var key in ch.val().images) {
+                if(ch.val().images[key].primary){images << ch.val().images[key].imageUrl;}
+              }
+            }
+            if(images.length == 0) images << 'https://firebasestorage.googleapis.com/v0/b/first-served-c9197.appspot.com/o/restaurant_images%2Frestaurant.jpg?alt=media&token=b0ca19be-6594-4bb1-bfdb-3c9474a0b234';
+            restaurants.splice((restaurants.length), 0, {
+              name: ch.val().name,
+              type: ch.val().type,
+              phone_number: ch.val().phone_number,
+              short_description: ch.val().short_description,
+              booking_message: ch.val().long_description,
+              address: ch.val().address,
+              website_url: ch.val().website_url,
+              booking_url: ch.val().booking_url,
+              instagram_url: ch.val().instagram_url,
+              fully_booked: ch.val().fully_booked,
+              images: images,
+              _key: ch.key
             });
+          });
+        });
+
+        this.setState({
+          restaurants: restaurants,
+          dataSource: this.state.dataSource.cloneWithRows(restaurants)
         });
       });
     }
