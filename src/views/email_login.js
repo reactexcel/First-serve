@@ -18,6 +18,7 @@ import Button from "apsl-react-native-button";
 import FontAwesomeIcon from "react-native-vector-icons/FontAwesome";
 import {Sae} from "react-native-textinput-effects";
 import DismissKeyboard from "dismissKeyboard";
+import DefaultPreference from 'react-native-default-preference';
 
 import CommonStyle from "../styles/common.css";
 
@@ -69,19 +70,19 @@ class EmailLogin extends Component {
               console.log("No user is signed in: " + user.uid);
               let userMobilePath = "/users/" + user.uid;
               firebase.database().ref(userMobilePath).on('value', (snapshot) => {
-                let routeName = 'RHome';
+                DefaultPreference.setMultiple({userType: 'restaurant', uid: user.uid});
+
                 if (snapshot.exists() && snapshot.val().isAdmin) {
-                  routeName = 'AHome';
+                  DefaultPreference.setMultiple({userType: 'admin', uid: user.uid});
                 }
-                const resetAction = NavigationActions.reset({
-                  index: 0,
-                  actions: [NavigationActions.navigate({ routeName: routeName, params: {userId: user.uid}})]
-                })
+
+                th.props.navigation.state.params.unlistenForAuth();
                 if (th.unsubscribe) {
                   th.unsubscribe();
                   th.unsubscribe = null;
                 }
-                th.props.navigation.dispatch(resetAction)
+                console.log("user is signed in go back.");
+                th.props.navigation.goBack('Home');
               });
             } else {
               console.log("No user is signed in.");

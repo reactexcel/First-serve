@@ -51,7 +51,7 @@ class AdminHome extends Component {
         this._setUserNoti = this._setUserNoti.bind(this);
     }
 
-    componentWillMount() {
+    componentDidMount() {
         try {
             // start listening for firebase updates
             this.listenForRestaurants(this.restaurantRef);
@@ -80,7 +80,7 @@ class AdminHome extends Component {
     render() {
         return (
           <View style={styles.container}>
-              <View style={[styles.notiView, styles.bottomBorder]}>
+{/*              <View style={[styles.notiView, styles.bottomBorder]}>
                   <View style={styles.notiIconView}>
                       <Icon name='bell' type='font-awesome' color='#626262'/>
                       <View style={{paddingLeft: 5}}><Text>Notifications</Text></View>
@@ -90,6 +90,7 @@ class AdminHome extends Component {
                       onValueChange={(value) => this._setUserNoti(value)}
                       value={this.state.notificationOn}/>
               </View>
+*/}
               <ListView
                   dataSource={this.state.dataSource}
                   enableEmptySections={true}
@@ -131,7 +132,7 @@ class AdminHome extends Component {
     _renderItem(restaurant) {
         return (
             <RestaurantListItem restaurant={restaurant}
-            addRestaurant={this._addRestaurant.bind(this)}
+            newRestaurant={this._newRestaurant.bind(this)}
             editRestaurant={this._editRestaurant.bind(this)}
             isAdmin={true}
             isRestaurantNotiOn={this.state.isRestaurantNotiOn}
@@ -141,15 +142,45 @@ class AdminHome extends Component {
         );
     }
 
-    _addRestaurant(){
+    _newRestaurant(){
       const { navigate } = this.props.navigation;
       navigate('NERestaurant', { title: 'Create Restaurant', userId: this.props.navigation.state.params.userId,
-      restaurant: {fully_booked: true, images: [{imageUrl: 'https://firebasestorage.googleapis.com/v0/b/first-served-c9197.appspot.com/o/restaurant_images%2Frestaurant.jpg?alt=media&token=b0ca19be-6594-4bb1-bfdb-3c9474a0b234', primary: true, storageId: '493892473492'}, {imageUrl: 'https://firebasestorage.googleapis.com/v0/b/first-served-c9197.appspot.com/o/restaurant_images%2Frestaurant.jpg?alt=media&token=b0ca19be-6594-4bb1-bfdb-3c9474a0b234', primary: false, storageId: '493892473492'}]},})
+      isNew: true,
+      restaurant: {
+        fully_booked: true,
+        name: '',
+        type: '',
+        phone_number: '',
+        short_description: '',
+        long_description: '',
+        booking_message: '',
+        address: '',
+        website_url: '',
+        booking_url: '',
+        instagram_url: '',
+        images: []
+      }})
     }
 
     _editRestaurant(restaurant){
       const { navigate } = this.props.navigation;
-      navigate('NERestaurant', { title: restaurant.name })
+      navigate('NERestaurant', { title: 'Create Restaurant', userId: this.props.navigation.state.params.userId,
+      isNew: false,
+      restaurant: restaurant});
+    }
+
+    _deleteRestaurant(restaurant){
+      Alert.alert(
+        'Delete Restaurant',
+        'Are you sure?',
+        [
+          {text: 'Cancel', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
+          {text: 'OK', onPress: () => {
+
+          }},
+        ],
+        { cancelable: false }
+      )
     }
 
     _setValue(id, value){
@@ -185,22 +216,27 @@ class AdminHome extends Component {
             var images = [];
             if(ch.val().images !== undefined){
               for (var key in ch.val().images) {
-                if(ch.val().images[key].primary){images << ch.val().images[key].imageUrl;}
+                var img = ch.val().images[key];
+                images.splice((img.primary ? 0 : images.length), 0, {
+                  imageUrl: img.imageUrl, storageId: key, primary: img.primary, fileName: img.fileName, uid: child.key, restaurantId: ch.key
+                });
               }
             }
-            if(images.length == 0) images << 'https://firebasestorage.googleapis.com/v0/b/first-served-c9197.appspot.com/o/restaurant_images%2Frestaurant.jpg?alt=media&token=b0ca19be-6594-4bb1-bfdb-3c9474a0b234';
+
             restaurants.splice((restaurants.length), 0, {
-              name: ch.val().name,
-              type: ch.val().type,
-              phone_number: ch.val().phone_number,
-              short_description: ch.val().short_description,
-              booking_message: ch.val().long_description,
-              address: ch.val().address,
-              website_url: ch.val().website_url,
-              booking_url: ch.val().booking_url,
-              instagram_url: ch.val().instagram_url,
+              name: (ch.val().name ? ch.val().name : ''),
+              type: (ch.val().type ? ch.val().type : ''),
+              phone_number: (ch.val().phone_number ? ch.val().phone_number : ''),
+              short_description: (ch.val().short_description ? ch.val().short_description : ''),
+              long_description: (ch.val().long_description ? ch.val().long_description : ''),
+              booking_message: (ch.val().booking_message ? ch.val().booking_message : ''),
+              address: (ch.val().address ? ch.val().address : ''),
+              website_url: (ch.val().website_url ? ch.val().website_url : ''),
+              booking_url: (ch.val().booking_url ? ch.val().booking_url : ''),
+              instagram_url: (ch.val().instagram_url ? ch.val().instagram_url : ''),
               fully_booked: ch.val().fully_booked,
               images: images,
+              _uid: child.key,
               _key: ch.key
             });
           });

@@ -11,6 +11,7 @@ import AdminHome from "./src/views/admin_home";
 import RestaurantHome from "./src/views/restaurant_home";
 import NewEditRestaurant from "./src/views/new_edit_restaurant";
 import Firebase from "./src/firebase/firebase";
+import DefaultPreference from 'react-native-default-preference';
 
 const FBSDK = require('react-native-fbsdk');
 const {
@@ -36,67 +37,95 @@ class Landing extends Component {
       firstServedView: null
     };
     this.unsubscribe = null;
+    this._unlistenForAuth = this._unlistenForAuth.bind(this);
   }
 
   componentWillMount(){
+    console.log('componentWillMount index');
     const th = this;
-    firestack.auth.listenForAuth(function(evt) {
-      if (!evt.authenticated) {
-        // console.error(evt.error)
-      } else {
-        console.log('User details', evt.user);
-        let userMobilePath = "/users/" + evt.user.uid;
-        firebase.database().ref(userMobilePath).on('value', (snapshot) => {
-          if (snapshot.exists() && snapshot.val().isUser) {
-            routeName = 'UHome';
-            const resetAction = NavigationActions.reset({
-              index: 0,
-              actions: [NavigationActions.navigate({ routeName: routeName, params: {userId: evt.user.uid}})]
-            })
-            firestack.auth.unlistenForAuth();
-            if (th.unsubscribe) {
-              th.unsubscribe();
-              th.unsubscribe = null;
-            }
-            th.props.navigation.dispatch(resetAction)
-          }
-        })
-      }
-    }).then(() => console.log('Listening for authentication changes'))
 
-    this.unsubscribe = firebase.auth().onAuthStateChanged(function(user) {
-      if (user) {
-        console.log('User details: ', user);
-        let userMobilePath = "/users/" + user.uid;
-        firebase.database().ref(userMobilePath).on('value', (snapshot) => {
-          let routeName = null;
-          if (snapshot.exists() && snapshot.val().isAdmin) {
-            routeName = 'AHome';
-          }else if (snapshot.exists() && snapshot.val().isRestaurantAdmin) {
-            routeName = 'RHome';
-          }
-          if(routeName){
-            const resetAction = NavigationActions.reset({
-              index: 0,
-              actions: [NavigationActions.navigate({ routeName: routeName, params: {userId: user.uid}})]
+    DefaultPreference.getMultiple(['userType', 'uid']).then(function(value) {
+      var routeName = null;
+      if(value[0] === 'user'){
+        routeName = 'UHome';
+      }else if (value[0] === 'restaurant') {
+        routeName = 'RHome';
+      }else if (value[0] === 'admin') {
+        routeName = 'AHome';
+      }
+
+      if(routeName){
+        console.log("componentWillMount routeName called.");
+        const resetAction = NavigationActions.reset({
+          index: 0,
+          actions: [NavigationActions.navigate({ routeName: routeName, params: {userId: value[1]}})]
+        })
+        firestack.auth.unlistenForAuth();
+        if (th.unsubscribe) {th.unsubscribe(); th.unsubscribe = null;}
+        th.props.navigation.dispatch(resetAction);
+      }else{
+        console.log("componentWillMount not routeName called.");
+        firestack.auth.listenForAuth(function(evt) {
+          if (!evt.authenticated) {
+            // console.error(evt.error)
+          } else {
+            console.log('User details', evt.user);
+            let userMobilePath = "/users/" + evt.user.uid;
+            firebase.database().ref(userMobilePath).on('value', (snapshot) => {
+              if (snapshot.exists() && snapshot.val().isUser) {
+                routeName = 'UHome';
+                const resetAction = NavigationActions.reset({
+                  index: 0,
+                  actions: [NavigationActions.navigate({ routeName: routeName, params: {userId: evt.user.uid}})]
+                })
+                firestack.auth.unlistenForAuth();
+                if (th.unsubscribe) {
+                  th.unsubscribe();
+                  th.unsubscribe = null;
+                }
+                th.props.navigation.dispatch(resetAction)
+              }
             })
-            firestack.auth.unlistenForAuth();
-            if (th.unsubscribe) {
-              th.unsubscribe();
-              th.unsubscribe = null;
-            }
-            th.props.navigation.dispatch(resetAction)
+          }
+        }).then(() => console.log('Listening for authentication changes'))
+
+        this.unsubscribe = firebase.auth().onAuthStateChanged(function(user) {
+          if (user) {
+            console.log('User details: ', user);
+            let userMobilePath = "/users/" + user.uid;
+            firebase.database().ref(userMobilePath).on('value', (snapshot) => {
+              let routeName = null;
+              if (snapshot.exists() && snapshot.val().isAdmin) {
+                routeName = 'AHome';
+              }else if (snapshot.exists() && snapshot.val().isRestaurantAdmin) {
+                routeName = 'RHome';
+              }
+              if(routeName){
+                const resetAction = NavigationActions.reset({
+                  index: 0,
+                  actions: [NavigationActions.navigate({ routeName: routeName, params: {userId: user.uid}})]
+                })
+                firestack.auth.unlistenForAuth();
+                if (th.unsubscribe) {
+                  th.unsubscribe();
+                  th.unsubscribe = null;
+                }
+                th.props.navigation.dispatch(resetAction)
+              }
+            });
           }
         });
+        th.setState({loading: false});
       }
-    })
+    });
   }
 
   componentDidMount(){
-    this.setState({loading: false})
+    console.log('componentDidMount index');
   }
 
   componentWillUnmount(){
+    console.log('componentWillUnmount index');
     firestack.auth.unlistenForAuth();
     if (this.unsubscribe) {
       this.unsubscribe();
@@ -105,7 +134,10 @@ class Landing extends Component {
 
   render() {
     const { navigate } = this.props.navigation;
-    return (
+    if(this.state.loading){
+      return null;
+    }else{
+      return (
         <View style={styles.container}>
           <View style={styles.imageView}>
             <Image source={require('./src/images/restaurant.png')} />
@@ -126,6 +158,7 @@ class Landing extends Component {
                     AccessToken.getCurrentAccessToken().then((data) => {
                       firestack.auth.signInWithProvider('facebook', data.accessToken, '').then((user)=>{ // facebook will need only access token.
                         console.log(user);
+                        DefaultPreference.set(userType, 'user');
                         let userMobilePath = "/users/" + user.user.uid;
                         firebase.database().ref(userMobilePath).update({
                             isUser: true
@@ -141,10 +174,17 @@ class Landing extends Component {
               }}/>
           </View>
           <View style={styles.btnEmailLogin}>
-            <Text onPress={() => navigate('ELogin', { title: 'Login as restaurant' })}>Login as restaurant</Text>
+            <Text onPress={() => {
+              navigate('ELogin', { title: 'Login as restaurant', unlistenForAuth: this._unlistenForAuth })}
+            }>Login as restaurant</Text>
           </View>
         </View>
-    );
+      );
+    }
+  }
+
+  _unlistenForAuth(){
+    this.setState({loading: true});
   }
 }
 

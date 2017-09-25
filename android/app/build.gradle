@@ -144,6 +144,8 @@ android {
 }
 
 dependencies {
+    compile project(':react-native-default-preference')
+    compile project(':react-native-fetch-blob')
     compile project(':react-native-vector-icons')
     compile project(':react-native-fbsdk')
     compile project(':react-native-firestack')

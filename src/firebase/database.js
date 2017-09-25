@@ -23,7 +23,6 @@ class Database {
         return firebase.database().ref(userMobilePath).set({
             mobile: mobile
         })
-
     }
 
     /**
@@ -121,31 +120,53 @@ class Database {
 
         let restaurantPath = "/restaurants/" + user.user.uid;
         let ref = firebase.database().ref(restaurantPath).push();
+        var images = restaurant.images.slice();
+        delete restaurant.images;
         ref.set(restaurant);
+        restaurantPath = restaurantPath + "/" + ref.key + "/images";
+        ref = firebase.database().ref(restaurantPath);
+        for (var i = 0; i < images.length; i++) {
+          var img = images[i];
+          var storageId = img.storageId;
+          delete img.storageId;
+          ref.child(storageId).set(img);
+        }
         callback(ref.key);
         // alert('Your account was created!');
       }).catch((err) => {
-        debugger
         callback("error");
         console.error('An error occurred', err);
       });
     }
 
-    static editRestaurant(restaurantId, restaurant, callback){
-      firestack.auth.createUserWithEmail(email, password)
-      .then((user) => {
-        console.log('user created', user)
-        let userMobilePath = "/users/" + user.user.uid;
-        firebase.database().ref(userMobilePath).update({
-            isRestaurantAdmin: true
-        });
+    static editRestaurant(restaurant, callback){
+      let restaurantPath = "/restaurants/" + restaurant._uid + "/" + restaurant._key;
+      let ref = firebase.database().ref(restaurantPath);
+      var images = restaurant.images.slice();
+      delete restaurant.images;
+      delete restaurant._uid;
+      delete restaurant._key;
+      ref.set(restaurant);
+      restaurantPath = restaurantPath + "/images";
+      ref = firebase.database().ref(restaurantPath);
+      for (var i = 0; i < images.length; i++) {
+        var img = images[i];
+        var storageId = img.storageId;
+        delete img.storageId;
+        delete img.uid;
+        delete img.restaurantId;
+        ref.child(storageId).set(img);
+      }
+      callback("Restaurant Updated")
+    }
 
-        let restaurantPath = "/restaurants/" + user.user.uid + "/" + restaurantId;
-        let ref = firebase.database().ref(restaurantPath);
-        ref.update(restaurant);
-        callback(ref.key);
-        // alert('Your account was created!');
-      }).catch((err) => {
+    static deleteRestaurant(restaurant){
+      let restaurantPath = "/restaurants/" + restaurant._uid;
+
+      let ref = firebase.database().ref(restaurantPath);
+      ref.delete()
+      .then(() => callback('deleted'))
+      .catch((err) => {
         debugger
         callback("error");
         console.error('An error occurred', err);

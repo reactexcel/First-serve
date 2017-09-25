@@ -36,8 +36,7 @@ const AdminCss = {
 		flexDirection: 'row',
 		alignItems: 'center',
 		justifyContent: 'space-around',
-		paddingTop: 10,
-		paddingBottom: 40
+		paddingTop: 10
 	},
 
 	notiIconView: {

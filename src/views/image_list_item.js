@@ -26,13 +26,13 @@ class ImageListItem extends Component {
             <FixWidthImage imgWidth={100} source={{uri: this.props.image.imageUrl ? this.props.image.imageUrl : 'https://firebasestorage.googleapis.com/v0/b/first-served-c9197.appspot.com/o/restaurant_images%2Frestaurant.jpg?alt=media&token=b0ca19be-6594-4bb1-bfdb-3c9474a0b234'}} />
             <TouchableHighlight
               style={styles.btn}
-              onPress={() => this.prop.primaryImage()}
+              onPress={() => this.props.primaryImage(this.props.image.storageId)}
               underlayColor='#fff'>
                 <Text style={[styles.submitText, {paddingLeft: 20, paddingRight: 20}]}>Primary</Text>
             </TouchableHighlight>
             <TouchableHighlight
               style={styles.btn}
-              onPress={() => this.prop.deleteImage()}
+              onPress={() => this.props.deleteImage(this.props.image.uid, this.props.image.restaurantId, this.props.image.storageId, this.props.image.fileName)}
               underlayColor='#fff'>
                 <Text style={[styles.submitText, {paddingLeft: 20, paddingRight: 20}]}>Delete</Text>
             </TouchableHighlight>

@@ -69,12 +69,12 @@ class RestaurantListItem extends Component {
                 </View>
             </View>
             <TouchableHighlight
-              style={styles.submit}
+              style={[styles.submit]}
               onPress={() => Linking.openURL(this.props.restaurant.booking_url)}
               underlayColor='#fff'>
                 <Text style={[styles.submitText]}>Regular booking</Text>
             </TouchableHighlight>
-            <View style={styles.rowContainer}>
+            <View style={[styles.rowContainer, {paddingTop: 15}]}>
               <Text style={{fontSize: 11}}>Get notified when additional tables become available</Text>
             </View>
             <View style={styles.listNotiView}>
@@ -89,6 +89,20 @@ class RestaurantListItem extends Component {
                 <Switch onValueChange={(value) => this.props.setValue(this.props.restaurant._key, value)}
                 value={this.props.isRestaurantNotiOn[this.props.restaurant._key] === true ? true : false}/>
             </View>
+            <View style={[styles.rowContainer, {paddingBottom: 40}]}>
+              <TouchableHighlight
+                style={styles.btn}
+                onPress={() => this.props.editRestaurant(this.props.restaurant)}
+                underlayColor='#fff'>
+                  <Text style={[styles.submitText, {paddingLeft: 20, paddingRight: 20}]}>Edit</Text>
+              </TouchableHighlight>
+              <TouchableHighlight
+                style={styles.btn}
+                onPress={() => this.props.deleteRestaurant(this.props.restaurant)}
+                underlayColor='#fff'>
+                  <Text style={[styles.submitText, {paddingLeft: 20, paddingRight: 20}]}>Delete</Text>
+              </TouchableHighlight>
+            </View>
           </View>
         </View>);
       }else{
@@ -97,7 +111,7 @@ class RestaurantListItem extends Component {
             <View style={[styles.listNotiView, {flex: 1}]}>
               <TouchableHighlight
                 style={styles.submit}
-                onPress={() => this.props.addRestaurant()}
+                onPress={() => this.props.newRestaurant()}
                 underlayColor='#fff'>
                 <Text style={[styles.submitText, {paddingLeft: 40, paddingRight: 40}]}>Add Restaurant</Text>
               </TouchableHighlight>
