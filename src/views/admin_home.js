@@ -45,6 +45,7 @@ class AdminHome extends Component {
             dataSource: dataSource,
             restaurants: [],
             isRestaurantNotiOn: {},
+            favourites: {},
             isModalVisible: {}
         };
 
@@ -61,6 +62,7 @@ class AdminHome extends Component {
                     notificationOn: notificationOn
                 });
             });
+
             Database.listenUserRestaurantNotiSetting(this.props.navigation.state.params.userId, (restaurantNotiSnap) => {
               console.log("listenUserRestaurantNotiSetting", "called");
               if(restaurantNotiSnap.hasChildren()){
@@ -70,6 +72,18 @@ class AdminHome extends Component {
               }
               this.setState({
                 isRestaurantNotiOn: this.state.isRestaurantNotiOn
+              });
+            });
+
+            Database.listenUserFavourites(this.props.navigation.state.params.userId, (favouriteSnap) => {
+              console.log("listenUserRestaurantNotiSetting", "called");
+              if(favouriteSnap.hasChildren()){
+                favouriteSnap.forEach((child) => {
+                  this.state.favourites[child.key] = child.val().isFavourite;
+                });
+              }
+              this.setState({
+                favourites: this.state.favourites
               });
             });
         } catch (error) {
@@ -137,6 +151,8 @@ class AdminHome extends Component {
             isAdmin={true}
             isRestaurantNotiOn={this.state.isRestaurantNotiOn}
             setValue={this._setValue.bind(this)}
+            favourites={this.state.favourites}
+            setFavourite={this._setFavourite.bind(this)}
             isModelVisible={this.state.isModalVisible}
             setModalVisible={this._setModalVisible.bind(this)} />
         );
@@ -190,6 +206,17 @@ class AdminHome extends Component {
 
         this.setState({
           isRestaurantNotiOn: this.state.isRestaurantNotiOn,
+          dataSource: source.cloneWithRows(this.state.restaurants)
+        });
+    }
+
+    _setFavourite(id, value){
+        Database.setUserFavourites(id, this.props.navigation.state.params.userId, value);
+        this.state.favourites[id] = value;
+        var source = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
+
+        this.setState({
+          favourites: this.state.favourites,
           dataSource: source.cloneWithRows(this.state.restaurants)
         });
     }

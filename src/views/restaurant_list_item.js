@@ -14,6 +14,7 @@ import {
 import styles from "../styles/admin.css";
 import {Icon} from "react-native-elements";
 import FullWidthImage from "../components/full_width_image"
+import RestaurantView from "./restaurant_view";
 
 class RestaurantListItem extends Component {
   render() {
@@ -28,37 +29,40 @@ class RestaurantListItem extends Component {
             visible={this.props.isModelVisible[this.props.restaurant._key] === true ? true : false}
             onRequestClose={() => {this.props.setModalVisible(this.props.restaurant._key, false)}}>
 
-            <View style={styles.container}>
-              <View>
-                <Text>Hello World!</Text>
-
-                <TouchableHighlight onPress={() => {this.props.setModalVisible(this.props.restaurant._key, false)}}>
-                  <Text>Hide Modal</Text>
-                </TouchableHighlight>
-              </View>
-            </View>
+            <RestaurantView restaurant={this.props.restaurant}
+              setModalVisible={this.props.setModalVisible}
+              setValue={this.props.setValue}
+              isRestaurantNotiOn={this.props.isRestaurantNotiOn}
+              setFavourite={this.props.setFavourite}
+              favourites={this.props.favourites}
+              editRestaurant={this.props.editRestaurant}
+              deleteRestaurant={this.props.deleteRestaurant}/>
           </Modal>
           <View style={{flex: 1, borderBottomWidth: 1}}>
             <View style={styles.rowContainer}>
               <TouchableHighlight
-                onPress={() => console.log("Clicked on", "Restaurant Name")}>
+                onPress={() => this.props.setModalVisible(this.props.restaurant._key, true)}>
                 <Text style={styles.listItemTitle}>{this.props.restaurant.name}</Text>
               </TouchableHighlight>
             </View>
             <View style={styles.rowContainer}>
               <TouchableHighlight
-                onPress={() => console.log("Clicked on", "Restaurant Image")}>
+                onPress={() => this.props.setModalVisible(this.props.restaurant._key, true)}>
                 <FullWidthImage source={{uri: this.props.restaurant.images.length > 0 ? this.props.restaurant.images[0].imageUrl : 'https://firebasestorage.googleapis.com/v0/b/first-served-c9197.appspot.com/o/restaurant_images%2Frestaurant.jpg?alt=media&token=b0ca19be-6594-4bb1-bfdb-3c9474a0b234'}} />
               </TouchableHighlight>
             </View>
             <View style={styles.notiView}>
-                <View style={styles.notiIconView}>
-                    <Icon
-                        name='heart'
-                        type='font-awesome'
-                        color='red'/>
-                    <View style={{paddingLeft: 5}}><Text>{this.props.restaurant.short_description}</Text></View>
-                </View>
+              <TouchableHighlight
+                onPress={() => this.props.setFavourite(this.props.restaurant._key, (this.props.favourites[this.props.restaurant._key] === true ? false : true))}
+                underlayColor='#fff'>
+                  <View style={styles.notiIconView}>
+                      <Icon
+                          name={this.props.favourites[this.props.restaurant._key] === true ? 'heart' : 'heart-o'}
+                          type='font-awesome'
+                          color='red'/>
+                      <View style={{paddingLeft: 5}}><Text>{this.props.restaurant.short_description}</Text></View>
+                  </View>
+                </TouchableHighlight>
             </View>
             <View style={styles.notiView}>
                 <View style={styles.notiIconView}>

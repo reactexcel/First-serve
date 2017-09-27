@@ -18,6 +18,7 @@
 		"react-native-firestack": "^2.3.9",
 		"react-native-image-picker": "^0.26.7",
 		"react-native-material-bottom-navigation": "^0.5.1",
+		"react-native-phone-call": "^1.0.4",
 		"react-native-progress": "^3.4.0",
 		"react-native-textinput-effects": "^0.4.0",
 		"react-native-vector-icons": "^4.3.0",

@@ -19,6 +19,12 @@ const AdminCss = {
 		paddingBottom: 5
 	},
 
+	centerContainer: {
+		flex: 1,
+		alignItems:'center',
+		justifyContent: 'center'
+	},
+
 	buttons: {
 		backgroundColor: "whitesmoke"
 	},
@@ -92,6 +98,10 @@ const AdminCss = {
 		borderBottomWidth: 1
 	},
 
+	topBorder: {
+		borderTopWidth: 1
+	},
+
 	edtText: {
 		color:'#98866F'
 	},
@@ -102,7 +112,34 @@ const AdminCss = {
 
 	headingRight: {
     alignSelf: 'flex-end',
-  }
+  },
+	navBar: {
+    height: 60,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    backgroundColor: '#122438'
+  },
+  leftContainer: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'flex-start'
+  },
+  rightContainer: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+		paddingRight: 8
+  },
+	circle: {
+		width: 40,
+		height: 40,
+		borderRadius: 20,
+		borderWidth: 1,
+		alignItems:'center',
+		justifyContent: 'center'
+	}
 };
 
 module.exports = AdminCss;

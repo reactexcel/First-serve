@@ -8,7 +8,6 @@ import Firestack from 'react-native-firestack';
 const firestack = new Firestack();
 
 class Database {
-
     static isDataAdded = false;
 
     /**
@@ -90,22 +89,31 @@ class Database {
             callback(snapshot)
         });
     }
+
+    static setUserFavourites(restaurantId, userId, isFavourite){
+      let userMobilePath = "/users/" + userId + "/favourite_restaurants/" + restaurantId;
+      try{
+        if(isFavourite){
+          firebase.database().ref(userMobilePath).set({isFavourite: isFavourite});
+        }else{
+          firebase.database().ref(userMobilePath).remove();
+        }
+      } catch (error) {
+          console.log(error);
+      }
+    }
+
     /**
      * Listen for changes to a users mobile number
      * @param userId
      * @param callback Users mobile number
      */
-    static listenUserNotiSetting(userId, callback) {
-        let userMobilePath = "/users/" + userId;
+    static listenUserFavourites(userId, callback) {
+        let userMobilePath = "/users/" + userId + "/favourite_restaurants";
 
         firebase.database().ref(userMobilePath).on('value', (snapshot) => {
           firebase.database().ref(userMobilePath).off('value');
-            var notiOn = false;
-            if (snapshot.val()) {
-                notiOn = snapshot.val().notiOn
-            }
-
-            callback(notiOn)
+            callback(snapshot)
         });
     }
 
