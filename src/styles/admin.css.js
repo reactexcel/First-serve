@@ -78,6 +78,16 @@ const AdminCss = {
 		borderWidth: 1,
 		borderColor: '#fff'
 	},
+	submitDisable:{
+		marginRight:40,
+		marginLeft:40,
+		marginTop:10,
+		paddingTop:10,
+		paddingBottom:10,
+		borderRadius:20,
+		borderWidth: 1,
+		borderColor: '#626262'
+	},
   btn:{
 		marginLeft:5,
 		marginTop:10,
@@ -92,6 +102,11 @@ const AdminCss = {
 		color:'#fff',
 		textAlign:'center',
 	},
+	submitTextDisable:{
+		color:'#626262',
+		textAlign:'center',
+	},
+
 	bgContainer: { flex:1, width: null, height: null },
 
 	bottomBorder: {

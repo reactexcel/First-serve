@@ -73,15 +73,15 @@ class RestaurantListItem extends Component {
                 </View>
             </View>
             <TouchableHighlight
-              style={[styles.submit]}
+              style={this.props.restaurant.fully_booked ? styles.submitDisable : styles.submit}
               onPress={() => Linking.openURL(this.props.restaurant.booking_url)}
               underlayColor='#fff'>
-                <Text style={[styles.submitText]}>Regular booking</Text>
+                <Text style={this.props.restaurant.fully_booked ? styles.submitTextDisable : styles.submitText}>{this.props.restaurant.fully_booked ? 'FULLY BOOKED' : 'Regular booking'}</Text>
             </TouchableHighlight>
             <View style={[styles.rowContainer, {paddingTop: 15}]}>
               <Text style={{fontSize: 11}}>Get notified when additional tables become available</Text>
             </View>
-            <View style={styles.listNotiView}>
+            <View style={[styles.listNotiView, {paddingBottom: this.props.restaurant.isAdmin ? 0 : 40}]}>
                 <View style={styles.notiIconView}>
                     <Icon
                         name='bell'
@@ -93,7 +93,7 @@ class RestaurantListItem extends Component {
                 <Switch onValueChange={(value) => this.props.setValue(this.props.restaurant._key, value)}
                 value={this.props.isRestaurantNotiOn[this.props.restaurant._key] === true ? true : false}/>
             </View>
-            <View style={[styles.rowContainer, {paddingBottom: 40}]}>
+            {this.props.restaurant.isAdmin && <View style={[styles.rowContainer, {paddingBottom: 40}]}>
               <TouchableHighlight
                 style={styles.btn}
                 onPress={() => this.props.editRestaurant(this.props.restaurant)}
@@ -106,7 +106,7 @@ class RestaurantListItem extends Component {
                 underlayColor='#fff'>
                   <Text style={[styles.submitText, {paddingLeft: 20, paddingRight: 20}]}>Delete</Text>
               </TouchableHighlight>
-            </View>
+            </View>}
           </View>
         </View>);
       }else{

@@ -327,7 +327,7 @@ class NewEditRestaurant extends Component {
     if(this.props.navigation.state.params.isNew == false){
       Database.editRestaurant(this.state.restaurant, function(restaurantKey){
         console.log("Restaurant Key", restaurantKey);
-      })
+      });
       this.props.navigation.goBack();
     }else if(this.props.navigation.state.params.isNew && this.state.password == this.state.confirmPassword){
       Database.addRestaurant(this.state.email, this.state.password, this.state.restaurant, function(restaurantKey){

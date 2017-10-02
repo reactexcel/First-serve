@@ -42,6 +42,26 @@ class Database {
         });
     }
 
+    static setRestaurantFullyBooked(userId, restaurantKey, isFullyBooked){
+      let userMobilePath = "/restaurants/" + userId + "/" + restaurantKey;
+
+      firebase.database().ref(userMobilePath).update({
+          fully_booked: isFullyBooked
+      });
+    }
+
+    static publishTable(table, callback){
+      let userMobilePath = "/tables/";
+      firebase.database().ref(userMobilePath).push(table);
+      callback("Published");
+    }
+
+    static deleteTable(tableKey, callback){
+      let userMobilePath = "/tables/" + tableKey;
+      firebase.database().ref(userMobilePath).remove();
+      callback('deleted');
+    }
+
     static setUserNotiSetting(userId, notiOn){
       let userMobilePath = "/users/" + userId;
 

@@ -1,7 +1,7 @@
 const RestaurantCss = {
 	container: {
 		flex: 1,
-		backgroundColor: "#0F1D28"
+		backgroundColor: "#000"
 	},
 
 	rowContainer: {
@@ -13,10 +13,14 @@ const RestaurantCss = {
 	},
 
 	rowContainerLF: {
-		flex: 1,
 		flexDirection:'row',
 		alignItems:'center',
 		paddingBottom: 5
+	},
+
+	rowContainerHCenter: {
+		flexDirection:'row',
+		justifyContent:'center'
 	},
 
 	buttons: {
@@ -44,24 +48,19 @@ const RestaurantCss = {
 		alignItems: 'center'
 	},
 
-	listView: {
-			flex: 1,
-			paddingBottom:20
-	},
-
 	listItem: {
 		flex: 1,
 		flexDirection:'row',
 		alignItems:'center',
 		justifyContent: 'center',
-		padding:20
+		paddingRight: 8
 	},
 
 	listItemTitle: {
 		fontSize: 20
 	},
 
-	submit:{
+	submit: {
 		marginRight:40,
 		marginLeft:40,
 		marginTop:10,
@@ -76,10 +75,31 @@ const RestaurantCss = {
 		color:'#fff',
 		textAlign:'center',
 	},
-	bgContainer: { flex:1, width: null, height: null },
+	publish: {
+		marginRight:60,
+		marginLeft:60,
+		marginTop:10,
+		paddingTop:10,
+		paddingBottom:10,
+		backgroundColor:'#fff',
+		borderRadius:20,
+		borderWidth: 1,
+		borderColor: '#fff'
+	},
+	publishText: {
+		color:'#000',
+		textAlign:'center',
+	},
 
-	bottomBorder: {
-		borderBottomWidth: 1
+	bgContainer: {
+		flex:1,
+		width: null,
+		height: null
+	},
+
+	bottomBorderBrown: {
+		borderBottomWidth: 1,
+		borderColor: '#98866F'
 	},
 
 	edtText: {
@@ -87,12 +107,25 @@ const RestaurantCss = {
 	},
 
 	headingLeft: {
-    alignSelf: 'flex-start',
+		flex: 1,
+		flexDirection: 'row',
+		justifyContent: 'flex-start',
   },
 
 	headingRight: {
-    alignSelf: 'flex-end',
-  }
+		flex: 1,
+		flexDirection: 'row',
+		justifyContent: 'flex-end',
+		alignItems: 'center',
+		paddingRight: 8
+  },
+
+	rectangle: {
+		borderWidth: 1,
+		borderColor: '#98866F',
+		alignItems:'center',
+		justifyContent: 'center'
+	}
 };
 
 module.exports = RestaurantCss;

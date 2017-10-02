@@ -9,7 +9,9 @@ import EmailLogin from "./src/views/email_login";
 import UserHome from "./src/views/user_home";
 import AdminHome from "./src/views/admin_home";
 import RestaurantHome from "./src/views/restaurant_home";
+import RestaurantSettings from "./src/views/restaurant_settings";
 import NewEditRestaurant from "./src/views/new_edit_restaurant";
+import PublishTable from "./src/views/publish_table";
 import Firebase from "./src/firebase/firebase";
 import DefaultPreference from 'react-native-default-preference';
 
@@ -157,8 +159,7 @@ class Landing extends Component {
                   } else {
                     AccessToken.getCurrentAccessToken().then((data) => {
                       firestack.auth.signInWithProvider('facebook', data.accessToken, '').then((user)=>{ // facebook will need only access token.
-                        console.log(user);
-                        DefaultPreference.set(userType, 'user');
+                        DefaultPreference.setMultiple({userType: 'user', uid: user.user.uid});
                         let userMobilePath = "/users/" + user.user.uid;
                         firebase.database().ref(userMobilePath).update({
                             isUser: true
@@ -217,6 +218,15 @@ const styles = StyleSheet.create({
     }
 });
 
-const FirstServed = StackNavigator({ Home: {screen: Landing}, ELogin: { screen: EmailLogin }, UHome: { screen: UserHome }, RHome: { screen: RestaurantHome }, AHome: { screen: AdminHome }, NERestaurant: {screen: NewEditRestaurant}});
+const FirstServed = StackNavigator({
+  Home: {screen: Landing},
+  ELogin: { screen: EmailLogin },
+  UHome: { screen: UserHome },
+  RHome: { screen: RestaurantHome },
+  AHome: { screen: AdminHome },
+  NERestaurant: {screen: NewEditRestaurant},
+  RSettings: {screen: RestaurantSettings},
+  PTable: {screen: PublishTable}
+});
 
 AppRegistry.registerComponent("FirstServed", () => FirstServed);
