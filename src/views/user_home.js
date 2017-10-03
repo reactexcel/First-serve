@@ -180,7 +180,7 @@ class UserHome extends Component {
                     type='font-awesome'
                     color='#000'/>
                     <TextInput
-                        style={{color: '#626262', flex: 1, paddingLeft: 10}}
+                        style={{color: '#626262', flex: 1, marginLeft: 15, marginRight: 150}}
                         onChangeText={(mobile) => this._setMobile(mobile)}
                         value={this.state.mobile}/>
                 </View>
