@@ -9,7 +9,10 @@ import {
     View,
     StyleSheet,
     TouchableHighlight,
-    ListView
+    ListView,
+    Image,
+    TextInput,
+    ScrollView
 } from "react-native";
 
 import Button from "apsl-react-native-button";
@@ -23,8 +26,14 @@ import Database from "../firebase/database";
 import RestaurantListItem from "./restaurant_list_item"
 import DismissKeyboard from "dismissKeyboard";
 import DefaultPreference from 'react-native-default-preference';
+import FixWidthImage from "../components/fix_width_image"
 import * as firebase from "firebase";
 import Firestack from 'react-native-firestack';
+
+const FBSDK = require('react-native-fbsdk');
+const {
+  LoginManager
+} = FBSDK;
 
 const firestack = new Firestack();
 
@@ -53,10 +62,15 @@ class UserHome extends Component {
             isRestaurantNotiOn: {},
             favourites: {},
             isModalVisible: {},
-            currentTab: 0
+            currentTab: 0,
+            pax: 0,
+            mobile: ''
         };
 
         this._setUserNoti = this._setUserNoti.bind(this);
+        this._setMobile = this._setMobile.bind(this);
+        this._setPax = this._setPax.bind(this);
+        this.save = this.save.bind(this);
     }
 
     componentWillMount() {
@@ -64,34 +78,26 @@ class UserHome extends Component {
         this.listenForRestaurants(this.restaurantRef);
 
         try {
-            // Listen for Mobile Changes
-            Database.listenUserNotiSetting(this.props.navigation.state.params.userId, (notificationOn) => {
-                this.setState({
-                    notificationOn: notificationOn
-                });
-            });
-
-            Database.listenUserRestaurantNotiSetting(this.props.navigation.state.params.userId, (restaurantNotiSnap) => {
+            Database.listenUser(this.props.navigation.state.params.userId, (userSnap) => {
               let isRestaurantNotiOn = {};
-              if(restaurantNotiSnap.hasChildren()){
-                restaurantNotiSnap.forEach((child) => {
-                  isRestaurantNotiOn[child.key] = child.val().notiOn;
-                });
+              if(userSnap.val().restaurants_noti){
+                var keys = Object.keys(userSnap.val().restaurants_noti);
+                for(i = 0; i < keys.length; i++){
+                  isRestaurantNotiOn[keys[i]] = userSnap.val().restaurants_noti[keys[i]].notiOn;
+                }
+              }
+              if(userSnap.val().favourite_restaurants){
+                var keys = Object.keys(userSnap.val().favourite_restaurants);
+                for(i = 0; i < keys.length; i++){
+                  this.state.favourites[keys[i]] = userSnap.val().favourite_restaurants[keys[i]].isFavourite;
+                }
               }
               this.setState({
-                isRestaurantNotiOn: isRestaurantNotiOn
-              });
-            });
-
-            Database.listenUserFavourites(this.props.navigation.state.params.userId, (favouriteSnap) => {
-              console.log("listenUserRestaurantNotiSetting", "called");
-              if(favouriteSnap.hasChildren()){
-                favouriteSnap.forEach((child) => {
-                  this.state.favourites[child.key] = child.val().isFavourite;
-                });
-              }
-              this.setState({
-                favourites: this.state.favourites
+                isRestaurantNotiOn: isRestaurantNotiOn,
+                favourites: this.state.favourites,
+                notificationOn: userSnap.val().notiOn,
+                mobile: userSnap.val().phone_number ? userSnap.val().phone_number : '',
+                pax: userSnap.val().pax ? userSnap.val().pax : '0'
               });
             });
         } catch (error) {
@@ -119,31 +125,81 @@ class UserHome extends Component {
                 renderRow={this._renderItem.bind(this)}
                 style={styles.listView}/>
           </View>}
-          {this.state.currentTab == 3 && <View style={styles.notiView}>
-            <TouchableHighlight
-              style={[styles.rowContainer, {paddingTop: 25}]}
-              onPress={() => this.logout(function(){
-                DefaultPreference.clearAll();
-                const resetAction = NavigationActions.reset({
-                  index: 0,
-                  actions: [NavigationActions.navigate({ routeName: 'Home'})]
-                })
-                this.props.navigation.dispatch(resetAction);
-              })}>
-                <View style={[styles.headingRight]}>
-                  <Text style={{color: '#000', fontSize: 16, paddingLeft: 10}}>Sign out</Text>
-                  <Icon
-                    name='sign-out'
-                    type='octicon'
-                    color='#000'/>
-              </View>
-            </TouchableHighlight>
+          {this.state.currentTab == 1 && <View style={styles.container}>
+            <Text>Pending</Text>
           </View>}
+          {this.state.currentTab == 2 && <View style={styles.container}>
+            <Text>Pending</Text>
+          </View>}
+          {this.state.currentTab == 3 && <ScrollView keyboardDismissMode={'none'}>
+            <View style={styles.container}>
+              <View style={styles.navBar}>
+                <TouchableHighlight
+                  style={[styles.headingRight]}
+                  onPress={() => this.logout(this, function(uh){
+                    DefaultPreference.clearAll();
+                    const resetAction = NavigationActions.reset({
+                      index: 0,
+                      actions: [NavigationActions.navigate({ routeName: 'Home'})]
+                    });
+                    uh.props.navigation.dispatch(resetAction);
+                  })}>
+                  <View style={[styles.headingRight]}>
+                    <Text style={{color: '#000', fontSize: 16, paddingRight: 10}}>Sign out</Text>
+                    <Icon
+                      name='sign-out'
+                      type='octicon'
+                      color='#000'/>
+                  </View>
+                </TouchableHighlight>
+              </View>
+              <View style={[styles.rowContainer]}>
+                <View style={[styles.avtarCircle]}>
+                  <Image style={{position: 'absolute', width: 80, height: 80, borderRadius: 40}} source={{uri: this.props.navigation.state.params.photoUrl ? this.props.navigation.state.params.photoUrl : 'https://firebasestorage.googleapis.com/v0/b/first-served-c9197.appspot.com/o/both.jpg?alt=media&token=9c17e2cf-262f-4450-959a-91d8b109a6fe'}} />
+                </View>
+              </View>
+              <View style={[styles.rowContainer, {paddingTop: 5}]}>
+                <Text style={{color: '#626262', fontSize: 24}}>{this.props.navigation.state.params.name}</Text>
+              </View>
+              <View style={[styles.container, {flex: 1, paddingLeft: 10, paddingRight: 10, paddingTop: 15}]}>
+                <View style={[styles.rowContainer, styles.bottomTopBorder, {paddingTop: 5, justifyContent: 'flex-start'}]}>
+                  <Icon
+                    name='cutlery'
+                    type='font-awesome'
+                    color='#000'/>
+                    <Text style={{color: '#626262', fontSize: 16, paddingLeft: 10}}>Table for</Text>
+                    <TextInput
+                        style={{color: '#626262'}}
+                        onChangeText={(pax) => this._setPax(pax)}
+                        value={this.state.pax}/>
+                    <Text> people</Text>
+                </View>
+                <View style={[styles.rowContainer, styles.bottomBorder, {paddingTop: 5, justifyContent: 'flex-start'}]}>
+                  <Icon
+                    name='mobile'
+                    type='font-awesome'
+                    color='#000'/>
+                    <TextInput
+                        style={{color: '#626262', flex: 1, paddingLeft: 10}}
+                        onChangeText={(mobile) => this._setMobile(mobile)}
+                        value={this.state.mobile}/>
+                </View>
+              </View>
+              <View style={[{paddingTop: 15}]}>
+                <View style={{marginLeft: 60, marginRight: 60}}>
+                  <Button onPress={this.save()} style={{backgroundColor: '#122438'}} textStyle={{color: '#FFF', fontSize: 18}}>
+                    Save changes
+                    </Button>
+                  </View>
+              </View>
+            </View>
+          </ScrollView>}
           <BottomNavigation
             labelColor="white"
             rippleColor="white"
             style={{ height: 56, elevation: 8, position: 'absolute', left: 0, bottom: 0, right: 0 }}
-            onTabChange={(newTabIndex) => this.tabChanged(newTabIndex)}>
+            onTabChange={(newTabIndex) => this.tabChanged(newTabIndex)}
+            activeTab={this.state.currentTab}>
             <Tab
               barBackgroundColor="#122438"
               label="Restaurants"
@@ -165,10 +221,11 @@ class UserHome extends Component {
       );
     }
 
-    logout(callback){
+    logout(th, callback){
       firestack.auth.signOut()
         .then(res => {
-          callback(res);
+            LoginManager.logOut();
+            callback(th, res);
         })
         .catch(err => {
           console.error('Uh oh... something weird happened')
@@ -176,12 +233,25 @@ class UserHome extends Component {
     }
 
     tabChanged(idx){
+      console.log("currentTab", idx);
       this.setState({currentTab: idx});
     }
 
     _setUserNoti(val){
         Database.setUserNotiSetting(this.props.navigation.state.params.userId, val);
         this.setState({notificationOn: val});
+    }
+
+    _setPax(val){
+        this.setState({pax: val});
+    }
+
+    _setMobile(val){
+        this.setState({mobile: val});
+    }
+
+    save(){
+      Database.setUserData(this.props.navigation.state.params.userId, this.state.pax, this.state.mobile);
     }
 
     _renderItem(restaurant) {

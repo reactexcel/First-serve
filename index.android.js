@@ -46,7 +46,7 @@ class Landing extends Component {
     console.log('componentWillMount index');
     const th = this;
 
-    DefaultPreference.getMultiple(['userType', 'uid']).then(function(value) {
+    DefaultPreference.getMultiple(['userType', 'uid', 'name', 'photoUrl']).then(function(value) {
       var routeName = null;
       if(value[0] === 'user'){
         routeName = 'UHome';
@@ -60,7 +60,14 @@ class Landing extends Component {
         console.log("componentWillMount routeName called.");
         const resetAction = NavigationActions.reset({
           index: 0,
-          actions: [NavigationActions.navigate({ routeName: routeName, params: {userId: value[1]}})]
+          actions: [NavigationActions.navigate({
+            routeName: routeName,
+            params: {
+              userId: value[1],
+              name: value[2],
+              photoUrl: value[3]
+            }
+          })]
         })
         firestack.auth.unlistenForAuth();
         if (th.unsubscribe) {th.unsubscribe(); th.unsubscribe = null;}
@@ -78,7 +85,14 @@ class Landing extends Component {
                 routeName = 'UHome';
                 const resetAction = NavigationActions.reset({
                   index: 0,
-                  actions: [NavigationActions.navigate({ routeName: routeName, params: {userId: evt.user.uid}})]
+                  actions: [NavigationActions.navigate({
+                    routeName: routeName,
+                    params: {
+                      userId: evt.user.uid,
+                      photoUrl: evt.user.photoUrl,
+                      name: evt.user.displayName
+                    }
+                  })]
                 })
                 firestack.auth.unlistenForAuth();
                 if (th.unsubscribe) {
@@ -159,7 +173,12 @@ class Landing extends Component {
                   } else {
                     AccessToken.getCurrentAccessToken().then((data) => {
                       firestack.auth.signInWithProvider('facebook', data.accessToken, '').then((user)=>{ // facebook will need only access token.
-                        DefaultPreference.setMultiple({userType: 'user', uid: user.user.uid});
+                        DefaultPreference.setMultiple({
+                          userType: 'user',
+                          uid: user.user.uid,
+                          name: user.user.displayName,
+                          photoUrl: user.user.photoUrl
+                        });
                         let userMobilePath = "/users/" + user.user.uid;
                         firebase.database().ref(userMobilePath).update({
                             isUser: true
