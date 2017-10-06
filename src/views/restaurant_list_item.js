@@ -5,15 +5,21 @@ import {
   View,
   Text,
   TouchableHighlight,
+  TouchableOpacity,
   Image,
   Switch,
   Linking,
-  Modal
+  Modal,
+  Dimensions,
+  ScrollView
 } from 'react-native';
 
+import Swiper from 'react-native-swiper'
+const { width } = Dimensions.get('window')
 import styles from "../styles/admin.css";
 import {Icon} from "react-native-elements";
 import FullWidthImage from "../components/full_width_image"
+import GallerySwiper from "../components/swiper"
 import RestaurantView from "./restaurant_view";
 
 class RestaurantListItem extends Component {
@@ -45,12 +51,7 @@ class RestaurantListItem extends Component {
                 <Text style={styles.listItemTitle}>{this.props.restaurant.name}</Text>
               </TouchableHighlight>
             </View>
-            <View style={styles.rowContainer}>
-              <TouchableHighlight
-                onPress={() => this.props.setModalVisible(this.props.restaurant._key, true)}>
-                <FullWidthImage source={{uri: this.props.restaurant.images.length > 0 ? this.props.restaurant.images[0].imageUrl : 'https://firebasestorage.googleapis.com/v0/b/first-served-c9197.appspot.com/o/restaurant_images%2Frestaurant.jpg?alt=media&token=b0ca19be-6594-4bb1-bfdb-3c9474a0b234'}} />
-              </TouchableHighlight>
-            </View>
+              <GallerySwiper {...this.props} openModel={() => this.props.setModalVisible(this.props.restaurant._key, true)} />
             <View style={styles.notiView}>
               <TouchableHighlight
                 onPress={() => this.props.setFavourite(this.props.restaurant._key, (this.props.favourites[this.props.restaurant._key] === true ? false : true))}

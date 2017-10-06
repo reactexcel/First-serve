@@ -108,6 +108,7 @@ class AdminHome extends Component {
               <ListView
                   dataSource={this.state.dataSource}
                   enableEmptySections={true}
+                  removeClippedSubviews={false}
                   renderRow={this._renderItem.bind(this)}
                   style={styles.listView}/>
               <View style={styles.notiView}>

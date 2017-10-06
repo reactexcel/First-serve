@@ -26,6 +26,7 @@ import MIcon from 'react-native-vector-icons/MaterialIcons'
 import {Sae} from "react-native-textinput-effects";
 import FontAwesomeIcon from "react-native-vector-icons/FontAwesome";
 
+import GallerySwiper from "../components/swiper"
 import CommonStyle from "../styles/admin.css";
 import Database from "../firebase/database";
 import FullWidthImage from "../components/full_width_image"
@@ -87,7 +88,9 @@ class RestaurantView extends Component {
           </View>
         </View>
         <ScrollView keyboardDismissMode={'none'}>
-          <FullWidthImage source={{uri: this.props.restaurant.images.length > 0 ? this.props.restaurant.images[0].imageUrl : 'https://firebasestorage.googleapis.com/v0/b/first-served-c9197.appspot.com/o/restaurant_images%2Frestaurant.jpg?alt=media&token=b0ca19be-6594-4bb1-bfdb-3c9474a0b234'}} />
+          <View style={CommonStyle.swiperModal}>
+            <GallerySwiper {...this.props} openModel={() => {}} />
+          </View>
           <View style={[{paddingLeft: 15, paddingRight: 15}]}>
             <Text style={[{paddingTop: 16, paddingBottom: 20}]}>{this.props.restaurant.long_description}</Text>
             <View style={[CommonStyle.rowContainer, CommonStyle.topBorder, {paddingTop: 15}]}>

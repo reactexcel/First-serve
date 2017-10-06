@@ -1,3 +1,6 @@
+import { Dimensions} from 'react-native'
+const { width } = Dimensions.get('window')
+
 const AdminCss = {
 	container: {
 		flex: 1,
@@ -54,7 +57,6 @@ const AdminCss = {
 			flex: 1,
 			paddingBottom:20
 	},
-
 	listItem: {
 		flex: 1,
 		flexDirection:'row',
@@ -154,6 +156,22 @@ const AdminCss = {
 		borderWidth: 1,
 		alignItems:'center',
 		justifyContent: 'center'
+	},
+	swiperConatiner:{
+		flex:1,
+		justifyContent: 'center',
+		backgroundColor: 'transparent'
+	},
+	swiperImage: {
+			width,
+			flex:1
+	},
+	swiperConatiner:{
+		flex:1,
+	},
+	swiperModal:{
+		flex:1,
+		marginTop:-8
 	}
 };
 
