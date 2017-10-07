@@ -7,7 +7,6 @@ const Common = {
 	},
 
 	rowContainer: {
-		flex: 1,
 		flexDirection:'row',
 		alignItems:'center',
 		justifyContent: 'center',
@@ -84,17 +83,45 @@ const Common = {
 		borderBottomWidth: 1
 	},
 
+	bottomTopBorder: {
+		borderTopWidth: 1,
+		borderBottomWidth: 1
+	},
+
 	edtText: {
 		color: HEXCOLOR.lightBrown
 	},
 
+	navBar: {
+    height: 60,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center'
+  },
+
 	headingLeft: {
-    alignSelf: 'flex-start',
+		flex: 1,
+		flexDirection: 'row',
+		justifyContent: 'flex-start',
   },
 
 	headingRight: {
-    alignSelf: 'flex-end',
-  }
+		flex: 1,
+		flexDirection: 'row',
+		justifyContent: 'flex-end',
+		alignItems: 'center',
+		paddingRight: 8
+  },
+
+	avtarCircle: {
+		width: 80,
+		height: 80,
+		borderRadius: 40,
+		borderWidth: 1,
+		alignItems:'center',
+		justifyContent: 'center',
+		overflow: 'hidden'
+	}
 };
 
 module.exports = Common;

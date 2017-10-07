@@ -70,6 +70,15 @@ class Database {
       });
     }
 
+    static setUserData(userId, pax, mobile){
+      let userMobilePath = "/users/" + userId;
+
+      firebase.database().ref(userMobilePath).update({
+          pax: pax,
+          phone_number: mobile
+      });
+    }
+
     /**
      * Listen for changes to a users mobile number
      * @param userId
@@ -94,6 +103,20 @@ class Database {
       firebase.database().ref(userMobilePath).set({
           notiOn: notiOn
       });
+    }
+
+    /**
+     * Listen for changes to a users mobile number
+     * @param userId
+     * @param callback Users mobile number
+     */
+    static listenUser(userId, callback) {
+        let userMobilePath = "/users/" + userId;
+
+        firebase.database().ref(userMobilePath).on('value', (snapshot) => {
+          firebase.database().ref(userMobilePath).off('value');
+            callback(snapshot)
+        });
     }
 
     /**
