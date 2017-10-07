@@ -1,7 +1,8 @@
+import { HEXCOLOR } from './hexcolor';
 const RestaurantCss = {
 	container: {
 		flex: 1,
-		backgroundColor: "#000"
+		backgroundColor:  HEXCOLOR.black
 	},
 
 	rowContainer: {
@@ -24,7 +25,7 @@ const RestaurantCss = {
 	},
 
 	buttons: {
-		backgroundColor: "whitesmoke"
+		backgroundColor:  HEXCOLOR.whiteSmoke
 	},
 
 	notiView: {
@@ -66,13 +67,13 @@ const RestaurantCss = {
 		marginTop:10,
 		paddingTop:10,
 		paddingBottom:10,
-		backgroundColor:'#68a0cf',
+		backgroundColor:HEXCOLOR.skyblue,
 		borderRadius:20,
 		borderWidth: 1,
-		borderColor: '#fff'
+		borderColor: HEXCOLOR.pureWhite
 	},
 	submitText:{
-		color:'#fff',
+		color:HEXCOLOR.pureWhite,
 		textAlign:'center',
 	},
 	publish: {
@@ -81,13 +82,13 @@ const RestaurantCss = {
 		marginTop:10,
 		paddingTop:10,
 		paddingBottom:10,
-		backgroundColor:'#fff',
+		backgroundColor:HEXCOLOR.pureWhite,
 		borderRadius:20,
 		borderWidth: 1,
-		borderColor: '#fff'
+		borderColor: HEXCOLOR.pureWhite
 	},
 	publishText: {
-		color:'#000',
+		color: HEXCOLOR.black ,
 		textAlign:'center',
 	},
 
@@ -99,11 +100,11 @@ const RestaurantCss = {
 
 	bottomBorderBrown: {
 		borderBottomWidth: 1,
-		borderColor: '#98866F'
+		borderColor: HEXCOLOR.lightBrown
 	},
 
 	edtText: {
-		color:'#98866F'
+		color:HEXCOLOR.lightBrown
 	},
 
 	headingLeft: {
@@ -122,7 +123,7 @@ const RestaurantCss = {
 
 	rectangle: {
 		borderWidth: 1,
-		borderColor: '#98866F',
+		borderColor: HEXCOLOR.lightBrown,
 		alignItems:'center',
 		justifyContent: 'center'
 	}

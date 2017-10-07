@@ -1,10 +1,11 @@
 import { Dimensions} from 'react-native'
 const { width } = Dimensions.get('window')
+import { HEXCOLOR } from './hexcolor';
 
 const AdminCss = {
 	container: {
 		flex: 1,
-		backgroundColor: "#F1F0EC"
+		backgroundColor: HEXCOLOR.whiteColor
 	},
 
 	rowContainer: {
@@ -29,7 +30,7 @@ const AdminCss = {
 	},
 
 	buttons: {
-		backgroundColor: "whitesmoke"
+		backgroundColor: HEXCOLOR.whiteSmoke
 	},
 
 	notiView: {
@@ -75,10 +76,10 @@ const AdminCss = {
 		marginTop:10,
 		paddingTop:10,
 		paddingBottom:10,
-		backgroundColor:'#68a0cf',
+		backgroundColor: HEXCOLOR.skyblue,
 		borderRadius:20,
 		borderWidth: 1,
-		borderColor: '#fff'
+		borderColor: HEXCOLOR.pureWhite
 	},
 	submitDisable:{
 		marginRight:40,
@@ -88,24 +89,24 @@ const AdminCss = {
 		paddingBottom:10,
 		borderRadius:20,
 		borderWidth: 1,
-		borderColor: '#626262'
+		borderColor: HEXCOLOR.lightGrey
 	},
   btn:{
 		marginLeft:5,
 		marginTop:10,
 		paddingTop:10,
 		paddingBottom:10,
-		backgroundColor:'#68a0cf',
+		backgroundColor:HEXCOLOR.skyblue,
 		borderRadius:20,
 		borderWidth: 1,
-		borderColor: '#fff'
+		borderColor: ''
 	},
 	submitText:{
-		color:'#fff',
+		color: HEXCOLOR.pureWhite,
 		textAlign:'center',
 	},
 	submitTextDisable:{
-		color:'#626262',
+		color:HEXCOLOR.lightGrey,
 		textAlign:'center',
 	},
 
@@ -120,7 +121,7 @@ const AdminCss = {
 	},
 
 	edtText: {
-		color:'#98866F'
+		color: HEXCOLOR.lightBrown
 	},
 
 	headingLeft: {
@@ -135,7 +136,7 @@ const AdminCss = {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: '#122438'
+    backgroundColor: HEXCOLOR.Endeavour
   },
   leftContainer: {
     flex: 1,

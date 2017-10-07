@@ -1,7 +1,9 @@
+import { HEXCOLOR } from './hexcolor';
+
 const Common = {
 	container: {
 		flex: 1,
-		backgroundColor: "#F1F0EC"
+		backgroundColor: HEXCOLOR.whiteColor
 	},
 
 	rowContainer: {
@@ -20,7 +22,7 @@ const Common = {
 	},
 
 	buttons: {
-		backgroundColor: "whitesmoke"
+		backgroundColor:  HEXCOLOR.whiteSmoke
 	},
 
 	notiView: {
@@ -67,13 +69,13 @@ const Common = {
 		marginTop:10,
 		paddingTop:10,
 		paddingBottom:10,
-		backgroundColor:'#68a0cf',
+		backgroundColor:HEXCOLOR.skyblue,
 		borderRadius:20,
 		borderWidth: 1,
-		borderColor: '#fff'
+		borderColor: HEXCOLOR.pureWhite
 	},
 	submitText:{
-		color:'#fff',
+		color: HEXCOLOR.pureWhite,
 		textAlign:'center',
 	},
 	bgContainer: { flex:1, width: null, height: null },
@@ -83,7 +85,7 @@ const Common = {
 	},
 
 	edtText: {
-		color:'#98866F'
+		color: HEXCOLOR.lightBrown
 	},
 
 	headingLeft: {
