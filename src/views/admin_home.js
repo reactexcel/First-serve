@@ -234,13 +234,15 @@ class AdminHome extends Component {
 
     listenForRestaurants(restaurantRef) {
       // listen for changes to the tasks reference, when it updates we'll get a
-      // dataSnapshot from firebase with a helper function
-      Helper.listenRestaurants(restaurantRef).then((restaurants)=>{
-        this.setState({
-          restaurants: restaurants,
-          dataSource: this.state.dataSource.cloneWithRows(restaurants)
-        });
-      })
+      // dataSnapshot from firebase with a helper
+      restaurantRef.on('value', (dataSnapshot) => {
+        Helper.listenRestaurants(dataSnapshot).then((restaurants)=>{
+          this.setState({
+            restaurants: restaurants,
+            dataSource: this.state.dataSource.cloneWithRows(restaurants)
+          });
+        })
+      });
     }
 }
 
