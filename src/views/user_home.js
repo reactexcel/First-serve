@@ -18,6 +18,7 @@ import BottomNavigation, { Tab } from 'react-native-material-bottom-navigation'
 import MIcon from 'react-native-vector-icons/MaterialIcons'
 import {StackNavigator, NavigationActions,} from 'react-navigation';
 
+import { HEXCOLOR } from "../styles/hexcolor.js";
 import styles from "../styles/common.css";
 import Database from "../firebase/database";
 import RestaurantListItem from "./restaurant_list_item"
@@ -33,7 +34,7 @@ class UserHome extends Component {
         title: 'Restaurant',
         headerTitleStyle: {alignSelf: 'center', color: 'white'},
         headerStyle: {
-            backgroundColor: '#122438',
+            backgroundColor: HEXCOLOR.endeavour,
         }
     };
 
@@ -105,7 +106,7 @@ class UserHome extends Component {
           {this.state.currentTab == 0 && <View style={styles.container}>
             <View style={[styles.notiView, styles.bottomBorder]}>
                 <View style={styles.notiIconView}>
-                    <Icon name='bell' type='font-awesome' color='#626262'/>
+                    <Icon name='bell' type='font-awesome' color={HEXCOLOR.lightGrey}/>
                     <View style={{paddingLeft: 5}}><Text>Notifications</Text></View>
                 </View>
 
@@ -131,35 +132,35 @@ class UserHome extends Component {
                 this.props.navigation.dispatch(resetAction);
               })}>
                 <View style={[styles.headingRight]}>
-                  <Text style={{color: '#000', fontSize: 16, paddingLeft: 10}}>Sign out</Text>
+                  <Text style={{color: HEXCOLOR.black, fontSize: 16, paddingLeft: 10}}>Sign out</Text>
                   <Icon
                     name='sign-out'
                     type='octicon'
-                    color='#000'/>
+                    color={HEXCOLOR.black}/>
               </View>
             </TouchableHighlight>
           </View>}
           <BottomNavigation
-            labelColor="white"
-            rippleColor="white"
+            labelColor={HEXCOLOR.pureWhite}
+            rippleColor={HEXCOLOR.pureWhite}
             style={{ height: 56, elevation: 8, position: 'absolute', left: 0, bottom: 0, right: 0 }}
             onTabChange={(newTabIndex) => this.tabChanged(newTabIndex)}>
             <Tab
-              barBackgroundColor="#122438"
+              barBackgroundColor={HEXCOLOR.endeavour}
               label="Restaurants"
-              icon={<Icon size={24} color="white" name="restaurant" />}/>
+              icon={<Icon size={24} color={HEXCOLOR.pureWhite} name="restaurant" />}/>
             <Tab
-              barBackgroundColor="#122438"
+              barBackgroundColor={HEXCOLOR.endeavour}
               label="Favourites"
-              icon={<Icon size={24} color="white" name="favorite-border" />}/>
+              icon={<Icon size={24} color={HEXCOLOR.pureWhite} name="favorite-border" />}/>
             <Tab
-              barBackgroundColor="#122438"
+              barBackgroundColor={HEXCOLOR.endeavour}
               label="Bookings"
-              icon={<Icon size={24} color="white" name="query-builder" />}/>
+              icon={<Icon size={24} color={HEXCOLOR.pureWhite} name="query-builder" />}/>
             <Tab
-              barBackgroundColor="#122438"
+              barBackgroundColor={HEXCOLOR.endeavour}
               label="Account"
-              icon={<Icon size={24} color="white" name="account-circle" />}/>
+              icon={<Icon size={24} color={HEXCOLOR.pureWhite} name="account-circle" />}/>
           </BottomNavigation>
         </View>
       );

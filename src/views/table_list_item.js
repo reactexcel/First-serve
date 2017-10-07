@@ -7,6 +7,7 @@ import {
   TouchableHighlight,
 } from 'react-native';
 
+import { HEXCOLOR } from "../styles/hexcolor.js";
 import styles from "../styles/restaurant.css";
 import {Icon} from "react-native-elements";
 import Moment from 'moment';
@@ -20,12 +21,12 @@ class TableListItem extends Component {
       <View style={styles.listItem}>
         <View style={styles.rowContainerLF}>
           <View style={styles.headingLeft}>
-            <Text style={{color: '#FFF', fontSize: 18}}>
+            <Text style={{color: HEXCOLOR.pureWhite, fontSize: 18}}>
               {this.props.table.people} people
             </Text>
           </View>
           <View style={{flexDirection: 'row', flex: 1, justifyContent: 'center'}}>
-            <Text style={{color: '#FFF', fontSize: 18}}>
+            <Text style={{color: HEXCOLOR.pureWhite, fontSize: 18}}>
               {Moment(this.props.table.startTime).format('HH:mm')}-{Moment(this.props.table.endTime).format('HH:mm')}
             </Text>
           </View>
@@ -37,7 +38,7 @@ class TableListItem extends Component {
               <Icon
                 name='trashcan'
                 type='octicon'
-                color='#fff'/>
+                color={HEXCOLOR.pureWhite}/>
               </View>
           </TouchableHighlight>
         </View>

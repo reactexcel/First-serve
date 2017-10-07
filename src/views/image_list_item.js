@@ -14,6 +14,7 @@ import {
 import styles from "../styles/admin.css";
 import {Icon} from "react-native-elements";
 import FixWidthImage from "../components/fix_width_image"
+import { HEXCOLOR } from "../styles/hexcolor.js";
 
 class ImageListItem extends Component {
   render() {
@@ -27,13 +28,13 @@ class ImageListItem extends Component {
             <TouchableHighlight
               style={styles.btn}
               onPress={() => this.props.primaryImage(this.props.image.storageId)}
-              underlayColor='#fff'>
+              underlayColor={HEXCOLOR.pureWhite}>
                 <Text style={[styles.submitText, {paddingLeft: 20, paddingRight: 20}]}>Primary</Text>
             </TouchableHighlight>
             <TouchableHighlight
               style={styles.btn}
               onPress={() => this.props.deleteImage(this.props.image.uid, this.props.image.restaurantId, this.props.image.storageId, this.props.image.fileName)}
-              underlayColor='#fff'>
+              underlayColor={HEXCOLOR.pureWhite}>
                 <Text style={[styles.submitText, {paddingLeft: 20, paddingRight: 20}]}>Delete</Text>
             </TouchableHighlight>
           </View>

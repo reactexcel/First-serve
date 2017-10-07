@@ -99,7 +99,7 @@ const AdminCss = {
 		backgroundColor:HEXCOLOR.skyblue,
 		borderRadius:20,
 		borderWidth: 1,
-		borderColor: ''
+		borderColor: HEXCOLOR.pureWhite
 	},
 	submitText:{
 		color: HEXCOLOR.pureWhite,
@@ -136,7 +136,7 @@ const AdminCss = {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: HEXCOLOR.Endeavour
+    backgroundColor: HEXCOLOR.endeavour
   },
   leftContainer: {
     flex: 1,
@@ -173,7 +173,34 @@ const AdminCss = {
 	swiperModal:{
 		flex:1,
 		marginTop:-8
-	}
+	},
+	headerTitleStyle: {
+		alignSelf: 'center',
+		color: HEXCOLOR.pureWhite
+	},
+	adminHeaderStyle:{
+		backgroundColor: HEXCOLOR.endeavour,
+	},
+	bottomNavigation: {
+		height: 56,
+		elevation: 8,
+		position: 'absolute',
+		left: 0, bottom: 0,
+		right: 0
+	},
+	shortDescription: {
+		color: HEXCOLOR.blueBerry,
+		fontSize: 18,
+		fontWeight: 'bold',
+		paddingTop: 16
+	},
+	restaurantsImages:{
+		color: '#7873B1',
+		fontSize: 18,
+		fontWeight: 'bold',
+	  paddingTop: 16,
+		paddingBottom: 10
+	},
 };
 
 module.exports = AdminCss;

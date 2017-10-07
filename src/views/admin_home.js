@@ -18,6 +18,7 @@ import BottomNavigation, { Tab } from 'react-native-material-bottom-navigation'
 import MIcon from 'react-native-vector-icons/MaterialIcons'
 
 import styles from "../styles/admin.css";
+import { HEXCOLOR } from "../styles/hexcolor.js";
 import Database from "../firebase/database";
 import RestaurantListItem from "./restaurant_list_item"
 import DismissKeyboard from "dismissKeyboard";
@@ -26,10 +27,8 @@ import * as firebase from "firebase";
 class AdminHome extends Component {
     static navigationOptions = {
         title: 'Restaurant',
-        headerTitleStyle :{alignSelf: 'center', color: 'white'},
-        headerStyle:{
-            backgroundColor: '#122438',
-        }
+        headerTitleStyle : styles.headerTitleStyle,
+        headerStyle: styles.adminHeaderStyle
     };
 
     constructor(props) {
@@ -113,26 +112,26 @@ class AdminHome extends Component {
                   style={styles.listView}/>
               <View style={styles.notiView}>
               <BottomNavigation
-                labelColor="white"
-                rippleColor="white"
-                style={{ height: 56, elevation: 8, position: 'absolute', left: 0, bottom: 0, right: 0 }}
+                labelColor={HEXCOLOR.pureWhite}
+                rippleColor={HEXCOLOR.pureWhite}
+                style={styles.bottomNavigation}
                 onTabChange={(newTabIndex) => console.log(`New Tab at position ${newTabIndex}`)}>
                 <Tab
-                  barBackgroundColor="#122438"
+                  barBackgroundColor={HEXCOLOR.endeavour}
                   label="Restaurants"
-                  icon={<Icon size={24} color="white" name="restaurant" />}/>
+                  icon={<Icon size={24} color={HEXCOLOR.pureWhite} name="restaurant" />}/>
                 <Tab
-                  barBackgroundColor="#122438"
+                  barBackgroundColor={HEXCOLOR.endeavour}
                   label="Favourites"
-                  icon={<Icon size={24} color="white" name="favorite-border" />}/>
+                  icon={<Icon size={24} color={HEXCOLOR.pureWhite} name="favorite-border" />}/>
                 <Tab
-                  barBackgroundColor="#122438"
+                  barBackgroundColor={HEXCOLOR.endeavour}
                   label="Bookings"
-                  icon={<Icon size={24} color="white" name="query-builder" />}/>
+                  icon={<Icon size={24} color={HEXCOLOR.pureWhite} name="query-builder" />}/>
                 <Tab
-                  barBackgroundColor="#122438"
+                  barBackgroundColor={HEXCOLOR.endeavour}
                   label="Account"
-                  icon={<Icon size={24} color="white" name="account-circle" />}/>
+                  icon={<Icon size={24} color={HEXCOLOR.pureWhite} name="account-circle" />}/>
               </BottomNavigation>
               </View>
           </View>

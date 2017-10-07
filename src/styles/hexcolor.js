@@ -7,4 +7,5 @@ export const HEXCOLOR = {
   black:'#000',
   lightBrown:'#98866F',
   endeavour: '#122438',
+  blueBerry: '#7873B1',
 };
