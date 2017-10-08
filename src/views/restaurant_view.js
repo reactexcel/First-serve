@@ -192,7 +192,7 @@ class RestaurantView extends Component {
                 color='#626262'/>
               <Text style={{paddingLeft: 5}}>{this.props.restaurant.address}</Text>
             </View>
-            <View style={[CommonStyle.rowContainer, {paddingBottom: 40}]}>
+            {this.props.isAdmin && <View style={[CommonStyle.rowContainer, {paddingBottom: 40}]}>
               <TouchableHighlight
                 style={[CommonStyle.btn, CommonStyle.centerContainer]}
                 onPress={() => this.props.editRestaurant(this.props.restaurant)}
@@ -205,7 +205,7 @@ class RestaurantView extends Component {
                 underlayColor='#fff'>
                   <Text style={[CommonStyle.submitText, {paddingLeft: 20, paddingRight: 20}]}>Delete</Text>
               </TouchableHighlight>
-            </View>
+            </View>}
           </View>
         </ScrollView>
       </View>

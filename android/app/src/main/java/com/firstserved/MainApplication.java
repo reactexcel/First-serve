@@ -2,19 +2,20 @@ package com.firstserved;
 
 import android.app.Application;
 
+import com.RNFetchBlob.RNFetchBlobPackage;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookSdk;
 import com.facebook.appevents.AppEventsLogger;
 import com.facebook.react.ReactApplication;
-import com.reactlibrary.RNDefaultPreferencePackage;
-import com.RNFetchBlob.RNFetchBlobPackage;
-import com.imagepicker.ImagePickerPackage;
-import com.oblador.vectoricons.VectorIconsPackage;
+import com.evollu.react.fcm.FIRMessagingPackage;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
 import com.facebook.react.shell.MainReactPackage;
 import com.facebook.reactnative.androidsdk.FBSDKPackage;
 import com.facebook.soloader.SoLoader;
+import com.imagepicker.ImagePickerPackage;
+import com.oblador.vectoricons.VectorIconsPackage;
+import com.reactlibrary.RNDefaultPreferencePackage;
 
 import java.util.Arrays;
 import java.util.List;
@@ -37,13 +38,14 @@ public class MainApplication extends Application implements ReactApplication {
     @Override
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
-          new MainReactPackage(),
-            new RNDefaultPreferencePackage(),
-            new RNFetchBlobPackage(),
-            new VectorIconsPackage(),
-            new FBSDKPackage(mCallbackManager),
-            new FirestackPackage(),
-            new ImagePickerPackage()
+        new MainReactPackage(),
+            new FIRMessagingPackage(),
+        new RNDefaultPreferencePackage(),
+        new RNFetchBlobPackage(),
+        new VectorIconsPackage(),
+        new FBSDKPackage(mCallbackManager),
+        new FirestackPackage(),
+        new ImagePickerPackage()
       );
     }
   };
