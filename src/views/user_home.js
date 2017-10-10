@@ -13,7 +13,10 @@ import {
     Image,
     TextInput,
     ScrollView,
-    Picker
+    Picker,
+    Platform,
+    ToastAndroid,
+    AlertIOS
 } from "react-native";
 
 import Button from "apsl-react-native-button";
@@ -22,6 +25,7 @@ import BottomNavigation, { Tab } from 'react-native-material-bottom-navigation'
 import MIcon from 'react-native-vector-icons/MaterialIcons'
 import {StackNavigator, NavigationActions,} from 'react-navigation';
 
+import * as Progress from 'react-native-progress';
 import { HEXCOLOR } from "../styles/hexcolor.js";
 import styles from "../styles/common.css";
 import Database from "../firebase/database";
@@ -66,7 +70,9 @@ class UserHome extends Component {
             isModalVisible: {},
             currentTab: 0,
             pax: 2,
-            mobile: ''
+            mobile: '',
+            isLoading:true,
+            saved:false
         };
 
         this._setUserNoti = this._setUserNoti.bind(this);
@@ -108,6 +114,7 @@ class UserHome extends Component {
     }
 
     render() {
+      const buttonName = (this.state.saved  ? "Saved" : "Save Changes" )
       return (
         <View style={styles.container}>
           {this.state.currentTab == 0 && <View style={styles.container}>
@@ -134,7 +141,7 @@ class UserHome extends Component {
           {this.state.currentTab == 2 && <View style={styles.container}>
             <Text>Pending</Text>
           </View>}
-          {this.state.currentTab == 3 && <ScrollView keyboardDismissMode={'none'}>
+          {this.state.currentTab == 3 && (this.state.isLoading ? <ScrollView keyboardDismissMode={'none'}>
             <View style={styles.container}>
               <View style={styles.navBar}>
                 <TouchableHighlight
@@ -202,13 +209,13 @@ class UserHome extends Component {
               </View>
               <View style={[{paddingTop: 15}]}>
                 <View style={{marginLeft: 60, marginRight: 60}}>
-                  <Button onPress={this.save()} style={{backgroundColor: '#122438'}} textStyle={{color: '#FFF', fontSize: 18}}>
-                    Save changes
+                  <Button onPress={()=>{this.save()}} style={{backgroundColor: '#122438'}} textStyle={{color: '#FFF', fontSize: 18}}>
+                    {buttonName}
                     </Button>
                   </View>
               </View>
             </View>
-          </ScrollView>}
+          </ScrollView>:<View style={{flex:1,justifyContent:'center',flexDirection:'column',alignItems:'center'}}><Progress.Circle size={30} indeterminate={true} /></View>)}
           <BottomNavigation
             labelColor={HEXCOLOR.pureWhite}
             rippleColor={HEXCOLOR.pureWhite}
@@ -266,7 +273,19 @@ class UserHome extends Component {
     }
 
     save(){
-      Database.setUserData(this.props.navigation.state.params.userId, this.state.pax, this.state.mobile);
+      this.setState({isLoading:false,saved:true})
+      if (this.state.mobile && this.state.pax) {
+        Database.setUserData(this.props.navigation.state.params.userId, this.state.pax, this.state.mobile).then(()=>{
+          this.setState({isLoading:true})
+        });
+      }else {
+        this.setState({isLoading:true})
+        if (Platform.OS === 'android') {
+        ToastAndroid.showWithGravity('Feild can not be empty ', ToastAndroid.SHORT, ToastAndroid.BOTTOM);
+      } else if (Platform.OS === 'ios') {
+        AlertIOS.alert('Feild can not be empty');
+      }
+      }
     }
 
     _renderItem(restaurant) {
