@@ -110,7 +110,7 @@ class RestaurantListItem extends Component {
                 style={styles.btn}
                 onPress={() => this.props.editRestaurant(this.props.restaurant)}
                 underlayColor='#fff'>
-                  <Text style={[styles.submitText, {paddingLeft: 20, paddingRight: 20}]}>Edit</Text>
+                  <Text style={[styles.submitText, {paddingLeft: 30, paddingRight: 30}]}>Edit</Text>
               </TouchableHighlight>
               <TouchableHighlight
                 style={styles.btn}

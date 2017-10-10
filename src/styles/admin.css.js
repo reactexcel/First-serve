@@ -101,6 +101,16 @@ const AdminCss = {
 		borderWidth: 1,
 		borderColor: '#fff'
 	},
+	text: {
+		paddingTop:10,
+		fontSize:21,
+		color: 'white'
+	},
+	navtext:{
+		paddingTop:12,
+		fontSize:18,
+		color: 'white'
+	},
 	submitText:{
 		color:'#fff',
 		textAlign:'center',
@@ -148,7 +158,8 @@ const AdminCss = {
     flexDirection: 'row',
     justifyContent: 'flex-end',
     alignItems: 'center',
-		paddingRight: 8
+		paddingTop:11,
+		paddingRight: 12
   },
 	circle: {
 		width: 40,
