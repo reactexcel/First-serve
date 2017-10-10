@@ -68,6 +68,7 @@ const Common = {
 		paddingBottom:10,
 		backgroundColor:'#68a0cf',
 		borderRadius:20,
+		overflow: 'hidden',
 		borderWidth: 1,
 		borderColor: '#fff'
 	},

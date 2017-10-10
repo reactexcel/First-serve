@@ -75,6 +75,7 @@ const AdminCss = {
 		paddingBottom:10,
 		backgroundColor:'#68a0cf',
 		borderRadius:20,
+		overflow: 'hidden',
 		borderWidth: 1,
 		borderColor: '#fff'
 	},
@@ -85,6 +86,7 @@ const AdminCss = {
 		paddingTop:10,
 		paddingBottom:10,
 		borderRadius:20,
+		overflow: 'hidden',
 		borderWidth: 1,
 		borderColor: '#626262'
 	},
@@ -95,6 +97,7 @@ const AdminCss = {
 		paddingBottom:10,
 		backgroundColor:'#68a0cf',
 		borderRadius:20,
+		overflow: 'hidden',
 		borderWidth: 1,
 		borderColor: '#fff'
 	},

@@ -68,6 +68,7 @@ const RestaurantCss = {
 		paddingBottom:10,
 		backgroundColor:'#68a0cf',
 		borderRadius:20,
+		overflow: 'hidden',
 		borderWidth: 1,
 		borderColor: '#fff'
 	},
@@ -83,6 +84,7 @@ const RestaurantCss = {
 		paddingBottom:10,
 		backgroundColor:'#fff',
 		borderRadius:20,
+		overflow: 'hidden',
 		borderWidth: 1,
 		borderColor: '#fff'
 	},
