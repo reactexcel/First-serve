@@ -16,7 +16,8 @@ import {
     Picker,
     Platform,
     ToastAndroid,
-    AlertIOS
+    AlertIOS,
+    Linking
 } from "react-native";
 
 import Button from "apsl-react-native-button";
@@ -294,6 +295,7 @@ class UserHome extends Component {
             isRestaurantNotiOn={this.state.isRestaurantNotiOn}
             favourites={this.state.favourites}
             isAdmin={false}
+            openMap={this._openMapview.bind(this)}
             setValue={this._setValue.bind(this)}
             setFavourite={this._setFavourite.bind(this)}
             isModelVisible={this.state.isModalVisible}
@@ -330,7 +332,9 @@ class UserHome extends Component {
         dataSource: source.cloneWithRows(this.state.restaurants)
       });
     }
-
+    _openMapview(address){
+      Linking.openURL('https://www.google.com/maps/search/?api=1&query='+ `${address}` );
+    }
     listenForRestaurants(restaurantRef) {
       // listen for changes to the tasks reference, when it updates we'll get a
       // dataSnapshot from firebase

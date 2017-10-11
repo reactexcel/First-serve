@@ -66,12 +66,16 @@ class RestaurantListItem extends Component {
                 </TouchableHighlight>
             </View>
             <View style={styles.notiView}>
+              <TouchableOpacity
+                onPress={()=>{this.props.openMap(this.props.restaurant.address)}}
+                >
                 <View style={styles.notiIconView}>
                     <Icon
                         name='map-marker'
                         type='font-awesome'/>
                     <View style={{paddingLeft: 5}}><Text>{this.props.restaurant.address}</Text></View>
                 </View>
+              </TouchableOpacity>
             </View>
             <TouchableHighlight
               style={this.props.restaurant.fully_booked ? styles.submitDisable : styles.submit}
