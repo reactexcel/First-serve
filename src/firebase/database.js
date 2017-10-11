@@ -62,13 +62,13 @@ class Database {
       firebase.database().ref(userMobilePath).transaction((table) => {
         if(table){
           if(table.bookedBy){
-            return undefined;
+            return;
           }else{
             table.bookedBy = userId;
             return table;
           }
         }else{
-          return undefined;
+          return;
         }
       }, (error, committed, snapshot) => {
         if (error) {
@@ -254,16 +254,12 @@ class Database {
       callback("Restaurant Updated")
     }
 
-    static deleteRestaurant(restaurant){
+    static deleteRestaurant(restaurant, callback){
       let restaurantPath = "/restaurants/" + restaurant._uid;
 
       let ref = firebase.database().ref(restaurantPath);
-      ref.delete()
-      .then(() => callback('deleted'))
-      .catch((err) => {
-        callback("error");
-        console.error('An error occurred', err);
-      });
+      ref.remove();
+      callback('deleted');
     }
 
     static addRestaurantImage(restaurantId, imageData){

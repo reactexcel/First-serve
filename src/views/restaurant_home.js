@@ -20,6 +20,7 @@ import Database from "../firebase/database";
 import DismissKeyboard from "dismissKeyboard";
 import * as Progress from 'react-native-progress';
 import {Icon} from "react-native-elements";
+import Moment from 'moment';
 import * as firebase from "firebase";
 
 class RestaurantHome extends Component {
@@ -65,10 +66,13 @@ class RestaurantHome extends Component {
       restaurantKey: '',
       progress: true,
       watchOnTables: false,
+      watchOnWaitingList: false,
+      waitingListCount: 0,
       availableTables: [],
       bookedTables: [],
       availableTablesDb: aDataSource.cloneWithRows([]),
       bookedTablesDb: bDataSource.cloneWithRows([]),
+      curTime: Moment(new Date()).format('MMM DD YYYY, HH:mm')
     };
 
     this.openPublish = this.openPublish.bind(this);
@@ -79,6 +83,8 @@ class RestaurantHome extends Component {
   componentWillMount(){
     console.log("componentWillMount restaurant home.");
     this.restaurantRef = firebase.database().ref("/restaurants/" + this.state.userId);
+    this.userRef = firebase.database().ref("users");
+    this.ref = firebase.database().ref("tables");
 
     this.restaurantRef.on('value', (dataSnapshot) => {
       restaurant = {};
@@ -102,9 +108,8 @@ class RestaurantHome extends Component {
 
       this.setState({restaurant: restaurant, restaurantKey: restaurant._key, progress: false});
 
+      const th = this;
       if(!this.state.watchOnTables){
-        const th = this;
-        this.ref = firebase.database().ref("tables");
         this.ref.orderByChild("restaurantKey").equalTo(this.state.restaurantKey).on("value", function(snapshot) {
           var aTables = [];
           var bTables = [];
@@ -135,15 +140,38 @@ class RestaurantHome extends Component {
         });
         this.setState({watchOnTables: true});
       }
+      if(!this.state.watchOnWaitingList){
+        this.userRef.orderByChild("restaurants_noti" + "/" + this.state.restaurantKey + "/notiOn").equalTo(true).on("value", function(snapshot) {
+          var waitingListCount = 0;
+          var users = snapshot.val();
+          var keys = Object.keys(users);
+          for(i = 0; i < keys.length; i++){
+            var u = users[keys[i]];
+            waitingListCount++;
+            if(u.notificationId){
+              // waitingListCount++;
+            }
+          }
+          th.setState({waitingListCount: waitingListCount});
+        });
+        this.setState({watchOnWaitingList: true});
+      }
     });
   }
 
-  componentDidMount() {console.log("componentDidMount restaurant home.");}
+  componentDidMount() {
+    console.log("componentDidMount restaurant home.");
+    this.timeoutHandle = setTimeout(()=>{
+          this.setState({ curTime: Moment(new Date()).format('MMM DD YYYY, HH:mm') })
+     }, 60000);
+  }
 
   componentWillUnmount(){
     console.log('componentWillUnmount restaurant home');
+    clearTimeout(this.timeoutHandle);
     this.restaurantRef.off();
     this.ref.off();
+    this.userRef.off();
   }
 
   openSettings(navigation) {
@@ -175,7 +203,7 @@ class RestaurantHome extends Component {
         <View style={CommonStyle.container}>
           <View style={[CommonStyle.rowContainerLF, CommonStyle.bottomBorderBrown, {paddingTop: 30}]}>
             <View style={CommonStyle.headingLeft}><Text style={{color: '#98866F'}}>Available tables</Text></View>
-            <View style={CommonStyle.headingRight}><Text style={{color: '#98866F'}}>Aug 29 2017, 03:03</Text></View>
+            <View style={CommonStyle.headingRight}><Text style={{color: '#98866F'}}>{this.state.curTime}</Text></View>
           </View>
 
           <View style={[CommonStyle.rowContainerLF]}>
@@ -186,14 +214,14 @@ class RestaurantHome extends Component {
           </View>
           <View style={[CommonStyle.rowContainerLF, CommonStyle.bottomBorderBrown, {paddingTop: 10}]}>
             <View style={CommonStyle.headingLeft}><Text style={{color: '#98866F'}}>Booked tables</Text></View>
-            <View style={CommonStyle.headingRight}><Text style={{color: '#98866F'}}>Aug 29 2017, 03:03</Text></View>
+            <View style={CommonStyle.headingRight}><Text style={{color: '#98866F'}}>{this.state.curTime}</Text></View>
           </View>
 
           <View style={[CommonStyle.rowContainerLF]}>
             <ListView
               dataSource={this.state.bookedTablesDb}
               enableEmptySections={true}
-              renderRow={this.renderTable}/>
+              renderRow={this.renderBookedTable}/>
           </View>
           <View style={[CommonStyle.rowContainerLF, {paddingTop: 10}]}>
             <Text style={{color: '#fff', fontSize: 16}}>Waiting List</Text>
@@ -203,7 +231,7 @@ class RestaurantHome extends Component {
               name='cutlery'
               type='font-awesome'
               color='#fff'/>
-            <Text style={{color: '#fff', fontSize: 16, paddingLeft: 10}}>{0} People</Text>
+            <Text style={{color: '#fff', fontSize: 16, paddingLeft: 10}}>{this.state.waitingListCount} People</Text>
           </View>
 
           <TouchableHighlight
@@ -225,6 +253,14 @@ class RestaurantHome extends Component {
   }
 
   renderTable(table) {
+    return (
+      <TableListItem
+        table={table}
+        deleteTable={this.deleteTable}
+        isBooked={false} />
+    )
+  }
+  renderBookedTable(table) {
     return (
       <TableListItem
         table={table}

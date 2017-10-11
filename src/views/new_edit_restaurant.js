@@ -70,16 +70,19 @@ const uploadImage = (uri, fileName, comp, mime = 'application/octet-stream') => 
 }
 
 class NewEditRestaurant extends Component {
-  static navigationOptions = {
-      title: 'New Restaurant',
+  static navigationOptions = ({ navigation }) => {
+    const {state} = navigation;
+    return {
+      title: state.params.title,
       headerTitleStyle :{alignSelf: 'center', color: 'white'},
       headerStyle:{
           backgroundColor: '#122438',
-      }
+      },
+      headerTintColor: '#FFF'
+    }
   };
   constructor(props) {
       super(props);
-
       const dataSource = new ListView.DataSource({rowHasChanged: (row1, row2) => {
         return (row1.primary !== row2.primary || row1.storageId !== row2.storageId || row1.imageUrl !== row2.imageUrl);
       }});
