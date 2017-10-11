@@ -40,7 +40,6 @@ import DefaultPreference from 'react-native-default-preference';
 import FixWidthImage from "../components/fix_width_image"
 import * as firebase from "firebase";
 import Firestack from 'react-native-firestack';
-import {Platform} from 'react-native';
 import FCM, {FCMEvent, RemoteNotificationResult, WillPresentNotificationResult, NotificationType} from 'react-native-fcm';
 
 const FBSDK = require('react-native-fbsdk');
@@ -90,8 +89,10 @@ class UserHome extends Component {
       bookingRestaurantKey: '',
       bookingTable: {pax: 2, startTime: 1489829490000, endTime: 1489829490000},
       bookingRestaurant: {images: [], name: 'rsgdvad', booking_message: 'vad  waefa asf', address: 'kjnvkqwneu asjn aqwegj asg'},
-      pax: 0,
-      mobile: ''
+      pax: 2,
+      mobile: '',
+      isLoading:true,
+      saved:false
     };
 
     this._setUserNoti = this._setUserNoti.bind(this);
@@ -249,6 +250,7 @@ class UserHome extends Component {
   }
 
   render() {
+    const buttonName = (this.state.saved  ? "Saved" : "Save Changes" )
     return (
       <View style={styles.container}>
         <Modal
@@ -277,6 +279,7 @@ class UserHome extends Component {
           <ListView
             dataSource={this.state.dataSource}
             enableEmptySections={true}
+            removeClippedSubviews={false}
             renderRow={this._renderItem.bind(this)}
             style={[styles.listView, {marginTop: 10}]}/>
         </View>}
@@ -294,7 +297,7 @@ class UserHome extends Component {
             renderRow={this._renderBookedItem.bind(this)}
             style={[styles.listView, {marginTop: 10}]}/>
         </View>}
-        {this.state.currentTab == 3 && <ScrollView keyboardDismissMode={'none'}>
+        {this.state.currentTab == 3 && (this.state.isLoading ?<ScrollView keyboardDismissMode={'none'}>
           <View style={styles.container}>
             <View style={styles.navBar}>
               <TouchableHighlight
@@ -331,10 +334,22 @@ class UserHome extends Component {
                   type='font-awesome'
                   color='#000'/>
                   <Text style={{color: '#626262', fontSize: 16, paddingLeft: 10}}>Table for</Text>
-                  <TextInput
-                      style={{color: '#626262'}}
-                      onChangeText={(pax) => this._setPax(pax)}
-                      value={this.state.pax}/>
+                  <Picker
+                    style={{width:80,borderWidth:1}}
+                    selectedValue={this.state.pax}
+                    onValueChange={(itemValue, itemIndex) => this.setState({pax: itemValue})}>
+                    <Picker.Item  label="0" value="0" />
+                    <Picker.Item  label="1" value="1" />
+                    <Picker.Item  label="2" value="2" />
+                    <Picker.Item  label="3" value="3" />
+                    <Picker.Item  label="4" value="4" />
+                    <Picker.Item  label="5" value="5" />
+                    <Picker.Item  label="6" value="6" />
+                    <Picker.Item  label="7" value="7" />
+                    <Picker.Item  label="8" value="8" />
+                    <Picker.Item  label="9" value="9" />
+                    <Picker.Item  label="10" value="10" />
+                  </Picker>
                   <Text> people</Text>
               </View>
               <View style={[styles.rowContainer, styles.bottomBorder, {paddingTop: 5, justifyContent: 'flex-start'}]}>
@@ -350,13 +365,13 @@ class UserHome extends Component {
             </View>
             <View style={[{paddingTop: 15}]}>
               <View style={{marginLeft: 60, marginRight: 60}}>
-                <Button onPress={this.save()} style={{backgroundColor: '#122438'}} textStyle={{color: '#FFF', fontSize: 18}}>
-                  Save changes
+                <Button onPress={()=>{this.save()}} style={{backgroundColor: '#122438'}} textStyle={{color: '#FFF', fontSize: 18}}>
+                  {buttonName}
                 </Button>
               </View>
             </View>
           </View>
-        </ScrollView>}
+        </ScrollView>:<View style={{flex:1,justifyContent:'center',flexDirection:'column',alignItems:'center'}}><Progress.Circle size={30} indeterminate={true} /></View>)}
         <BottomNavigation
           labelColor="white"
           rippleColor="white"

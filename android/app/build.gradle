@@ -144,7 +144,9 @@ android {
 }
 
 dependencies {
-    compile project(':react-native-fcm')
+    compile (project(':react-native-fcm')){
+      exclude group: "com.google.firebase"
+    }
     compile project(':react-native-default-preference')
     compile project(':react-native-fetch-blob')
     compile project(':react-native-vector-icons')
@@ -152,13 +154,16 @@ dependencies {
     compile(project(':react-native-firestack')){
      exclude group: 'com.google.android.gms', module: 'play-services-base'
     }
-    compile 'com.google.firebase:firebase-auth:10.0.1'
+    compile ('com.google.firebase:firebase-auth:10.0.1'){
+        force = true;
+    }
     compile project(':react-native-image-picker')
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile 'com.android.support:appcompat-v7:23.0.1'
     compile 'com.facebook.react:react-native:+'
-    compile 'com.google.firebase:firebase-core:10.0.1'
-    // From node_modules
+    compile ('com.google.firebase:firebase-core:10.0.1'){
+        force = true;
+    }
 }
 
 // Run this once to be able to run the application with BUCK
