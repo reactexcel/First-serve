@@ -335,7 +335,7 @@ class UserHome extends Component {
                   color='#000'/>
                   <Text style={{color: '#626262', fontSize: 16, paddingLeft: 10}}>Table for</Text>
                   <Picker
-                    style={{width:80,borderWidth:1}}
+                    style={{width:80  ,borderWidth:1}}
                     selectedValue={this.state.pax}
                     onValueChange={(itemValue, itemIndex) => this.setState({pax: itemValue})}>
                     <Picker.Item  label="0" value="0" />
@@ -524,6 +524,7 @@ class UserHome extends Component {
       Database.bookTable(this.state.userId, this.state.bookingTable.key, function(isBooked){
         if(isBooked){
           alert("Your table has been booked.");
+          th.setBookingModalVisible(false)
           th.setState({currentTab: 2});
         }else{
           // alert("Sorry, Table already booked.");
