@@ -6,6 +6,7 @@ import * as firebase from "firebase";
 import Firebase from "./firebase";
 import Firestack from 'react-native-firestack';
 const firestack = new Firestack();
+import { Platform, StyleSheet } from 'react-native';
 
 class Database {
     static isDataAdded = false;
@@ -56,6 +57,35 @@ class Database {
       callback("Published");
     }
 
+    static bookTable(userId, tableKey, callback){
+      let userMobilePath = "/tables/" + tableKey;
+      firebase.database().ref(userMobilePath).transaction((table) => {
+        if(table){
+          if(table.bookedBy){
+            return undefined;
+          }else{
+            table.bookedBy = userId;
+            return table;
+          }
+        }else{
+          return undefined;
+        }
+      }, (error, committed, snapshot) => {
+        if (error) {
+          console.log('Something went wrong', error);
+          callback(false);
+        } else if (!committed) {
+          console.log('Aborted'); // Returning undefined will trigger this
+          callback(false);
+        } else {
+          console.log('Table booked');
+          callback(true);
+        }
+
+        console.log('User table now: ', snapshot.val());
+      });
+    }
+
     static deleteTable(tableKey, callback){
       let userMobilePath = "/tables/" + tableKey;
       firebase.database().ref(userMobilePath).remove();
@@ -79,6 +109,14 @@ class Database {
         }).then((val)=>{
           resolve(val)
         });
+      });
+    }
+
+    static setNotiId(userId, token){
+      let userMobilePath = "/users/" + userId;
+
+      firebase.database().ref(userMobilePath).update({
+          notificationId: token
       });
     }
 
@@ -117,9 +155,14 @@ class Database {
         let userMobilePath = "/users/" + userId;
 
         firebase.database().ref(userMobilePath).on('value', (snapshot) => {
-          firebase.database().ref(userMobilePath).off('value');
+          console.log("listenUser", 'called');
             callback(snapshot)
         });
+    }
+
+    static listenUserStop(userId) {
+        let userMobilePath = "/users/" + userId;
+        firebase.database().ref(userMobilePath).off('value');
     }
 
     /**
@@ -221,7 +264,6 @@ class Database {
       ref.delete()
       .then(() => callback('deleted'))
       .catch((err) => {
-        debugger
         callback("error");
         console.error('An error occurred', err);
       });

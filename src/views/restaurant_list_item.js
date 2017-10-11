@@ -38,6 +38,7 @@ class RestaurantListItem extends Component {
             <RestaurantView restaurant={this.props.restaurant}
               setModalVisible={this.props.setModalVisible}
               setValue={this.props.setValue}
+              isAdmin={this.props.isAdmin}
               isRestaurantNotiOn={this.props.isRestaurantNotiOn}
               setFavourite={this.props.setFavourite}
               favourites={this.props.favourites}
@@ -52,8 +53,9 @@ class RestaurantListItem extends Component {
               </TouchableHighlight>
             </View>
               <GallerySwiper {...this.props} openModel={() => this.props.setModalVisible(this.props.restaurant._key, true)} />
-            <View style={styles.notiView}>
+            <View style={[styles.notiView, {paddingLeft: 15, paddingRight: 15, justifyContent: 'center'}]}>
               <TouchableHighlight
+              style={{flexDirection: 'row'}}
                 onPress={() => this.props.setFavourite(this.props.restaurant._key, (this.props.favourites[this.props.restaurant._key] === true ? false : true))}
                 underlayColor='#fff'>
                   <View style={styles.notiIconView}>
@@ -61,9 +63,9 @@ class RestaurantListItem extends Component {
                           name={this.props.favourites[this.props.restaurant._key] === true ? 'heart' : 'heart-o'}
                           type='font-awesome'
                           color='red'/>
-                      <View style={{paddingLeft: 5}}><Text>{this.props.restaurant.short_description}</Text></View>
                   </View>
                 </TouchableHighlight>
+                <View style={[{paddingLeft: 10}]}><Text>{this.props.restaurant.short_description}</Text></View>
             </View>
             <View style={styles.notiView}>
               <TouchableOpacity
@@ -79,14 +81,24 @@ class RestaurantListItem extends Component {
             </View>
             <TouchableHighlight
               style={this.props.restaurant.fully_booked ? styles.submitDisable : styles.submit}
-              onPress={() => Linking.openURL(this.props.restaurant.booking_url)}
+              onPress={() => {
+                if(this.props.restaurant.fully_booked){
+                  console.log('Regular booking', 'fully booked');
+                }else{
+                  if(this.props.restaurant.website_url.length > 0){
+                    Linking.openURL(this.props.restaurant.website_url);
+                  }else{
+                    console.log('Website', "Url Not Present.");
+                  }
+                }
+              }}
               underlayColor='#fff'>
                 <Text style={this.props.restaurant.fully_booked ? styles.submitTextDisable : styles.submitText}>{this.props.restaurant.fully_booked ? 'FULLY BOOKED' : 'Regular booking'}</Text>
             </TouchableHighlight>
             <View style={[styles.rowContainer, {paddingTop: 15}]}>
               <Text style={{fontSize: 11}}>Get notified when additional tables become available</Text>
             </View>
-            <View style={[styles.listNotiView, {paddingBottom: this.props.restaurant.isAdmin ? 0 : 40}]}>
+            <View style={[styles.listNotiView, {paddingBottom: this.props.restaurant.isAdmin ? 0 : 58}]}>
                 <View style={styles.notiIconView}>
                     <Icon
                         name='bell'
@@ -98,7 +110,7 @@ class RestaurantListItem extends Component {
                 <Switch onValueChange={(value) => this.props.setValue(this.props.restaurant._key, value)}
                 value={this.props.isRestaurantNotiOn[this.props.restaurant._key] === true ? true : false}/>
             </View>
-            {this.props.restaurant.isAdmin && <View style={[styles.rowContainer, {paddingBottom: 40}]}>
+            {this.props.isAdmin && <View style={[styles.rowContainer, {paddingBottom: 58}]}>
               <TouchableHighlight
                 style={styles.btn}
                 onPress={() => this.props.editRestaurant(this.props.restaurant)}
