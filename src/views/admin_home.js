@@ -30,12 +30,14 @@ import * as Helper from '../helper/helper';
 
 console.log(Helper);
 class AdminHome extends Component {
-    static navigationOptions = {
+    static navigationOptions = ({ navigation }) => {
+      const {state} = navigation;
+      return {
         title: `${state.params.title}`,
         headerTitleStyle : styles.headerTitleStyle,
         headerStyle: styles.adminHeaderStyle
-    };
-
+      }
+};
     constructor(props) {
         super(props);
         this.restaurantRef = firebase.database().ref("/restaurants");
