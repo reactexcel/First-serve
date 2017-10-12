@@ -98,7 +98,7 @@ class RestaurantListItem extends Component {
             <View style={[styles.rowContainer, {paddingTop: 15}]}>
               <Text style={{fontSize: 11}}>Get notified when additional tables become available</Text>
             </View>
-            <View style={[styles.listNotiView, {paddingBottom: this.props.restaurant.isAdmin ? 0 : 58}]}>
+            <View style={[styles.listNotiView, {paddingBottom: this.props.isAdmin ? 0 : 58}]}>
                 <View style={styles.notiIconView}>
                     <Icon
                         name='bell'

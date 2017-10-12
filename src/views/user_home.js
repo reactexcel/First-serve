@@ -50,11 +50,14 @@ const {
 const firestack = new Firestack();
 
 class UserHome extends Component {
-  static navigationOptions = {
-    title: 'Restaurant',
-    headerTitleStyle: {alignSelf: 'center', color: 'white'},
-    headerStyle: {
-      backgroundColor: '#122438',
+  static navigationOptions = ({ navigation }) => {
+    const {state} = navigation;
+    return {
+      title: `${state.params.title}`,
+      headerTitleStyle: {alignSelf: 'center', color: 'white'},
+      headerStyle: {
+        backgroundColor: '#122438',
+      }
     }
   };
 
@@ -80,9 +83,10 @@ class UserHome extends Component {
       favoriteDataSource: favoriteDataSource,
       bookedDataSource: bookedDataSource,
       favourites: {},
+      isNoFavourite: true,
+      isNoBooked: true,
       restaurants: [],
       isRestaurantNotiOn: {},
-      favourites: {},
       isModalVisible: {},
       isBookingModelVisible: false,
       currentTab: 0,
@@ -184,7 +188,10 @@ class UserHome extends Component {
           if(keys.indexOf(this.state.restaurants[i]._key) > -1) favourites.push(this.state.restaurants[i]);
         }
 
+        var isNoFavourite = true;
+        if(favourites.length > 0) isNoFavourite = false;
         this.setState({
+          isNoFavourite: isNoFavourite,
           isRestaurantNotiOn: isRestaurantNotiOn,
           favourites: this.state.favourites,
           notificationOn: userSnap.val().notiOn,
@@ -196,27 +203,37 @@ class UserHome extends Component {
       const th = this;
       this.ref = firebase.database().ref("tables");
       this.ref.orderByChild("bookedBy").equalTo(this.state.userId).on("value", function(snapshot) {
-        var restaurantKeys = [];
-        var tables = {};
+        var tables = [];
         snapshot.forEach((ch) => {
-          restaurantKeys.push(ch.val().restaurantKey);
-          tables[ch.val().restaurantKey] = {
+          tables.push({
             restaurantKey: ch.val().restaurantKey,
             startTime: ch.val().startTime,
             endTime: ch.val().endTime,
             pax: ch.val().pax,
             bookedBy: ch.val().bookedBy,
             key: ch.key,
-          }
-        });
-        var bookedRestaurant = [];
-        for(i = 0; i < th.state.restaurants.length; i++){
-          if(restaurantKeys.indexOf(th.state.restaurants[i]._key) > -1) bookedRestaurant.push({
-            restaurant: th.state.restaurants[i],
-            table: tables[th.state.restaurants[i]._key]
           });
+        });
+
+        var bookedRestaurant = [];
+        for(i = 0; i < tables.length; i++){
+          var table = tables[i];
+          for(j = 0; j < th.state.restaurants.length; j++){
+            var restaurant = th.state.restaurants[j];
+            if(table.restaurantKey == restaurant._key){
+              bookedRestaurant.push({
+               restaurant: restaurant,
+               table: table
+             });
+            }
+          }
         }
+
+        var isNoBooked = true;
+        if(bookedRestaurant.length > 0) isNoBooked = false;
+
         th.setState({
+          isNoBooked: isNoBooked,
           bookedDataSource: th.state.bookedDataSource.cloneWithRows(bookedRestaurant)
         });
       });
@@ -227,7 +244,9 @@ class UserHome extends Component {
 
   componentDidMount(){
     const th = this;
-    FCM.requestPermissions().then(()=>console.log('granted')).catch(()=>console.log('notification permission rejected'));
+    FCM.requestPermissions()
+      .then(() => console.log('granted'))
+      .catch(()=>console.log('notification permission rejected'));
 
     FCM.getFCMToken().then(token => {
         console.log(token)
@@ -284,18 +303,24 @@ class UserHome extends Component {
             style={[styles.listView, {marginTop: 10}]}/>
         </View>}
         {this.state.currentTab == 1 && <View style={styles.container}>
-          <ListView
+          {this.state.isNoFavourite && <View style={styles.midContainer}>
+            <Text style={{fontSize: 20}}>No Favourites</Text>
+          </View>}
+          {!this.state.isNoFavourite && <ListView
             dataSource={this.state.favoriteDataSource}
             enableEmptySections={true}
             renderRow={this._renderFavoriteItem.bind(this)}
-            style={[styles.listView, {marginTop: 10}]}/>
+            style={[styles.listView, {marginTop: 10}]}/>}
         </View>}
         {this.state.currentTab == 2 && <View style={styles.container}>
-          <ListView
+          {this.state.isNoBooked && <View style={styles.midContainer}>
+            <Text style={{fontSize: 20}}>No Bookings</Text>
+          </View>}
+          {!this.state.isNoBooked && <ListView
             dataSource={this.state.bookedDataSource}
             enableEmptySections={true}
             renderRow={this._renderBookedItem.bind(this)}
-            style={[styles.listView, {marginTop: 10}]}/>
+            style={[styles.listView, {marginTop: 10}]}/>}
         </View>}
         {this.state.currentTab == 3 && (this.state.isLoading ?<ScrollView keyboardDismissMode={'none'}>
           <View style={styles.container}>
@@ -359,6 +384,7 @@ class UserHome extends Component {
                   color='#000'/>
                   <TextInput
                     style={{color: '#626262', flex: 1, marginLeft: 15, marginRight: 150}}
+                    keyboardType={'phone-pad'}
                     onChangeText={(mobile) => this._setMobile(mobile)}
                     value={this.state.mobile}/>
               </View>
@@ -411,7 +437,18 @@ class UserHome extends Component {
 
     tabChanged(idx){
       console.log("currentTab", idx);
+      const {setParams} = this.props.navigation;
+      let title = "Restaurants";
+      if(idx == 1){
+        title = "Favourites";
+      }else if (idx == 2) {
+        title = "Bookings";
+      }else if (idx == 3) {
+        title = "Profile";
+      }
+      // UserHome.navigationOptions.title = "favorites";
       this.setState({currentTab: idx});
+      setParams({ title: title });
     }
 
     _setUserNoti(val){
@@ -496,7 +533,10 @@ class UserHome extends Component {
           if(keys.indexOf(this.state.restaurants[i]._key) > -1 && this.state.favourites[this.state.restaurants[i]._key]) favourites.push(this.state.restaurants[i]);
         }
 
+        var isNoFavourite = true;
+        if(favourites.length > 0) isNoFavourite = false;
         this.setState({
+          isNoFavourite: isNoFavourite,
           favourites: this.state.favourites,
           dataSource: source.cloneWithRows(this.state.restaurants),
           favoriteDataSource: this.state.favoriteDataSource.cloneWithRows(favourites)
@@ -527,8 +567,10 @@ class UserHome extends Component {
           th.setBookingModalVisible(false)
           th.setState({currentTab: 2});
         }else{
-          // alert("Sorry, Table already booked.");
+          alert("Sorry, Table already booked.");
+          th.setState({isBookingModelVisible: false});
         }
+        FCM.removeAllDeliveredNotifications();
       });
     }
     listenForRestaurants(restaurantRef) {

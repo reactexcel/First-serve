@@ -138,6 +138,7 @@ const AdminCss = {
     alignItems: 'center',
     backgroundColor: HEXCOLOR.endeavour
   },
+
   leftContainer: {
     flex: 1,
     flexDirection: 'row',

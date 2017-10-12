@@ -80,7 +80,7 @@ class RestaurantSettings extends Component {
             _key: ch.key
           };
         });
-        this.setState({restaurant: restaurant, restaurantKey: restaurant._key});
+        this.setState({restaurant: restaurant, restaurantKey: restaurant._key, isFullyBooked: restaurant.fully_booked});
       })
     }
 

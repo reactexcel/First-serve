@@ -25,12 +25,12 @@ class TableListItem extends Component {
               {this.props.table.people} people
             </Text>
           </View>
-          <View style={{flexDirection: 'row', flex: 1, justifyContent: 'center'}}>
+          <View style={{flexDirection: 'row', flex: 1, justifyContent: 'flex-end'}}>
             <Text style={{color: HEXCOLOR.pureWhite, fontSize: 18}}>
               {Moment(this.props.table.startTime).format('HH:mm')}-{Moment(this.props.table.endTime).format('HH:mm')}
             </Text>
           </View>
-          <TouchableHighlight
+          {!this.props.isBooked && <TouchableHighlight
             style={styles.headingRight}
             onPress={() => this.props.deleteTable(this.props.table.key)}
             underlayColor='#98866F'>
@@ -40,7 +40,7 @@ class TableListItem extends Component {
                 type='octicon'
                 color={HEXCOLOR.pureWhite}/>
               </View>
-          </TouchableHighlight>
+          </TouchableHighlight>}
         </View>
       </View>
     );

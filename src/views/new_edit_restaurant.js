@@ -70,10 +70,12 @@ const uploadImage = (uri, fileName, comp, mime = 'application/octet-stream') => 
 }
 
 class NewEditRestaurant extends Component {
+
   static navigationOptions = {
       title: 'New Restaurant',
       headerTitleStyle : CommonStyle.headerTitleStyle,
-      headerStyle: CommonStyle.adminHeaderStyle
+      headerStyle: CommonStyle.adminHeaderStyle,
+      headerTintColor: '#FFF'
   };
   constructor(props) {
       super(props);
