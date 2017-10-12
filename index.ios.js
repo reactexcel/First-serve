@@ -251,4 +251,4 @@ const FirstServed = StackNavigator({
   PTable: {screen: PublishTable}
 });
 
-AppRegistry.registerComponent('FirstServed', () => FirstServed);
+AppRegistry.registerComponent("FirstServed", () => FirstServed);

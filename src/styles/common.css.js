@@ -4,6 +4,12 @@ const Common = {
 		backgroundColor: "#F1F0EC"
 	},
 
+	midContainer: {
+		flex: 1,
+		alignItems:'center',
+		justifyContent: 'center',
+	},
+
 	rowContainer: {
 		flexDirection:'row',
 		alignItems:'center',

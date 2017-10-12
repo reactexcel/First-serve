@@ -48,10 +48,12 @@ class Landing extends Component {
 
     DefaultPreference.getMultiple(['userType', 'uid', 'name', 'photoUrl']).then(function(value) {
       var routeName = null;
+      var title = "Restaurants";
       if(value[0] === 'user'){
         routeName = 'UHome';
       }else if (value[0] === 'restaurant') {
         routeName = 'RHome';
+        title = "Restaurant";
       }else if (value[0] === 'admin') {
         routeName = 'AHome';
       }
@@ -63,6 +65,7 @@ class Landing extends Component {
           actions: [NavigationActions.navigate({
             routeName: routeName,
             params: {
+              title: title,
               userId: value[1],
               name: value[2],
               photoUrl: value[3]
@@ -83,11 +86,13 @@ class Landing extends Component {
             firebase.database().ref(userMobilePath).on('value', (snapshot) => {
               if (snapshot.exists() && snapshot.val().isUser) {
                 routeName = 'UHome';
+                title = "Restaurants";
                 const resetAction = NavigationActions.reset({
                   index: 0,
                   actions: [NavigationActions.navigate({
                     routeName: routeName,
                     params: {
+                      title: title,
                       userId: evt.user.uid,
                       photoUrl: evt.user.photoUrl,
                       name: evt.user.displayName
@@ -111,15 +116,17 @@ class Landing extends Component {
             let userMobilePath = "/users/" + user.uid;
             firebase.database().ref(userMobilePath).on('value', (snapshot) => {
               let routeName = null;
+              let title = "Restaurants";
               if (snapshot.exists() && snapshot.val().isAdmin) {
                 routeName = 'AHome';
               }else if (snapshot.exists() && snapshot.val().isRestaurantAdmin) {
                 routeName = 'RHome';
+                title = "Restaurant";
               }
               if(routeName){
                 const resetAction = NavigationActions.reset({
                   index: 0,
-                  actions: [NavigationActions.navigate({ routeName: routeName, params: {userId: user.uid}})]
+                  actions: [NavigationActions.navigate({routeName: routeName, params: {userId: user.uid, title: title}})]
                 })
                 firestack.auth.unlistenForAuth();
                 if (th.unsubscribe) {
