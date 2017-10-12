@@ -18,6 +18,7 @@ import DefaultPreference from 'react-native-default-preference';
 import DateTimePicker from 'react-native-modal-datetime-picker';
 import Moment from 'moment';
 
+import { HEXCOLOR } from "../styles/hexcolor.js";
 import CommonStyle from "../styles/restaurant.css";
 import Database from "../firebase/database";
 import DismissKeyboard from "dismissKeyboard";
@@ -29,9 +30,9 @@ class PublishTable extends Component {
       title: 'Publish table',
       headerTitleStyle :{alignSelf: 'center', color: 'white'},
       headerStyle:{
-          backgroundColor: '#98866F',
+          backgroundColor: HEXCOLOR.lightBrown,
       },
-      headerTintColor: '#FFF'
+      headerTintColor: HEXCOLOR.pureWhite
   };
   constructor(props) {
     super(props);
@@ -104,25 +105,25 @@ class PublishTable extends Component {
     return (
       <View style={CommonStyle.container}>
         <View style={[CommonStyle.rowContainerHCenter, {marginTop: 20}]}>
-          <Text style={{color: '#98866F'}}>Available table for</Text>
+          <Text style={{color: HEXCOLOR.lightBrown}}>Available table for</Text>
         </View>
         <View style={[CommonStyle.rowContainerHCenter, {marginTop: 20}]}>
           <View style={[CommonStyle.rectangle, {width: 200, height: 40, flexDirection:'row'}]}>
             <TouchableHighlight
               onPress={() => this.minus()}
-              underlayColor='#98866F'>
+              underlayColor={HEXCOLOR.lightBrown}>
               <View style={[CommonStyle.rectangle, {width: 40, height: 40, flexDirection:'row'}]}>
-                <Text style={{color: '#FFF', fontSize: 24}}>-</Text>
+                <Text style={{color: HEXCOLOR.pureWhite, fontSize: 24}}>-</Text>
               </View>
             </TouchableHighlight>
             <View style={[CommonStyle.rectangle, {width: 120, height: 40, flexDirection:'row'}]}>
-              <Text style={{color: '#98866F'}}>{this.state.people} people</Text>
+              <Text style={{color: HEXCOLOR.lightBrown}}>{this.state.people} people</Text>
             </View>
             <TouchableHighlight
               onPress={() => this.plus()}
-              underlayColor='#98866F'>
+              underlayColor={HEXCOLOR.lightBrown}>
               <View style={[CommonStyle.rectangle, {width: 40, height: 40, flexDirection:'row'}]}>
-                <Text style={{color: '#FFF', fontSize: 24}}>+</Text>
+                <Text style={{color: HEXCOLOR.pureWhite, fontSize: 24}}>+</Text>
               </View>
             </TouchableHighlight>
           </View>
@@ -130,9 +131,9 @@ class PublishTable extends Component {
         <View style={[CommonStyle.rowContainerHCenter, {marginTop: 20}]}>
           <TouchableHighlight
             onPress={() => this._showDateTimePicker(1)}
-            underlayColor='#98866F'>
-            <View style={[CommonStyle.rectangle, {width: 200, height: 40, flexDirection:'row', borderColor: '#FFF'}]}>
-              <Text style={{color: '#FFF', fontSize: 18}}>
+            underlayColor={HEXCOLOR.lightBrown}>
+            <View style={[CommonStyle.rectangle, {width: 200, height: 40, flexDirection:'row', borderColor: HEXCOLOR.pureWhite}]}>
+              <Text style={{color: HEXCOLOR.pureWhite, fontSize: 18}}>
                 {this.state.startTime === 'SET START TIME' ? this.state.startTime : Moment(this.state.startTime).format('YYYY-MM-DD HH:mm')}
               </Text>
             </View>
@@ -141,9 +142,9 @@ class PublishTable extends Component {
         <View style={[CommonStyle.rowContainerHCenter, {marginTop: 20}]}>
           <TouchableHighlight
             onPress={() => this._showDateTimePicker(2)}
-            underlayColor='#98866F'>
-            <View style={[CommonStyle.rectangle, {width: 200, height: 40, flexDirection:'row', borderColor: '#FFF'}]}>
-              <Text style={{color: '#FFF', fontSize: 18}}>
+            underlayColor={HEXCOLOR.lightBrown}>
+            <View style={[CommonStyle.rectangle, {width: 200, height: 40, flexDirection:'row', borderColor: HEXCOLOR.pureWhite}]}>
+              <Text style={{color: HEXCOLOR.pureWhite, fontSize: 18}}>
                 {this.state.endTime === 'SET END TIME' ? this.state.endTime : Moment(this.state.endTime).format('YYYY-MM-DD HH:mm')}
               </Text>
             </View>
@@ -153,7 +154,7 @@ class PublishTable extends Component {
         <TouchableHighlight
           style={[CommonStyle.publish, {marginTop: 40}]}
           onPress={() => this.publishTable()}
-          underlayColor='#fff'>
+          underlayColor={HEXCOLOR.pureWhite}>
             <Text style={[CommonStyle.publishText]}>Publish</Text>
         </TouchableHighlight>
         <DateTimePicker

@@ -19,6 +19,7 @@ import FontAwesomeIcon from "react-native-vector-icons/FontAwesome";
 import {Sae} from "react-native-textinput-effects";
 import DismissKeyboard from "dismissKeyboard";
 import DefaultPreference from 'react-native-default-preference';
+import { HEXCOLOR } from "../styles/hexcolor.js";
 
 import CommonStyle from "../styles/common.css";
 
@@ -111,8 +112,8 @@ class EmailLogin extends Component {
                             label={"Email Address"}
                             iconClass={FontAwesomeIcon}
                             iconName={"pencil"}
-                            iconColor={"#98866F"}
-                            inputStyle={{ color: '#98866F' }}
+                            iconColor={HEXCOLOR.lightBrown}
+                            inputStyle={{ color: HEXCOLOR.lightBrown }}
                             onChangeText={(email) => this.setState({email})}
                             keyboardType="email-address"
                             autoCapitalize="none"/>
@@ -120,8 +121,8 @@ class EmailLogin extends Component {
                             label={"Password"}
                             iconClass={FontAwesomeIcon}
                             iconName={"key"}
-                            iconColor={"#98866F"}
-                            inputStyle={{ color: '#98866F' }}
+                            iconColor={HEXCOLOR.lightBrown}
+                            inputStyle={{ color: HEXCOLOR.lightBrown }}
                             onChangeText={(password) => this.setState({password})}
                             password={true}
                             secureTextEntry={true}
@@ -149,7 +150,7 @@ const styles = StyleSheet.create({
     title: {
         paddingBottom: 16,
         textAlign: "center",
-        color: "#000",
+        color: HEXCOLOR.black,
         fontSize: 35,
         fontWeight: "bold",
         opacity: 0.8,

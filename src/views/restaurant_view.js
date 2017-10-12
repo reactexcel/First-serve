@@ -26,6 +26,8 @@ import MIcon from 'react-native-vector-icons/MaterialIcons'
 import {Sae} from "react-native-textinput-effects";
 import FontAwesomeIcon from "react-native-vector-icons/FontAwesome";
 
+import { HEXCOLOR } from "../styles/hexcolor.js";
+import GallerySwiper from "../components/swiper"
 import CommonStyle from "../styles/admin.css";
 import Database from "../firebase/database";
 import FullWidthImage from "../components/full_width_image"
@@ -89,7 +91,9 @@ class RestaurantView extends Component {
           </View>
         </View>
         <ScrollView keyboardDismissMode={'none'}>
-          <FullWidthImage source={{uri: this.props.restaurant.images.length > 0 ? this.props.restaurant.images[0].imageUrl : 'https://firebasestorage.googleapis.com/v0/b/first-served-c9197.appspot.com/o/restaurant_images%2Frestaurant.jpg?alt=media&token=b0ca19be-6594-4bb1-bfdb-3c9474a0b234'}} />
+          <View style={CommonStyle.swiperModal}>
+            <GallerySwiper {...this.props} openModel={() => {}} />
+          </View>
           <View style={[{paddingLeft: 15, paddingRight: 15}]}>
             <Text style={[{paddingTop: 16, paddingBottom: 20}]}>{this.props.restaurant.long_description}</Text>
             <View style={[CommonStyle.rowContainer, CommonStyle.topBorder, {paddingTop: 15}]}>
@@ -100,7 +104,7 @@ class RestaurantView extends Component {
                     <Icon
                         name='bell'
                         type='font-awesome'
-                        color='#626262'/>
+                        color={HEXCOLOR.lightGrey}/>
                     <View style={{paddingLeft: 5}}><Text>Notifications</Text></View>
                 </View>
 
@@ -112,13 +116,13 @@ class RestaurantView extends Component {
                 <TouchableHighlight
                   style={CommonStyle.centerContainer}
                   onPress={() => this.props.setFavourite(this.props.restaurant._key, (this.props.favourites[this.props.restaurant._key] === true ? false : true))}
-                  underlayColor='#fff'>
+                  underlayColor={HEXCOLOR.pureWhite}>
                   <View style={CommonStyle.centerContainer}>
                     <View style={CommonStyle.circle}>
                       <Icon
                         name={this.props.favourites[this.props.restaurant._key] === true ? 'heart' : 'heart-o'}
                         type='font-awesome'
-                        color='#626262'/>
+                        color={HEXCOLOR.lightGrey}/>
                     </View>
                     <Text>Favourite</Text>
                   </View>
@@ -132,13 +136,13 @@ class RestaurantView extends Component {
                       console.log('Website', "Url Not Present.")
                     }
                   }}
-                  underlayColor='#fff'>
+                  underlayColor={HEXCOLOR.pureWhite}>
                   <View style={CommonStyle.centerContainer}>
                     <View style={CommonStyle.circle}>
                       <Icon
                         name='home'
                         type='font-awesome'
-                        color='#626262'/>
+                        color={HEXCOLOR.lightGrey}/>
                     </View>
                     <Text>Website</Text>
                   </View>
@@ -154,13 +158,13 @@ class RestaurantView extends Component {
                       console.log('Instagram', "Url Not Present.")
                     }
                   }}
-                  underlayColor='#fff'>
+                  underlayColor={HEXCOLOR.pureWhite}>
                   <View style={CommonStyle.centerContainer}>
                     <View style={CommonStyle.circle}>
                       <Icon
                         name='instagram'
                         type='font-awesome'
-                        color='#626262'/>
+                        color={HEXCOLOR.lightGrey}/>
                     </View>
                     <Text>Instagram</Text>
                   </View>
@@ -174,13 +178,13 @@ class RestaurantView extends Component {
                       console.log('PhoneNumber', "Not Present.")
                     }
                   }}
-                  underlayColor='#fff'>
+                  underlayColor={HEXCOLOR.pureWhite}>
                   <View style={CommonStyle.centerContainer}>
                     <View style={CommonStyle.circle}>
                       <Icon
                         name='phone'
                         type='font-awesome'
-                        color='#626262'/>
+                        color={HEXCOLOR.lightGrey}/>
                     </View>
                     <Text>{this.props.restaurant.phone_number}</Text>
                   </View>
@@ -191,20 +195,20 @@ class RestaurantView extends Component {
               <Icon
                 name='map-marker'
                 type='font-awesome'
-                color='#626262'/>
+                color={HEXCOLOR.lightGrey}/>
               <Text style={{paddingLeft: 5}}>{this.props.restaurant.address}</Text>
             </View>
             {this.props.isAdmin && <View style={[CommonStyle.rowContainer, {paddingBottom: 40}]}>
               <TouchableHighlight
                 style={[CommonStyle.btn, CommonStyle.centerContainer]}
                 onPress={() => this.props.editRestaurant(this.props.restaurant)}
-                underlayColor='#fff'>
+                underlayColor={HEXCOLOR.pureWhite}>
                   <Text style={[CommonStyle.submitText, {paddingLeft: 20, paddingRight: 20}]}>Edit</Text>
               </TouchableHighlight>
               <TouchableHighlight
                 style={[CommonStyle.btn, CommonStyle.centerContainer]}
                 onPress={() => this.props.deleteRestaurant(this.props.restaurant)}
-                underlayColor='#fff'>
+                underlayColor={HEXCOLOR.pureWhite}>
                   <Text style={[CommonStyle.submitText, {paddingLeft: 20, paddingRight: 20}]}>Delete</Text>
               </TouchableHighlight>
             </View>}

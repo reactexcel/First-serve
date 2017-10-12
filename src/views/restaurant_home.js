@@ -14,6 +14,7 @@ import {
 import Button from "apsl-react-native-button";
 import FontAwesomeIcon from "react-native-vector-icons/FontAwesome";
 
+import { HEXCOLOR } from "../styles/hexcolor.js";
 import CommonStyle from "../styles/restaurant.css";
 import TableListItem from "./table_list_item";
 import Database from "../firebase/database";
@@ -30,7 +31,7 @@ class RestaurantHome extends Component {
       title: 'Restaurant',
       headerTitleStyle :{alignSelf: 'center', color: 'white'},
       headerStyle:{
-          backgroundColor: '#98866F',
+          backgroundColor: HEXCOLOR.lightBrown,
       },
       headerRight: (
         <TouchableHighlight
@@ -202,10 +203,9 @@ class RestaurantHome extends Component {
       return (
         <View style={CommonStyle.container}>
           <View style={[CommonStyle.rowContainerLF, CommonStyle.bottomBorderBrown, {paddingTop: 30}]}>
-            <View style={CommonStyle.headingLeft}><Text style={{color: '#98866F'}}>Available tables</Text></View>
-            <View style={CommonStyle.headingRight}><Text style={{color: '#98866F'}}>{this.state.curTime}</Text></View>
+            <View style={CommonStyle.headingLeft}><Text style={{color: HEXCOLOR.lightBrown}}>Available tables</Text></View>
+            <View style={CommonStyle.headingRight}><Text style={{color: HEXCOLOR.lightBrown}}>{this.state.curTime}</Text></View>
           </View>
-
           <View style={[CommonStyle.rowContainerLF]}>
             <ListView
               dataSource={this.state.availableTablesDb}
@@ -213,8 +213,8 @@ class RestaurantHome extends Component {
               renderRow={this.renderTable}/>
           </View>
           <View style={[CommonStyle.rowContainerLF, CommonStyle.bottomBorderBrown, {paddingTop: 10}]}>
-            <View style={CommonStyle.headingLeft}><Text style={{color: '#98866F'}}>Booked tables</Text></View>
-            <View style={CommonStyle.headingRight}><Text style={{color: '#98866F'}}>{this.state.curTime}</Text></View>
+            <View style={CommonStyle.headingLeft}><Text style={{color: HEXCOLOR.lightBrown}}>Booked tables</Text></View>
+            <View style={CommonStyle.headingRight}><Text style={{color: HEXCOLOR.lightBrown}}>{this.state.curTime}</Text></View>
           </View>
 
           <View style={[CommonStyle.rowContainerLF]}>
@@ -224,20 +224,20 @@ class RestaurantHome extends Component {
               renderRow={this.renderBookedTable}/>
           </View>
           <View style={[CommonStyle.rowContainerLF, {paddingTop: 10}]}>
-            <Text style={{color: '#fff', fontSize: 16}}>Waiting List</Text>
+            <Text style={{color: HEXCOLOR.pureWhite, fontSize: 16}}>Waiting List</Text>
           </View>
           <View style={[CommonStyle.rowContainerLF]}>
             <Icon
               name='cutlery'
               type='font-awesome'
-              color='#fff'/>
-            <Text style={{color: '#fff', fontSize: 16, paddingLeft: 10}}>{this.state.waitingListCount} People</Text>
+              color={HEXCOLOR.pureWhite}/>
+            <Text style={{color: HEXCOLOR.pureWhite, fontSize: 16, paddingLeft: 10}}>{this.state.waitingListCount} People</Text>
           </View>
 
           <TouchableHighlight
             style={[CommonStyle.publish, {marginTop: 40}]}
             onPress={() => this.openPublish()}
-            underlayColor='#fff'>
+            underlayColor={HEXCOLOR.pureWhite}>
               <Text style={[CommonStyle.publishText]}>Publish</Text>
           </TouchableHighlight>
         </View>

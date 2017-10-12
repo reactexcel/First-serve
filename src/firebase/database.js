@@ -101,11 +101,14 @@ class Database {
     }
 
     static setUserData(userId, pax, mobile){
-      let userMobilePath = "/users/" + userId;
-
-      firebase.database().ref(userMobilePath).update({
-          pax: pax,
-          phone_number: mobile
+      return new Promise((resolve) => {
+        let userMobilePath = "/users/" + userId;
+        return firebase.database().ref(userMobilePath).update({
+            pax: pax,
+            phone_number: mobile
+        }).then((val)=>{
+          resolve(val)
+        });
       });
     }
 

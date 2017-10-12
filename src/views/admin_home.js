@@ -20,24 +20,24 @@ import MIcon from 'react-native-vector-icons/MaterialIcons'
 import {StackNavigator, NavigationActions,} from 'react-navigation';
 
 import styles from "../styles/admin.css";
+import { HEXCOLOR } from "../styles/hexcolor.js";
 import Database from "../firebase/database";
 import RestaurantListItem from "./restaurant_list_item"
 import DismissKeyboard from "dismissKeyboard";
 import DefaultPreference from 'react-native-default-preference';
 import * as firebase from "firebase";
+import * as Helper from '../helper/helper';
 
+console.log(Helper);
 class AdminHome extends Component {
     static navigationOptions = ({ navigation }) => {
       const {state} = navigation;
       return {
         title: `${state.params.title}`,
-        headerTitleStyle :{alignSelf: 'center', color: 'white'},
-        headerStyle:{
-            backgroundColor: '#122438',
-        }
+        headerTitleStyle : styles.headerTitleStyle,
+        headerStyle: styles.adminHeaderStyle
       }
-    };
-
+};
     constructor(props) {
         super(props);
         this.restaurantRef = firebase.database().ref("/restaurants");
@@ -116,6 +116,7 @@ class AdminHome extends Component {
               {this.state.currentTab == 0 && <ListView
                   dataSource={this.state.dataSource}
                   enableEmptySections={true}
+                  removeClippedSubviews={false}
                   renderRow={this._renderItem.bind(this)}
                   style={styles.listView}/>}
               {this.state.currentTab == 1 && <View style={styles.container}>
@@ -135,19 +136,19 @@ class AdminHome extends Component {
                 </View>
               </View>}
               <BottomNavigation
-                labelColor="white"
-                rippleColor="white"
-                style={{ height: 56, elevation: 8, position: 'absolute', left: 0, bottom: 0, right: 0 }}
+                labelColor={HEXCOLOR.pureWhite}
+                rippleColor={HEXCOLOR.pureWhite}
+                style={styles.bottomNavigation}
                 onTabChange={(newTabIndex) => this.tabChanged(newTabIndex)}
                 activeTab={this.state.currentTab}>
                 <Tab
-                  barBackgroundColor="#122438"
+                  barBackgroundColor={HEXCOLOR.endeavour}
                   label="Restaurants"
-                  icon={<Icon size={24} color="white" name="restaurant" />}/>
+                  icon={<Icon size={24} color={HEXCOLOR.pureWhite} name="restaurant" />}/>
                 <Tab
-                  barBackgroundColor="#122438"
+                  barBackgroundColor={HEXCOLOR.endeavour}
                   label="Account"
-                  icon={<Icon size={24} color="white" name="account-circle" />}/>
+                  icon={<Icon size={24} color={HEXCOLOR.pureWhite} name="account-circle" />}/>
               </BottomNavigation>
           </View>
         );
@@ -283,47 +284,14 @@ class AdminHome extends Component {
 
     listenForRestaurants(restaurantRef) {
       // listen for changes to the tasks reference, when it updates we'll get a
-      // dataSnapshot from firebase
+      // dataSnapshot from firebase with a helper
       restaurantRef.on('value', (dataSnapshot) => {
-        // transform the children to an array
-        var restaurants = [];
-        var count = 0;
-        restaurants.push({isAddButton: true});
-        dataSnapshot.forEach((child) => {
-          child.forEach((ch) => {
-            var images = [];
-            if(ch.val().images !== undefined){
-              for (var key in ch.val().images) {
-                var img = ch.val().images[key];
-                images.splice((img.primary ? 0 : images.length), 0, {
-                  imageUrl: img.imageUrl, storageId: key, primary: img.primary, fileName: img.fileName, uid: child.key, restaurantId: ch.key
-                });
-              }
-            }
-
-            restaurants.splice((restaurants.length), 0, {
-              name: (ch.val().name ? ch.val().name : ''),
-              type: (ch.val().type ? ch.val().type : ''),
-              phone_number: (ch.val().phone_number ? ch.val().phone_number : ''),
-              short_description: (ch.val().short_description ? ch.val().short_description : ''),
-              long_description: (ch.val().long_description ? ch.val().long_description : ''),
-              booking_message: (ch.val().booking_message ? ch.val().booking_message : ''),
-              address: (ch.val().address ? ch.val().address : ''),
-              website_url: (ch.val().website_url ? ch.val().website_url : ''),
-              booking_url: (ch.val().booking_url ? ch.val().booking_url : ''),
-              instagram_url: (ch.val().instagram_url ? ch.val().instagram_url : ''),
-              fully_booked: ch.val().fully_booked,
-              images: images,
-              _uid: child.key,
-              _key: ch.key
-            });
+        Helper.listenRestaurants(dataSnapshot).then((restaurants)=>{
+          this.setState({
+            restaurants: restaurants,
+            dataSource: this.state.dataSource.cloneWithRows(restaurants)
           });
-        });
-
-        this.setState({
-          restaurants: restaurants,
-          dataSource: this.state.dataSource.cloneWithRows(restaurants)
-        });
+        })
       });
     }
 }

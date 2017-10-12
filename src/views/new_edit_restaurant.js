@@ -25,7 +25,7 @@ import MIcon from 'react-native-vector-icons/MaterialIcons'
 import {Sae} from "react-native-textinput-effects";
 import FontAwesomeIcon from "react-native-vector-icons/FontAwesome";
 import RNFetchBlob from 'react-native-fetch-blob'
-
+import { HEXCOLOR } from "../styles/hexcolor.js";
 import CommonStyle from "../styles/admin.css";
 import Database from "../firebase/database";
 import ImageListItem from "./image_list_item"
@@ -70,16 +70,12 @@ const uploadImage = (uri, fileName, comp, mime = 'application/octet-stream') => 
 }
 
 class NewEditRestaurant extends Component {
-  static navigationOptions = ({ navigation }) => {
-    const {state} = navigation;
-    return {
-      title: state.params.title,
-      headerTitleStyle :{alignSelf: 'center', color: 'white'},
-      headerStyle:{
-          backgroundColor: '#122438',
-      },
+
+  static navigationOptions = {
+      title: 'New Restaurant',
+      headerTitleStyle : CommonStyle.headerTitleStyle,
+      headerStyle: CommonStyle.adminHeaderStyle,
       headerTintColor: '#FFF'
-    }
   };
   constructor(props) {
       super(props);
@@ -113,8 +109,8 @@ class NewEditRestaurant extends Component {
                         label={"Restaurant Name"}
                         iconClass={FontAwesomeIcon}
                         iconName={"pencil"}
-                        iconColor={"#98866F"}
-                        inputStyle={{ color: '#98866F' }}
+                        iconColor={HEXCOLOR.lightBrown}
+                        inputStyle={{ color: HEXCOLOR.lightBrown }}
                         onChangeText={(name) => this.setVal("name", name)}
                         value={this.state.restaurant.name}
                         keyboardType="default"
@@ -123,8 +119,8 @@ class NewEditRestaurant extends Component {
                         label={"Email Address"}
                         iconClass={FontAwesomeIcon}
                         iconName={"pencil"}
-                        iconColor={"#98866F"}
-                        inputStyle={{ color: '#98866F' }}
+                        iconColor={HEXCOLOR.lightBrown}
+                        inputStyle={{ color: HEXCOLOR.lightBrown }}
                         onChangeText={(email) => this.setState({email: email})}
                         value={this.state.email}
                         keyboardType="email-address"
@@ -133,8 +129,8 @@ class NewEditRestaurant extends Component {
                         label={"Password"}
                         iconClass={FontAwesomeIcon}
                         iconName={"key"}
-                        iconColor={"#98866F"}
-                        inputStyle={{ color: '#98866F' }}
+                        iconColor={HEXCOLOR.lightBrown}
+                        inputStyle={{ color: HEXCOLOR.lightBrown }}
                         onChangeText={(password) => this.setState({password: password})}
                         value={this.state.password}
                         password={true}
@@ -145,8 +141,8 @@ class NewEditRestaurant extends Component {
                         label={"Confirm Password"}
                         iconClass={FontAwesomeIcon}
                         iconName={"key"}
-                        iconColor={"#98866F"}
-                        inputStyle={{ color: '#98866F' }}
+                        iconColor={HEXCOLOR.lightBrown}
+                        inputStyle={{ color: HEXCOLOR.lightBrown }}
                         onChangeText={(confirmPassword) => this.setState({confirmPassword: confirmPassword})}
                         value={this.state.confirmPassword}
                         password={true}
@@ -157,8 +153,8 @@ class NewEditRestaurant extends Component {
                         label={"Address"}
                         iconClass={FontAwesomeIcon}
                         iconName={"pencil"}
-                        iconColor={"#98866F"}
-                        inputStyle={{ color: '#98866F' }}
+                        iconColor={HEXCOLOR.lightBrown}
+                        inputStyle={{ color: HEXCOLOR.lightBrown }}
                         onChangeText={(address) => this.setVal("address", address)}
                         value={this.state.restaurant.address}
                         keyboardType="default"
@@ -168,8 +164,8 @@ class NewEditRestaurant extends Component {
                         label={"Phone Number"}
                         iconClass={FontAwesomeIcon}
                         iconName={"pencil"}
-                        iconColor={"#98866F"}
-                        inputStyle={{ color: '#98866F' }}
+                        iconColor={HEXCOLOR.lightBrown}
+                        inputStyle={{ color: HEXCOLOR.lightBrown }}
                         onChangeText={(phone_number) => this.setVal("phone_number", phone_number)}
                         value={this.state.restaurant.phone_number}
                         keyboardType="phone-pad"
@@ -179,8 +175,8 @@ class NewEditRestaurant extends Component {
                         label={"Website"}
                         iconClass={FontAwesomeIcon}
                         iconName={"pencil"}
-                        iconColor={"#98866F"}
-                        inputStyle={{ color: '#98866F' }}
+                        iconColor={HEXCOLOR.lightBrown}
+                        inputStyle={{ color: HEXCOLOR.lightBrown }}
                         onChangeText={(website_url) => this.setVal("website_url", website_url)}
                         value={this.state.restaurant.website_url}
                         keyboardType="url"
@@ -190,8 +186,8 @@ class NewEditRestaurant extends Component {
                         label={"Link to Instagram"}
                         iconClass={FontAwesomeIcon}
                         iconName={"pencil"}
-                        iconColor={"#98866F"}
-                        inputStyle={{ color: '#98866F' }}
+                        iconColor={HEXCOLOR.lightBrown}
+                        inputStyle={{ color: HEXCOLOR.lightBrown }}
                         onChangeText={(instagram_url) => this.setVal("instagram_url", instagram_url)}
                         value={this.state.restaurant.instagram_url}
                         keyboardType="url"
@@ -201,8 +197,8 @@ class NewEditRestaurant extends Component {
                         label={"Restaurant Kitchen Type"}
                         iconClass={FontAwesomeIcon}
                         iconName={"pencil"}
-                        iconColor={"#98866F"}
-                        inputStyle={{ color: '#98866F' }}
+                        iconColor={HEXCOLOR.lightBrown}
+                        inputStyle={{ color: HEXCOLOR.lightBrown }}
                         onChangeText={(type) => this.setVal("type", type)}
                         value={this.state.restaurant.type}
                         keyboardType="default"
@@ -212,32 +208,32 @@ class NewEditRestaurant extends Component {
                         label={"Booking URL"}
                         iconClass={FontAwesomeIcon}
                         iconName={"pencil"}
-                        iconColor={"#98866F"}
-                        inputStyle={{ color: '#98866F' }}
+                        iconColor={HEXCOLOR.lightBrown}
+                        inputStyle={{ color: HEXCOLOR.lightBrown }}
                         onChangeText={(booking_url) => this.setVal("booking_url", booking_url)}
                         value={this.state.restaurant.booking_url}
                         keyboardType="url"
                         autoCapitalize="none"/>
 
-                    <Text style={{color: '#7873B1', fontSize: 18, fontWeight: 'bold', paddingTop: 16}}>Short Description</Text>
+                    <Text style={CommonStyle.shortDescription}>Short Description</Text>
                     <TextInput
-                        style={{color: '#9A886F', fontSize: 18}}
+                        style={{color: HEXCOLOR.lightBrown, fontSize: 18}}
                         multiline={true}
                         numberOfLines={4}
                         onChangeText={(short_description) => this.setVal("short_description", short_description)}
                         value={this.state.restaurant.short_description}/>
 
-                    <Text style={{color: '#7873B1', fontSize: 18, fontWeight: 'bold', paddingTop: 16}}>Long Description</Text>
+                    <Text style={CommonStyle.shortDescription}>Long Description</Text>
                     <TextInput
-                        style={{color: '#9A886F', fontSize: 18}}
+                        style={{color: HEXCOLOR.lightBrown, fontSize: 18}}
                         multiline={true}
                         numberOfLines={8}
                         onChangeText={(long_description) => this.setVal("long_description", long_description)}
                         value={this.state.restaurant.long_description}/>
 
-                    <Text style={{color: '#7873B1', fontSize: 18, fontWeight: 'bold', paddingTop: 16}}>Booking Message</Text>
+                    <Text style={CommonStyle.shortDescription}>Booking Message</Text>
                     <TextInput
-                        style={{color: '#9A886F', fontSize: 18}}
+                        style={{color: HEXCOLOR.lightBrown, fontSize: 18}}
                         multiline={true}
                         numberOfLines={3}
                         onChangeText={(booking_message) => this.setVal("booking_message", booking_message)}
@@ -247,14 +243,14 @@ class NewEditRestaurant extends Component {
                         label={"Price Range"}
                         iconClass={FontAwesomeIcon}
                         iconName={"pencil"}
-                        iconColor={"#98866F"}
-                        inputStyle={{ color: '#98866F' }}
+                        iconColor={HEXCOLOR.lightBrown}
+                        inputStyle={{ color: HEXCOLOR.lightBrown }}
                         onChangeText={(price_range) => this.setVal("price_range", price_range)}
                         value={this.state.restaurant.price_range}
                         keyboardType="default"
                         autoCapitalize="none"/>
                     <View>
-                      <Text style={{color: '#7873B1', fontSize: 18, fontWeight: 'bold', paddingTop: 16, paddingBottom: 10}}>Restaurant Images:</Text>
+                      <Text style={CommonStyle.restaurantsImages}>Restaurant Images:</Text>
                     </View>
                     <ListView
                       style={{paddingTop: 10}}

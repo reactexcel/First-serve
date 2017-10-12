@@ -1,7 +1,11 @@
+import { Dimensions} from 'react-native'
+const { width } = Dimensions.get('window')
+import { HEXCOLOR } from './hexcolor';
+
 const AdminCss = {
 	container: {
 		flex: 1,
-		backgroundColor: "#F1F0EC"
+		backgroundColor: HEXCOLOR.whiteColor
 	},
 
 	rowContainer: {
@@ -26,7 +30,7 @@ const AdminCss = {
 	},
 
 	buttons: {
-		backgroundColor: "whitesmoke"
+		backgroundColor: HEXCOLOR.whiteSmoke
 	},
 
 	notiView: {
@@ -54,7 +58,6 @@ const AdminCss = {
 			flex: 1,
 			paddingBottom:20
 	},
-
 	listItem: {
 		flex: 1,
 		flexDirection:'row',
@@ -73,11 +76,11 @@ const AdminCss = {
 		marginTop:10,
 		paddingTop:10,
 		paddingBottom:10,
-		backgroundColor:'#68a0cf',
+		backgroundColor: HEXCOLOR.skyblue,
 		borderRadius:20,
 		overflow: 'hidden',
 		borderWidth: 1,
-		borderColor: '#fff'
+		borderColor: HEXCOLOR.pureWhite
 	},
 	submitDisable:{
 		marginRight:40,
@@ -88,18 +91,18 @@ const AdminCss = {
 		borderRadius:20,
 		overflow: 'hidden',
 		borderWidth: 1,
-		borderColor: '#626262'
+		borderColor: HEXCOLOR.lightGrey
 	},
   btn:{
 		marginLeft:5,
 		marginTop:10,
 		paddingTop:10,
 		paddingBottom:10,
-		backgroundColor:'#68a0cf',
+		backgroundColor:HEXCOLOR.skyblue,
 		borderRadius:20,
 		overflow: 'hidden',
 		borderWidth: 1,
-		borderColor: '#fff'
+		borderColor: HEXCOLOR.pureWhite
 	},
 	text: {
 		paddingTop:10,
@@ -112,11 +115,11 @@ const AdminCss = {
 		color: 'white'
 	},
 	submitText:{
-		color:'#fff',
+		color: HEXCOLOR.pureWhite,
 		textAlign:'center',
 	},
 	submitTextDisable:{
-		color:'#626262',
+		color:HEXCOLOR.lightGrey,
 		textAlign:'center',
 	},
 
@@ -131,7 +134,7 @@ const AdminCss = {
 	},
 
 	edtText: {
-		color:'#98866F'
+		color: HEXCOLOR.lightBrown
 	},
 
 	headingLeft: {
@@ -146,7 +149,7 @@ const AdminCss = {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: '#122438'
+    backgroundColor: HEXCOLOR.endeavour
   },
 
   leftContainer: {
@@ -169,7 +172,50 @@ const AdminCss = {
 		borderWidth: 1,
 		alignItems:'center',
 		justifyContent: 'center'
-	}
+	},
+	swiperConatiner:{
+		flex:1,
+		justifyContent: 'center',
+		backgroundColor: 'transparent'
+	},
+	swiperImage: {
+			width,
+			flex:1
+	},
+	swiperConatiner:{
+		flex:1,
+	},
+	swiperModal:{
+		flex:1,
+		marginTop:-8
+	},
+	headerTitleStyle: {
+		alignSelf: 'center',
+		color: HEXCOLOR.pureWhite
+	},
+	adminHeaderStyle:{
+		backgroundColor: HEXCOLOR.endeavour,
+	},
+	bottomNavigation: {
+		height: 56,
+		elevation: 8,
+		position: 'absolute',
+		left: 0, bottom: 0,
+		right: 0
+	},
+	shortDescription: {
+		color: HEXCOLOR.blueBerry,
+		fontSize: 18,
+		fontWeight: 'bold',
+		paddingTop: 16
+	},
+	restaurantsImages:{
+		color: '#7873B1',
+		fontSize: 18,
+		fontWeight: 'bold',
+	  paddingTop: 16,
+		paddingBottom: 10
+	},
 };
 
 module.exports = AdminCss;

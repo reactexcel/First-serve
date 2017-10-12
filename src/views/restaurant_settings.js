@@ -16,6 +16,7 @@ import FontAwesomeIcon from "react-native-vector-icons/FontAwesome";
 import {StackNavigator, NavigationActions,} from 'react-navigation';
 import DefaultPreference from 'react-native-default-preference';
 
+import { HEXCOLOR } from "../styles/hexcolor.js";
 import CommonStyle from "../styles/restaurant.css";
 import Database from "../firebase/database";
 import DismissKeyboard from "dismissKeyboard";
@@ -27,9 +28,9 @@ class RestaurantSettings extends Component {
       title: 'Restaurant Settings',
       headerTitleStyle :{alignSelf: 'center', color: 'white'},
       headerStyle:{
-        backgroundColor: '#98866F',
+        backgroundColor: HEXCOLOR.lightBrown,
       },
-      headerTintColor: '#FFF'
+      headerTintColor: HEXCOLOR.pureWhite
   };
   constructor(props) {
     super(props);
@@ -105,22 +106,22 @@ class RestaurantSettings extends Component {
                   <Icon
                     name='sign-out'
                     type='octicon'
-                    color='#fff'/>
-                  <Text style={{color: '#fff', fontSize: 16, paddingLeft: 10}}>Sign out</Text>
+                    color={HEXCOLOR.pureWhite}/>
+                  <Text style={{color: HEXCOLOR.pureWhite, fontSize: 16, paddingLeft: 10}}>Sign out</Text>
                 </View>
               </View>
             </TouchableHighlight>
 
             <View style={[CommonStyle.rowContainerLF, {paddingTop: 25}]}>
               <View style={[CommonStyle.headingLeft]}>
-                <Text style={{color: '#fff', fontSize: 24, paddingLeft: 10}}>Fully booked</Text>
+                <Text style={{color: HEXCOLOR.pureWhite, fontSize: 24, paddingLeft: 10}}>Fully booked</Text>
               </View>
               <View style={[CommonStyle.headingRight]}>
                 <Switch onValueChange={(value) => this.setFullyBooked(value)}
-                  onTintColor="#fff"
+                  onTintColor={HEXCOLOR.pureWhite}
                   style={{marginBottom: 10}}
-                  thumbTintColor="#fff"
-                  tintColor="#98866F"
+                  thumbTintColor={HEXCOLOR.pureWhite}
+                  tintColor={HEXCOLOR.lightBrown}
                   value={this.state.isFullyBooked}/>
               </View>
             </View>
