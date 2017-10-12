@@ -75,6 +75,7 @@ const AdminCss = {
 		paddingBottom:10,
 		backgroundColor:'#68a0cf',
 		borderRadius:20,
+		overflow: 'hidden',
 		borderWidth: 1,
 		borderColor: '#fff'
 	},
@@ -85,6 +86,7 @@ const AdminCss = {
 		paddingTop:10,
 		paddingBottom:10,
 		borderRadius:20,
+		overflow: 'hidden',
 		borderWidth: 1,
 		borderColor: '#626262'
 	},
@@ -95,8 +97,19 @@ const AdminCss = {
 		paddingBottom:10,
 		backgroundColor:'#68a0cf',
 		borderRadius:20,
+		overflow: 'hidden',
 		borderWidth: 1,
 		borderColor: '#fff'
+	},
+	text: {
+		paddingTop:10,
+		fontSize:21,
+		color: 'white'
+	},
+	navtext:{
+		paddingTop:12,
+		fontSize:18,
+		color: 'white'
 	},
 	submitText:{
 		color:'#fff',
@@ -146,7 +159,8 @@ const AdminCss = {
     flexDirection: 'row',
     justifyContent: 'flex-end',
     alignItems: 'center',
-		paddingRight: 8
+		paddingTop:11,
+		paddingRight: 12
   },
 	circle: {
 		width: 40,
