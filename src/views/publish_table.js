@@ -87,14 +87,15 @@ class PublishTable extends Component {
     });
   }
 
-  _showDateTimePicker = (openFor) => this.setState({ timePickerFor: openFor, isDateTimePickerVisible: true });
+  _showDateTimePicker = (openFor) => {this.setState({ timePickerFor: openFor, isDateTimePickerVisible: true})};
 
   _hideDateTimePicker = () => this.setState({timePickerFor: 0, isDateTimePickerVisible: false });
 
   _handleDatePicked = (date) => {
     console.log('A date has been picked: ', date);
     if(this.state.timePickerFor == 1){
-      this.setState({startTime: date.getTime()});
+      var idealEndTime = Moment(date).add(2,'hours')
+      this.setState({startTime: date.getTime(), endTime: idealEndTime._d.getTime() });
     }else if(this.state.timePickerFor == 2){
       this.setState({endTime: date.getTime()});
     }

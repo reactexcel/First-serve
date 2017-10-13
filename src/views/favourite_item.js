@@ -12,22 +12,38 @@ import {
 } from 'react-native';
 
 import styles from "../styles/admin.css";
+import GallerySwiper from "../components/swiper";
 import {Icon} from "react-native-elements";
 import FullWidthImage from "../components/full_width_image"
 import RestaurantView from "./restaurant_view";
 
 class FavouriteItem extends Component {
+
   render() {
     // We are going to return a simple list item with just a title for now
     // this.props.setModalVisible(this.props.restaurant._key, true)
     return (
       <View style={styles.listItem}>
+        <Modal
+          animationType="slide"
+          transparent={false}
+          visible={this.props.isModelVisible[this.props.restaurant._key] === true ? true : false}
+          onRequestClose={() => {this.props.setModalVisible(this.props.restaurant._key, false)}}>
+
+          <RestaurantView restaurant={this.props.restaurant}
+            setModalVisible={this.props.setModalVisible}
+            setValue={this.props.setValue}
+            isAdmin={this.props.isAdmin}
+            isRestaurantNotiOn={this.props.isRestaurantNotiOn}
+            setFavourite={this.props.setFavourite}
+            favourites={this.props.favourites}/>
+        </Modal>
         <View style={{flex: 1, borderBottomWidth: 1}}>
           <View style={styles.rowContainer}>
             <Text style={styles.listItemTitle}>{this.props.restaurant.name}</Text>
           </View>
           <View style={styles.rowContainer}>
-            <FullWidthImage source={{uri: this.props.restaurant.images.length > 0 ? this.props.restaurant.images[0].imageUrl : 'https://firebasestorage.googleapis.com/v0/b/first-served-c9197.appspot.com/o/restaurant_images%2Frestaurant.jpg?alt=media&token=b0ca19be-6594-4bb1-bfdb-3c9474a0b234'}} />
+            <GallerySwiper {...this.props} openModel={() => this.props.setModalVisible(this.props.restaurant._key, true)} />
           </View>
           <View style={[styles.notiView, {paddingLeft: 15, paddingRight: 15, justifyContent: 'center'}]}>
             <TouchableHighlight

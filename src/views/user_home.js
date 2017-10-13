@@ -96,7 +96,9 @@ class UserHome extends Component {
       pax: 2,
       mobile: '',
       isLoading:true,
-      saved:false
+      saved:false,
+      isModalVisibleForViewResurant:{},
+      favouritesModal:false
     };
 
     this._setUserNoti = this._setUserNoti.bind(this);
@@ -269,6 +271,7 @@ class UserHome extends Component {
   }
 
   render() {
+    console.log(this.state.isModalVisibleForViewResurant);
     const buttonName = (this.state.saved  ? "Saved" : "Save Changes" )
     return (
       <View style={styles.container}>
@@ -303,14 +306,14 @@ class UserHome extends Component {
             style={[styles.listView, {marginTop: 10}]}/>
         </View>}
         {this.state.currentTab == 1 && <View style={styles.container}>
-          {this.state.isNoFavourite && <View style={styles.midContainer}>
-            <Text style={{fontSize: 20}}>No Favourites</Text>
-          </View>}
-          {!this.state.isNoFavourite && <ListView
-            dataSource={this.state.favoriteDataSource}
-            enableEmptySections={true}
-            renderRow={this._renderFavoriteItem.bind(this)}
-            style={[styles.listView, {marginTop: 10}]}/>}
+            {this.state.isNoFavourite ? <View style={styles.midContainer}>
+              <Text style={{fontSize: 20}}>No Favourites</Text>
+            </View>: <ListView
+              dataSource={this.state.favoriteDataSource}
+              enableEmptySections={true}
+              removeClippedSubviews={false}
+              renderRow={this._renderFavoriteItem.bind(this)}
+              style={[styles.listView, {marginTop: 10}]}/>}
         </View>}
         {this.state.currentTab == 2 && <View style={styles.container}>
           {this.state.isNoBooked && <View style={styles.midContainer}>
@@ -497,7 +500,12 @@ class UserHome extends Component {
     _renderFavoriteItem(restaurant) {
       return (
         <FavourateItem restaurant={restaurant}
+        isRestaurantNotiOn={this.state.isRestaurantNotiOn}
         favourites={this.state.favourites}
+        setValue={this._setValue.bind(this)}
+        isAdmin={false}
+        isModelVisible={this.state.isModalVisibleForViewResurant}
+        setModalVisible={this._setModalVisibleForViewResurant.bind(this)}
         setFavourite={this._setFavourite}/>
       );
     }
@@ -551,7 +559,25 @@ class UserHome extends Component {
         dataSource: source.cloneWithRows(this.state.restaurants)
       });
     }
+    _setModalVisibleForViewResurant(id,value){
 
+      var source = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
+      var keys = Object.keys(this.state.favourites);
+      var favourites = [];
+      for(i = 0; i < this.state.restaurants.length; i++){
+        if(keys.indexOf(this.state.restaurants[i]._key) > -1 && this.state.favourites[this.state.restaurants[i]._key]) favourites.push(this.state.restaurants[i]);
+      }
+      var isNoFavourite = true;
+      if(favourites.length > 0) isNoFavourite = false;
+      this.state.isModalVisibleForViewResurant[id] = value;
+      this.setState({
+        favoriteDataSource: source.cloneWithRows(favourites),
+        isModalVisibleForViewResurant: this.state.isModalVisibleForViewResurant,
+      });
+      if (true) {
+
+      }
+    }
     _openMapview(address){
       Linking.openURL('https://www.google.com/maps/search/?api=1&query='+ `${address}` );
     }
