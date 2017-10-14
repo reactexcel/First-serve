@@ -42,6 +42,7 @@ class RestaurantListItem extends Component {
               isRestaurantNotiOn={this.props.isRestaurantNotiOn}
               setFavourite={this.props.setFavourite}
               favourites={this.props.favourites}
+              openMap={this.props.openMap}
               editRestaurant={this.props.editRestaurant}
               deleteRestaurant={this.props.deleteRestaurant}/>
           </Modal>

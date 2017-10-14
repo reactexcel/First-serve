@@ -14,7 +14,8 @@ import {
     ListView,
     ScrollView,
     Platform,
-    Linking
+    Linking,
+    TouchableOpacity
 } from "react-native";
 
 import Button from "apsl-react-native-button";
@@ -190,11 +191,15 @@ class RestaurantView extends Component {
               </View>
             </View>
             <View style={CommonStyle.rowContainer}>
+              <TouchableOpacity
+                onPress={()=>{this.props.openMap(this.props.restaurant.address)}}
+                >
               <Icon
                 name='map-marker'
                 type='font-awesome'
                 color={HEXCOLOR.lightGrey}/>
               <Text style={{paddingLeft: 5}}>{this.props.restaurant.address}</Text>
+            </TouchableOpacity>
             </View>
             {this.props.isAdmin && <View style={[CommonStyle.rowContainer, {paddingBottom: 40}]}>
               <TouchableHighlight
