@@ -457,6 +457,7 @@ class UserHome extends Component {
         title = "Bookings";
       }else if (idx == 3) {
         title = "Profile";
+        this.setState({saved:false});
       }
       // UserHome.navigationOptions.title = "favorites";
       this.setState({currentTab: idx});
