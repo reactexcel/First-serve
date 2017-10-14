@@ -136,7 +136,7 @@ class UserHome extends Component {
           }
         }
         th.setState({bookingTable: table, bookingRestaurant: rest, bookingRestaurantKey: bookingRestaurantKey});
-        th.setBookingModalVisible(true);
+        // th.setBookingModalVisible(true);
 
         if(os ==='ios'){
           //optional
@@ -271,7 +271,7 @@ class UserHome extends Component {
   }
 
   render() {
-    console.log(this.state.isModalVisibleForViewResurant);
+    console.log(this.state.isBookingModelVisible);
     const buttonName = (this.state.saved  ? "Saved" : "Save Changes" )
     return (
       <View style={styles.container}>
