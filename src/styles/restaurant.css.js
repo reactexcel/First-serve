@@ -69,6 +69,7 @@ const RestaurantCss = {
 		paddingBottom:10,
 		backgroundColor:HEXCOLOR.skyblue,
 		borderRadius:20,
+		overflow: 'hidden',
 		borderWidth: 1,
 		borderColor: HEXCOLOR.pureWhite
 	},
@@ -84,6 +85,7 @@ const RestaurantCss = {
 		paddingBottom:10,
 		backgroundColor:HEXCOLOR.pureWhite,
 		borderRadius:20,
+		overflow: 'hidden',
 		borderWidth: 1,
 		borderColor: HEXCOLOR.pureWhite
 	},

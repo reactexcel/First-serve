@@ -194,7 +194,7 @@ class Landing extends Component {
               }}/>
           </View>
           <View style={styles.btnEmailLogin}>
-            <Text onPress={() => {
+            <Text style={styles.btnText} onPress={() => {
               navigate('ELogin', { title: 'Login as restaurant', unlistenForAuth: this._unlistenForAuth })}
             }>Login as restaurant</Text>
           </View>
@@ -234,6 +234,9 @@ const styles = StyleSheet.create({
     btnEmailLogin: {
       flexDirection: 'row',
       justifyContent: 'center'
+    },
+    btnText : {
+      padding:10
     }
 });
 

@@ -76,6 +76,7 @@ const Common = {
 		paddingBottom:10,
 		backgroundColor:HEXCOLOR.skyblue,
 		borderRadius:20,
+		overflow: 'hidden',
 		borderWidth: 1,
 		borderColor: HEXCOLOR.pureWhite
 	},
