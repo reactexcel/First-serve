@@ -86,6 +86,7 @@ class UserHome extends Component {
       isNoFavourite: true,
       isNoBooked: true,
       restaurants: [],
+      isLoadingRestaurants:true,
       isRestaurantNotiOn: {},
       isModalVisible: {},
       isBookingModelVisible: false,
@@ -136,7 +137,7 @@ class UserHome extends Component {
           }
         }
         th.setState({bookingTable: table, bookingRestaurant: rest, bookingRestaurantKey: bookingRestaurantKey});
-        th.setBookingModalVisible(true);
+        // th.setBookingModalVisible(true);
 
         if(os ==='ios'){
           //optional
@@ -190,11 +191,14 @@ class UserHome extends Component {
           if(keys.indexOf(this.state.restaurants[i]._key) > -1) favourites.push(this.state.restaurants[i]);
         }
 
+        var isLoadingRestaurants = true;
+        if(this.state.restaurants.length > 0)   isLoadingRestaurants = false;
         var isNoFavourite = true;
         if(favourites.length > 0) isNoFavourite = false;
         console.log("favourites from listen user: ", favourites.length);
         this.setState({
           isNoFavourite: isNoFavourite,
+          isLoadingRestaurants: isLoadingRestaurants,
           isRestaurantNotiOn: isRestaurantNotiOn,
           favourites: this.state.favourites,
           notificationOn: userSnap.val().notiOn,
@@ -272,7 +276,7 @@ class UserHome extends Component {
   }
 
   render() {
-    console.log(this.state.isModalVisibleForViewResurant);
+    console.log(this.state.isBookingModelVisible);
     const buttonName = (this.state.saved  ? "Saved" : "Save Changes" )
     return (
       <View style={styles.container}>
@@ -299,12 +303,17 @@ class UserHome extends Component {
                   onValueChange={(value) => this._setUserNoti(value)}
                   value={this.state.notificationOn}/>
           </View>*/}
+          {this.state.isLoadingRestaurants ?
+            <View style={styles.midContainer}>
+             <Text style={{fontSize: 20}}>Loading Restaurants .... </Text>
+           </View>
+           :
           <ListView
             dataSource={this.state.dataSource}
             enableEmptySections={true}
             removeClippedSubviews={false}
             renderRow={this._renderItem.bind(this)}
-            style={[styles.listView, {marginTop: 10}]}/>
+            style={[styles.listView, {marginTop: 10}]}/>}
         </View>}
         {this.state.currentTab == 1 && <View style={styles.container}>
             {this.state.isNoFavourite ? <View style={styles.midContainer}>
@@ -449,6 +458,7 @@ class UserHome extends Component {
         title = "Bookings";
       }else if (idx == 3) {
         title = "Profile";
+        this.setState({saved:false});
       }
       // UserHome.navigationOptions.title = "favorites";
       this.setState({currentTab: idx});
