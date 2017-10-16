@@ -137,7 +137,9 @@ class UserHome extends Component {
           }
         }
         th.setState({bookingTable: table, bookingRestaurant: rest, bookingRestaurantKey: bookingRestaurantKey});
-        // th.setBookingModalVisible(true);
+        if(notif.restaurantKey !== undefined){
+          th.setBookingModalVisible(true);
+        }
 
         if(os ==='ios'){
           //optional
@@ -220,7 +222,6 @@ class UserHome extends Component {
             key: ch.key,
           });
         });
-
         var bookedRestaurant = [];
         for(i = 0; i < tables.length; i++){
           var table = tables[i];
@@ -239,6 +240,7 @@ class UserHome extends Component {
         if(bookedRestaurant.length > 0) isNoBooked = false;
 
         th.setState({
+          bookings:tables,
           isNoBooked: isNoBooked,
           bookedDataSource: th.state.bookedDataSource.cloneWithRows(bookedRestaurant)
         });
@@ -275,7 +277,7 @@ class UserHome extends Component {
   }
 
   render() {
-    console.log(this.state.isBookingModelVisible);
+    // console.log(this.state.isBookingModelVisible);
     const buttonName = (this.state.saved  ? "Saved" : "Save Changes" )
     return (
       <View style={styles.container}>
@@ -325,12 +327,13 @@ class UserHome extends Component {
               style={[styles.listView, {marginTop: 10}]}/>}
         </View>}
         {this.state.currentTab == 2 && <View style={styles.container}>
-          {this.state.isNoBooked && <View style={styles.midContainer}>
+          {this.state.isNoBooked ? <View style={styles.midContainer}>
             <Text style={{fontSize: 20}}>No Bookings</Text>
-          </View>}
-          {!this.state.isNoBooked && <ListView
+          </View>
+          : <ListView
             dataSource={this.state.bookedDataSource}
             enableEmptySections={true}
+            removeClippedSubviews={false}
             renderRow={this._renderBookedItem.bind(this)}
             style={[styles.listView, {marginTop: 10}]}/>}
         </View>}
@@ -527,7 +530,14 @@ class UserHome extends Component {
         restaurant={bookedTable.restaurant}
         table={bookedTable.table}
         favourites={this.state.favourites}
-        setFavourite={this._setFavourite}/>
+        setFavourite={this._setFavourite}
+        isRestaurantNotiOn={this.state.isRestaurantNotiOn}
+        openMap={this._openMapview.bind(this)}
+        isAdmin={false}
+        isModelVisible={this.state.isModalVisibleForViewResurant}
+        setModalVisible={this._setModalVisibleForViewBookingResurant.bind(this)}
+        setValue={this._setValue.bind(this)}
+      />
       );
     }
 
@@ -581,8 +591,28 @@ class UserHome extends Component {
       var isNoFavourite = true;
       if(favourites.length > 0) isNoFavourite = false;
       this.state.isModalVisibleForViewResurant[id] = value;
+      console.log(this.state.isModalVisibleForViewResurant[id]);
       this.setState({
         favoriteDataSource: source.cloneWithRows(favourites),
+        isModalVisibleForViewResurant: this.state.isModalVisibleForViewResurant,
+      });
+      if (true) {
+
+      }
+    }
+    _setModalVisibleForViewBookingResurant(id,value){
+      var source = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
+      var keys = Object.keys(this.state.bookedDataSource);
+      var booking = [];
+      for(i = 0; i < this.state.restaurants.length; i++){
+        if(this.state.bookedDataSource._dataBlob.s1[0].restaurant._key === this.state.restaurants[i]._key) booking.push({restaurant:this.state.restaurants[i],table:this.state.bookedDataSource._dataBlob.s1[0].table});
+      }
+      var isNoFavourite = true;
+      if(booking.length > 0) isNoFavourite = false;
+      this.state.isModalVisibleForViewResurant[id] = value;
+      console.log(this.state.isModalVisibleForViewResurant[id]);
+      this.setState({
+        bookedDataSource: source.cloneWithRows(booking),
         isModalVisibleForViewResurant: this.state.isModalVisibleForViewResurant,
       });
       if (true) {
