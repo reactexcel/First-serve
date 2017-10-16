@@ -192,6 +192,7 @@ class UserHome extends Component {
 
         var isNoFavourite = true;
         if(favourites.length > 0) isNoFavourite = false;
+        console.log("favourites from listen user: ", favourites.length);
         this.setState({
           isNoFavourite: isNoFavourite,
           isRestaurantNotiOn: isRestaurantNotiOn,
@@ -514,8 +515,13 @@ class UserHome extends Component {
       return (
         <BookedItem
         restaurant={bookedTable.restaurant}
+        isRestaurantNotiOn={this.state.isRestaurantNotiOn}
+        setValue={this._setValue.bind(this)}
+        isAdmin={false}
         table={bookedTable.table}
         favourites={this.state.favourites}
+        isModelVisible={this.state.isModalVisibleForViewResurant}
+        setModalVisible={this._setModalVisibleForViewResurant.bind(this)}
         setFavourite={this._setFavourite}/>
       );
     }
@@ -635,17 +641,32 @@ class UserHome extends Component {
             });
           });
         });
+
         rest = {images: [], name: '', booking_message: '', address: ''};
+
         for(i = 0; i < restaurants.length; i++){
           if(restaurants[i]._key == this.state.bookingRestaurantKey){
             rest = restaurants[i];
             break;
           }
         }
+
+        var keys = Object.keys(this.state.favourites);
+        var favourites = [];
+        for(i = 0; i < restaurants.length; i++){
+          if(keys.indexOf(restaurants[i]._key) > -1) favourites.push(restaurants[i]);
+        }
+
+        var isNoFavourite = true;
+        if(favourites.length > 0) isNoFavourite = false;
+        console.log("favourites from restaurant listener: ", favourites.length);
+
         this.setState({
+          isNoFavourite: isNoFavourite,
           restaurants: restaurants,
           bookingRestaurant: rest,
-          dataSource: this.state.dataSource.cloneWithRows(restaurants)
+          dataSource: this.state.dataSource.cloneWithRows(restaurants),
+          favoriteDataSource: this.state.favoriteDataSource.cloneWithRows(favourites)
         });
       });
     }
