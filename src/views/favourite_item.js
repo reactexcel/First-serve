@@ -8,7 +8,8 @@ import {
   Image,
   Switch,
   Linking,
-  Modal
+  Modal,
+  TouchableOpacity
 } from 'react-native';
 
 import styles from "../styles/admin.css";
@@ -60,12 +61,16 @@ class FavouriteItem extends Component {
               </TouchableHighlight>
           </View>
           <View style={[styles.notiView, {paddingBottom: 58}]}>
+            <TouchableOpacity
+              onPress={()=>{this.props.openMap(this.props.restaurant.address)}}
+              >
               <View style={styles.notiIconView}>
                   <Icon
                       name='map-marker'
                       type='font-awesome'/>
                   <View style={{paddingLeft: 5}}><Text>{this.props.restaurant.address}</Text></View>
               </View>
+            </TouchableOpacity>
           </View>
         </View>
       </View>

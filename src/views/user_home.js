@@ -513,6 +513,7 @@ class UserHome extends Component {
         isRestaurantNotiOn={this.state.isRestaurantNotiOn}
         favourites={this.state.favourites}
         setValue={this._setValue.bind(this)}
+        openMap={this._openMapview.bind(this)}
         isAdmin={false}
         isModelVisible={this.state.isModalVisibleForViewResurant}
         setModalVisible={this._setModalVisibleForViewResurant.bind(this)}
