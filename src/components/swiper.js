@@ -16,7 +16,7 @@ export default class GallerySwiper extends Component {
     render() {
         return (
           <View style={styles.swiperConatiner}>
-            <Swiper  height={255} horizontal={true} removeClippedSubviews={false} >
+            <Swiper  height={255} horizontal={true} removeClippedSubviews={false} dotStyle={{borderWidth:2,borderColor:'white'}} activeDotColor={"white"} >
               {this.props.restaurant.images.map((images, key) => {
                 return(
                     <View key={key} style={styles.swiperConatiner}>
