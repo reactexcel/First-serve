@@ -89,6 +89,8 @@ class UserHome extends Component {
       isLoadingRestaurants:true,
       isRestaurantNotiOn: {},
       isModalVisible: {},
+      tableId:'',
+      notif:true,
       isBookingModelVisible: false,
       currentTab: 0,
       bookingRestaurantKey: '',
@@ -114,6 +116,7 @@ class UserHome extends Component {
     const os = Platform.OS;
     FCM.on(FCMEvent.Notification, async (notif) => {
         // there are two parts of notif. notif.notification contains the notification payload, notif.data contains data payload
+        console.log(notif,'notification');
         if(notif.local_notification){
           //this is a local notification
         }
@@ -121,6 +124,11 @@ class UserHome extends Component {
           //app is open/resumed because user clicked banner
         }
         // await someAsyncCall();
+        if(this.state.tableId !==''  && this.state.tableId === notif.tableId){
+          this.setState({notif:false});
+        }else{
+          this.setState({notif:true});
+        }
         var table = {
           restaurantKey: notif.restaurantKey,
           startTime: notif.startTime,
@@ -136,8 +144,8 @@ class UserHome extends Component {
             break;
           }
         }
-        th.setState({bookingTable: table, bookingRestaurant: rest, bookingRestaurantKey: bookingRestaurantKey});
-        if(notif.restaurantKey !== undefined){
+        th.setState({bookingTable: table, bookingRestaurant: rest, bookingRestaurantKey: bookingRestaurantKey, tableId: notif.tableId});
+        if(notif.restaurantKey !== undefined && this.state.notif){
           th.setBookingModalVisible(true);
         }
 
