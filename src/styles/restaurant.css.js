@@ -19,6 +19,14 @@ const RestaurantCss = {
 		paddingBottom: 5
 	},
 
+	navBar: {
+    height: 60,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    backgroundColor: HEXCOLOR.lightBrown
+  },
+
 	rowContainerHCenter: {
 		flexDirection:'row',
 		justifyContent:'center'
