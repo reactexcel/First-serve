@@ -33,6 +33,7 @@ import styles from "../styles/common.css";
 import Database from "../firebase/database";
 import RestaurantListItem from "./restaurant_list_item"
 import FavourateItem from "./favourite_item"
+import RestaurantView from "./restaurant_view";
 import BookedItem from "./booked_item"
 import AvailableTable from "./available_table"
 import DismissKeyboard from "dismissKeyboard";
@@ -86,6 +87,7 @@ class UserHome extends Component {
       isNoFavourite: true,
       isNoBooked: true,
       restaurants: [],
+      tables: [],
       isLoadingRestaurants:true,
       isRestaurantNotiOn: {},
       isModalVisible: {},
@@ -107,6 +109,10 @@ class UserHome extends Component {
     this._setPax = this._setPax.bind(this);
     this.save = this.save.bind(this);
     this._setFavourite = this._setFavourite.bind(this);
+    this._openMapview = this._openMapview.bind(this);
+    this._setValue = this._setValue.bind(this);
+    this._setModalVisible = this._setModalVisible.bind(this);
+    this._setModalVisibleForViewResurant = this._setModalVisibleForViewResurant.bind(this);
     this.setBookingModalVisible = this.setBookingModalVisible.bind(this);
     this.book = this.book.bind(this);
 
@@ -198,15 +204,36 @@ class UserHome extends Component {
         var isNoFavourite = true;
         if(favourites.length > 0) isNoFavourite = false;
         console.log("favourites from listen user: ", favourites.length);
+
+        var bookedRestaurant = [];
+        for(i = 0; i < this.state.tables.length; i++){
+          var table = this.state.tables[i];
+          for(j = 0; j < this.state.restaurants.length; j++){
+            var restaurant = this.state.restaurants[j];
+            if(table.restaurantKey == restaurant._key){
+              bookedRestaurant.push({
+               restaurant: restaurant,
+               table: table
+             });
+            }
+          }
+        }
+
+        var isNoBooked = true;
+        if(bookedRestaurant.length > 0) isNoBooked = false;
+        var sourceB = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
+
         this.setState({
           isNoFavourite: isNoFavourite,
+          isNoBooked: isNoBooked,
           isLoadingRestaurants: isLoadingRestaurants,
           isRestaurantNotiOn: isRestaurantNotiOn,
           favourites: this.state.favourites,
           notificationOn: userSnap.val().notiOn,
           mobile: userSnap.val().phone_number ? userSnap.val().phone_number : '',
           pax: userSnap.val().pax ? userSnap.val().pax : '0',
-          favoriteDataSource: this.state.favoriteDataSource.cloneWithRows(favourites)
+          favoriteDataSource: this.state.favoriteDataSource.cloneWithRows(favourites),
+          bookedDataSource: sourceB.cloneWithRows(bookedRestaurant),
         });
       });
       const th = this;
@@ -243,6 +270,7 @@ class UserHome extends Component {
         th.setState({
           bookings:tables,
           isNoBooked: isNoBooked,
+          tables: tables,
           bookedDataSource: th.state.bookedDataSource.cloneWithRows(bookedRestaurant)
         });
       });
@@ -414,6 +442,27 @@ class UserHome extends Component {
             </View>
           </View>
         </ScrollView>:<View style={{flex:1,justifyContent:'center',flexDirection:'column',alignItems:'center'}}><Progress.Circle size={30} indeterminate={true} /></View>)}
+        {this.state.restaurants.map((restaurant, key) => {
+          console.log("Model Key", key);
+          return(
+            <Modal
+              key={key}
+              animationType="slide"
+              transparent={false}
+              visible={this.state.isModalVisible[restaurant._key] === true ? true : false}
+              onRequestClose={() => {this.setModalVisible(restaurant._key, false)}}>
+
+              <RestaurantView restaurant={restaurant}
+                setModalVisible={this._setModalVisible}
+                setValue={this._setValue}
+                isAdmin={false}
+                isRestaurantNotiOn={this.state.isRestaurantNotiOn}
+                setFavourite={this._setFavourite}
+                favourites={this.state.favourites}
+                openMap={this._openMapview}/>
+            </Modal>)
+          })
+        }
         <BottomNavigation
           labelColor="white"
           rippleColor="white"
@@ -503,11 +552,11 @@ class UserHome extends Component {
             isRestaurantNotiOn={this.state.isRestaurantNotiOn}
             favourites={this.state.favourites}
             isAdmin={false}
-            openMap={this._openMapview.bind(this)}
-            setValue={this._setValue.bind(this)}
+            openMap={this._openMapview}
+            setValue={this._setValue}
             setFavourite={this._setFavourite}
             isModelVisible={this.state.isModalVisible}
-            setModalVisible={this._setModalVisible.bind(this)} />
+            setModalVisible={this._setModalVisible} />
         );
     }
 
@@ -516,11 +565,11 @@ class UserHome extends Component {
         <FavourateItem restaurant={restaurant}
         isRestaurantNotiOn={this.state.isRestaurantNotiOn}
         favourites={this.state.favourites}
-        setValue={this._setValue.bind(this)}
-        openMap={this._openMapview.bind(this)}
+        setValue={this._setValue}
+        openMap={this._openMapview}
         isAdmin={false}
-        isModelVisible={this.state.isModalVisibleForViewResurant}
-        setModalVisible={this._setModalVisibleForViewResurant.bind(this)}
+        isModelVisible={this.state.isModalVisible}
+        setModalVisible={this._setModalVisible}
         setFavourite={this._setFavourite}/>
       );
     }
@@ -530,7 +579,7 @@ class UserHome extends Component {
         <BookedItem
         restaurant={bookedTable.restaurant}
         isRestaurantNotiOn={this.state.isRestaurantNotiOn}
-        setValue={this._setValue.bind(this)}
+        setValue={this._setValue}
         isAdmin={false}
         table={bookedTable.table}
         favourites={this.state.favourites}
@@ -538,8 +587,8 @@ class UserHome extends Component {
         isRestaurantNotiOn={this.state.isRestaurantNotiOn}
         openMap={this._openMapview.bind(this)}
         isAdmin={false}
-        isModelVisible={this.state.isModalVisibleForViewResurant}
-        setModalVisible={this._setModalVisibleForViewBookingResurant.bind(this)}
+        isModelVisible={this.state.isModalVisible}
+        setModalVisible={this._setModalVisible}
         setValue={this._setValue.bind(this)}
       />
       );
@@ -559,6 +608,8 @@ class UserHome extends Component {
         Database.setUserFavourites(id, this.state.userId, value);
         this.state.favourites[id] = value;
         var source = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
+        var sourceB = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
+        var sourceF = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
 
         var keys = Object.keys(this.state.favourites);
         var favourites = [];
@@ -568,11 +619,31 @@ class UserHome extends Component {
 
         var isNoFavourite = true;
         if(favourites.length > 0) isNoFavourite = false;
+
+        var bookedRestaurant = [];
+        for(i = 0; i < this.state.tables.length; i++){
+          var table = this.state.tables[i];
+          for(j = 0; j < this.state.restaurants.length; j++){
+            var restaurant = this.state.restaurants[j];
+            if(table.restaurantKey == restaurant._key){
+              bookedRestaurant.push({
+               restaurant: restaurant,
+               table: table
+             });
+            }
+          }
+        }
+
+        var isNoBooked = true;
+        if(bookedRestaurant.length > 0) isNoBooked = false;
+
         this.setState({
+          isNoBooked: isNoBooked,
           isNoFavourite: isNoFavourite,
           favourites: this.state.favourites,
           dataSource: source.cloneWithRows(this.state.restaurants),
-          favoriteDataSource: this.state.favoriteDataSource.cloneWithRows(favourites)
+          bookedDataSource: sourceB.cloneWithRows(bookedRestaurant),
+          favoriteDataSource: sourceF.cloneWithRows(favourites)
         });
     }
 
@@ -584,8 +655,8 @@ class UserHome extends Component {
         dataSource: source.cloneWithRows(this.state.restaurants)
       });
     }
-    _setModalVisibleForViewResurant(id,value){
 
+    _setModalVisibleForViewResurant(id,value){
       var source = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
       var keys = Object.keys(this.state.favourites);
       var favourites = [];
@@ -597,32 +668,12 @@ class UserHome extends Component {
       this.state.isModalVisibleForViewResurant[id] = value;
       console.log(this.state.isModalVisibleForViewResurant[id]);
       this.setState({
+        isNoFavourite: isNoFavourite,
         favoriteDataSource: source.cloneWithRows(favourites),
         isModalVisibleForViewResurant: this.state.isModalVisibleForViewResurant,
       });
-      if (true) {
-
-      }
     }
-    _setModalVisibleForViewBookingResurant(id,value){
-      var source = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
-      var keys = Object.keys(this.state.bookedDataSource);
-      var booking = [];
-      for(i = 0; i < this.state.restaurants.length; i++){
-        if(this.state.bookedDataSource._dataBlob.s1[0].restaurant._key === this.state.restaurants[i]._key) booking.push({restaurant:this.state.restaurants[i],table:this.state.bookedDataSource._dataBlob.s1[0].table});
-      }
-      var isNoFavourite = true;
-      if(booking.length > 0) isNoFavourite = false;
-      this.state.isModalVisibleForViewResurant[id] = value;
-      console.log(this.state.isModalVisibleForViewResurant[id]);
-      this.setState({
-        bookedDataSource: source.cloneWithRows(booking),
-        isModalVisibleForViewResurant: this.state.isModalVisibleForViewResurant,
-      });
-      if (true) {
 
-      }
-    }
     _openMapview(address){
       Linking.openURL('https://www.google.com/maps/search/?api=1&query='+ `${address}` );
     }
@@ -700,11 +751,31 @@ class UserHome extends Component {
         if(favourites.length > 0) isNoFavourite = false;
         console.log("favourites from restaurant listener: ", favourites.length);
 
+        var bookedRestaurant = [];
+        for(i = 0; i < this.state.tables.length; i++){
+          var table = this.state.tables[i];
+          for(j = 0; j < this.state.restaurants.length; j++){
+            var restaurant = this.state.restaurants[j];
+            if(table.restaurantKey == restaurant._key){
+              bookedRestaurant.push({
+               restaurant: restaurant,
+               table: table
+             });
+            }
+          }
+        }
+
+        var isNoBooked = true;
+        if(bookedRestaurant.length > 0) isNoBooked = false;
+
+        var sourceB = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
         this.setState({
+          isNoBooked: isNoBooked,
           isNoFavourite: isNoFavourite,
           restaurants: restaurants,
           bookingRestaurant: rest,
           dataSource: this.state.dataSource.cloneWithRows(restaurants),
+          bookedDataSource: sourceB.cloneWithRows(bookedRestaurant),
           favoriteDataSource: this.state.favoriteDataSource.cloneWithRows(favourites)
         });
       });
