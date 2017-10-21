@@ -93,7 +93,7 @@ class UserHome extends Component {
       isLoadingRestaurants:true,
       isRestaurantNotiOn: {},
       isModalVisible: {},
-      tableId:'',
+      tableId: '',
       notif:true,
       isBookingModelVisible: false,
       currentTab: 0,
@@ -135,7 +135,7 @@ class UserHome extends Component {
           //app is open/resumed because user clicked banner
         }
         // await someAsyncCall();
-        if(this.state.tableId !==''  && this.state.tableId === notif.tableId){
+        if(this.state.tableId !== ''  && this.state.tableId === notif.tableId){
           this.setState({notif:false});
         }else{
           this.setState({notif:true});
@@ -258,14 +258,17 @@ class UserHome extends Component {
       this.ref.orderByChild("bookedBy").equalTo(this.state.userId).on("value", function(snapshot) {
         var tables = [];
         snapshot.forEach((ch) => {
-          tables.push({
-            restaurantKey: ch.val().restaurantKey,
-            startTime: ch.val().startTime,
-            endTime: ch.val().endTime,
-            pax: ch.val().pax,
-            bookedBy: ch.val().bookedBy,
-            key: ch.key,
-          });
+          var curTime = new Date().getTime();
+          if(curTime < ch.val().endTime) {
+            tables.push({
+              restaurantKey: ch.val().restaurantKey,
+              startTime: ch.val().startTime,
+              endTime: ch.val().endTime,
+              pax: ch.val().pax,
+              bookedBy: ch.val().bookedBy,
+              key: ch.key,
+            });
+          }
         });
         var bookedRestaurant = [];
         for(i = 0; i < tables.length; i++){
@@ -750,7 +753,7 @@ class UserHome extends Component {
           th.setBookingModalVisible(false)
           th.setState({currentTab: 2});
         }else{
-          alert("Sorry, Table already booked.");
+          alert("Sorry, Table already booked or not available.");
           th.setState({isBookingModelVisible: false});
         }
         FCM.removeAllDeliveredNotifications();
@@ -828,12 +831,15 @@ class UserHome extends Component {
 
         var isNoBooked = true;
         if(bookedRestaurant.length > 0) isNoBooked = false;
+        var isLoadingRestaurants = true;
+        if(restaurants.length > 0) isLoadingRestaurants = false;
 
         var sourceB = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
         this.setState({
           isNoBooked: isNoBooked,
           isNoFavourite: isNoFavourite,
           restaurants: restaurants,
+          isLoadingRestaurants: isLoadingRestaurants,
           bookingRestaurant: rest,
           dataSource: this.state.dataSource.cloneWithRows(restaurants),
           bookedDataSource: sourceB.cloneWithRows(bookedRestaurant),

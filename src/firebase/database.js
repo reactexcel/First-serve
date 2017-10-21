@@ -61,11 +61,15 @@ class Database {
       let userMobilePath = "/tables/" + tableKey;
       firebase.database().ref(userMobilePath).transaction((table) => {
         if(table){
+          var curTime = new Date().getTime();
+          debugger
           if(table.bookedBy){
             return;
-          }else{
+          }else if(curTime < table.endTime) {
             table.bookedBy = userId;
             return table;
+          }else{
+            return;
           }
         }else{
           return;

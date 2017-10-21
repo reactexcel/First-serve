@@ -188,7 +188,8 @@ class Landing extends Component {
                         });
                         let userMobilePath = "/users/" + user.user.uid;
                         firebase.database().ref(userMobilePath).update({
-                            isUser: true
+                            isUser: true,
+                            name: user.user.displayName
                         });
                       })
                       console.log(data);

@@ -677,6 +677,7 @@
 				F149F9F23E4B975982F38045 /* Pods */,
 				9E29336EDEE936FC4A09FFB4 /* Frameworks */,
 				EA68F630BE7A4A8798585356 /* Resources */,
+				8B884F731F9B6F7100F9E8FD /* Recovered References */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -749,6 +750,19 @@
 				8B8817D11F78DA4700A0EEF9 /* libRNDefaultPreference.a */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		8B884F731F9B6F7100F9E8FD /* Recovered References */ = {
+			isa = PBXGroup;
+			children = (
+				A12ED9A74D924BB7B473C1D7 /* libFirestack.a */,
+				9857F975918D4391AE302428 /* libRNVectorIcons.a */,
+				7CDC80D52ED748CA9EB841C2 /* libRCTFBSDK.a */,
+				27426CE66C704F8FAC854531 /* libRNFetchBlob.a */,
+				A7A742FE162F4729862DBB4C /* libRNDefaultPreference.a */,
+				EBDC38B50B164C698D3C6E93 /* libRNFIRMessaging.a */,
+			);
+			name = "Recovered References";
 			sourceTree = "<group>";
 		};
 		9E29336EDEE936FC4A09FFB4 /* Frameworks */ = {
