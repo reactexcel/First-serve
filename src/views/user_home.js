@@ -26,6 +26,8 @@ import {Icon} from "react-native-elements";
 import BottomNavigation, { Tab } from 'react-native-material-bottom-navigation'
 import MIcon from 'react-native-vector-icons/MaterialIcons'
 import {StackNavigator, NavigationActions,} from 'react-navigation';
+import DateTimePicker from 'react-native-modal-datetime-picker';
+import Moment from 'moment';
 
 import * as Progress from 'react-native-progress';
 import { HEXCOLOR } from "../styles/hexcolor.js";
@@ -91,6 +93,8 @@ class UserHome extends Component {
       isLoadingRestaurants:true,
       isRestaurantNotiOn: {},
       isModalVisible: {},
+      tableId:'',
+      notif:true,
       isBookingModelVisible: false,
       currentTab: 0,
       bookingRestaurantKey: '',
@@ -101,7 +105,10 @@ class UserHome extends Component {
       isLoading:true,
       saved:false,
       isModalVisibleForViewResurant:{},
-      favouritesModal:false
+      favouritesModal:false,
+      isDateTimePickerVisible:false,
+      UserNotifStartTime:'SET START TIME',
+      UserNotifEndTime:'SET END TIME'
     };
 
     this._setUserNoti = this._setUserNoti.bind(this);
@@ -120,6 +127,7 @@ class UserHome extends Component {
     const os = Platform.OS;
     FCM.on(FCMEvent.Notification, async (notif) => {
         // there are two parts of notif. notif.notification contains the notification payload, notif.data contains data payload
+        console.log(notif,'notification');
         if(notif.local_notification){
           //this is a local notification
         }
@@ -127,6 +135,11 @@ class UserHome extends Component {
           //app is open/resumed because user clicked banner
         }
         // await someAsyncCall();
+        if(this.state.tableId !==''  && this.state.tableId === notif.tableId){
+          this.setState({notif:false});
+        }else{
+          this.setState({notif:true});
+        }
         var table = {
           restaurantKey: notif.restaurantKey,
           startTime: notif.startTime,
@@ -142,10 +155,12 @@ class UserHome extends Component {
             break;
           }
         }
-        th.setState({bookingTable: table, bookingRestaurant: rest, bookingRestaurantKey: bookingRestaurantKey});
-        if(notif.restaurantKey !== undefined){
+        if(notif.startTime <= this.state.UserNotifEndTime && notif.endTime >= this.state.UserNotifStartTime){
+        th.setState({bookingTable: table, bookingRestaurant: rest, bookingRestaurantKey: bookingRestaurantKey, tableId: notif.tableId});
+        if(notif.restaurantKey !== undefined && this.state.notif){
           th.setBookingModalVisible(true);
         }
+      }
 
         if(os ==='ios'){
           //optional
@@ -232,8 +247,10 @@ class UserHome extends Component {
           notificationOn: userSnap.val().notiOn,
           mobile: userSnap.val().phone_number ? userSnap.val().phone_number : '',
           pax: userSnap.val().pax ? userSnap.val().pax : '0',
+          UserNotifStartTime: userSnap.val().UserNotifStartTime ? userSnap.val().UserNotifStartTime:'SET START TIME' ,
+          UserNotifEndTime: userSnap.val().UserNotifEndTime ? userSnap.val().UserNotifEndTime:'SET END TIME',
           favoriteDataSource: this.state.favoriteDataSource.cloneWithRows(favourites),
-          bookedDataSource: sourceB.cloneWithRows(bookedRestaurant),
+          bookedDataSource: sourceB.cloneWithRows(bookedRestaurant)
         });
       });
       const th = this;
@@ -432,7 +449,36 @@ class UserHome extends Component {
                     onChangeText={(mobile) => this._setMobile(mobile)}
                     value={this.state.mobile}/>
               </View>
+              <View style={{marginTop:10}} >
+              <Text style={{fontSize:16}} >Notification Time</Text>
+              <View style={[styles.bottomBorder,{flexDirection:'row', paddingLeft:5}]} >
+                  <TouchableHighlight
+                    onPress={() => this._showDateTimePicker(1)}
+                    underlayColor={HEXCOLOR.lightBrown}>
+                    <View >
+                      <Text style={{ fontSize: 16,fontWeight:'bold'}}>
+                        {this.state.UserNotifStartTime === 'SET START TIME' ? this.state.UserNotifStartTime : Moment(this.state.UserNotifStartTime).format('YYYY-MM-DD HH:mm')}
+                      </Text>
+                    </View>
+                  </TouchableHighlight>
+                  <Text style={{marginLeft:5,marginRight:5,fontSize:16}} >To</Text>
+                  <TouchableHighlight
+                    onPress={() => this._showDateTimePicker(2)}
+                    underlayColor={HEXCOLOR.lightBrown}>
+                    <View>
+                      <Text style={{ fontSize: 16,fontWeight:'bold'}}>
+                        {this.state.UserNotifEndTime === 'SET END TIME' ? this.state.UserNotifEndTime : Moment(this.state.UserNotifEndTime).format('YYYY-MM-DD HH:mm')}
+                      </Text>
+                    </View>
+                  </TouchableHighlight>
+                  <DateTimePicker
+                    isVisible={this.state.isDateTimePickerVisible}
+                    onConfirm={this._handleDatePicked}
+                    onCancel={this._hideDateTimePicker}
+                    mode='time'/>
+              </View>
             </View>
+          </View>
             <View style={[{paddingTop: 15}]}>
               <View style={{marginLeft: 60, marginRight: 60}}>
                 <Button onPress={()=>{this.save()}} style={{backgroundColor: '#122438'}} textStyle={{color: '#FFF', fontSize: 18}}>
@@ -500,6 +546,21 @@ class UserHome extends Component {
         })
     }
 
+    _showDateTimePicker = (openFor) => {this.setState({ timePickerFor: openFor, isDateTimePickerVisible: true})};
+
+    _hideDateTimePicker = () => this.setState({timePickerFor: 0, isDateTimePickerVisible: false });
+
+    _handleDatePicked = (date) => {
+      if(this.state.timePickerFor == 1 ){
+        this.setState({UserNotifStartTime: date.getTime() });
+      }else if(this.state.timePickerFor == 2 && ( this.state.UserNotifStartTime && date.getTime() > this.state.UserNotifStartTime ) ){
+        this.setState({UserNotifEndTime: date.getTime()});
+      }else{
+        alert("End time must be more than Start time.");
+      }
+      this._hideDateTimePicker();
+    };
+
     tabChanged(idx){
       console.log("currentTab", idx);
       const {setParams} = this.props.navigation;
@@ -533,7 +594,7 @@ class UserHome extends Component {
     save(){
       this.setState({isLoading:false,saved:true})
       if (this.state.mobile && this.state.pax) {
-        Database.setUserData(this.props.navigation.state.params.userId, this.state.pax, this.state.mobile).then(()=>{
+        Database.setUserData(this.props.navigation.state.params.userId, this.state.pax, this.state.mobile, this.state.UserNotifStartTime,this.state.UserNotifEndTime).then(()=>{
           this.setState({isLoading:true})
         });
       }else {
