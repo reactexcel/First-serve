@@ -595,18 +595,27 @@ class UserHome extends Component {
     }
 
     save(){
-      this.setState({isLoading:false,saved:true})
+      this.setState({isLoading: false, saved: true});
       if (this.state.mobile && this.state.pax) {
-        Database.setUserData(this.props.navigation.state.params.userId, this.state.pax, this.state.mobile, this.state.UserNotifStartTime,this.state.UserNotifEndTime).then(()=>{
-          this.setState({isLoading:true})
-        });
+        if(this.state.UserNotifStartTime >= this.state.UserNotifEndTime){
+          this.setState({isLoading: true})
+          if (Platform.OS === 'android') {
+            ToastAndroid.showWithGravity('Notification Start time should be less than End time.', ToastAndroid.SHORT, ToastAndroid.BOTTOM);
+          } else if (Platform.OS === 'ios') {
+            AlertIOS.alert('Notification Start time should be less than End time.');
+          }
+        }else{
+          Database.setUserData(this.props.navigation.state.params.userId, this.state.pax, this.state.mobile, this.state.UserNotifStartTime, this.state.UserNotifEndTime).then(()=>{
+            this.setState({isLoading:true})
+          });
+        }
       }else {
         this.setState({isLoading:true})
         if (Platform.OS === 'android') {
-        ToastAndroid.showWithGravity('Feild can not be empty ', ToastAndroid.SHORT, ToastAndroid.BOTTOM);
-      } else if (Platform.OS === 'ios') {
-        AlertIOS.alert('Feild can not be empty');
-      }
+          ToastAndroid.showWithGravity('Feild can not be empty ', ToastAndroid.SHORT, ToastAndroid.BOTTOM);
+        } else if (Platform.OS === 'ios') {
+          AlertIOS.alert('Feild can not be empty');
+        }
       }
     }
 
@@ -629,7 +638,7 @@ class UserHome extends Component {
         <FavourateItem restaurant={restaurant}
         isRestaurantNotiOn={this.state.isRestaurantNotiOn}
         favourites={this.state.favourites}
-        setValue={this._setValue}
+        setValue={this._setValue.bind(this)}
         openMap={this._openMapview}
         isAdmin={false}
         isModelVisible={this.state.isModalVisible}
@@ -642,18 +651,14 @@ class UserHome extends Component {
       return (
         <BookedItem
         restaurant={bookedTable.restaurant}
-        isRestaurantNotiOn={this.state.isRestaurantNotiOn}
-        setValue={this._setValue}
         isAdmin={false}
         table={bookedTable.table}
         favourites={this.state.favourites}
         setFavourite={this._setFavourite}
-        isRestaurantNotiOn={this.state.isRestaurantNotiOn}
         openMap={this._openMapview.bind(this)}
         isAdmin={false}
         isModelVisible={this.state.isModalVisible}
         setModalVisible={this._setModalVisible}
-        setValue={this._setValue.bind(this)}
       />
       );
     }
@@ -662,9 +667,22 @@ class UserHome extends Component {
         Database.setUserRestaurantNotiSetting(id, this.state.userId, value);
         this.state.isRestaurantNotiOn[id] = value;
         var source = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
+        var sourceF = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
+        var keys = Object.keys(this.state.favourites);
+        var favourites = [];
+        for(i = 0; i < this.state.restaurants.length; i++){
+          if(keys.indexOf(this.state.restaurants[i]._key) > -1 && this.state.favourites[this.state.restaurants[i]._key]) favourites.push(this.state.restaurants[i]);
+        }
+
+        var isNoFavourite = true;
+        if(favourites.length > 0) isNoFavourite = false;
+
         this.setState({
+          isNoFavourite: isNoFavourite,
+          favourites: this.state.favourites,
           isRestaurantNotiOn: this.state.isRestaurantNotiOn,
-          dataSource: source.cloneWithRows(this.state.restaurants)
+          dataSource: source.cloneWithRows(this.state.restaurants),
+          favoriteDataSource: sourceF.cloneWithRows(favourites)
         });
     }
 
