@@ -85,7 +85,7 @@ class AvailableTable extends Component {
             </View>
             <View style={[{paddingTop: 15}]}>
               <Text style={{fontSize: 18}}>{this.props.table.pax} people</Text>
-              <Text style={{fontSize: 18}}>{Moment(parseInt(this.props.table.startTime)).format('HH:mm')} - {Moment(parseInt(this.props.table.endTime)).format('HH:mm')}</Text>
+              <Text style={{fontSize: 18}}>{Moment(parseInt(this.props.table.startTime)).format('HH:mm')} - {Moment(parseInt(this.props.table.endTime)).format('HH:mm')} for {Moment(parseInt(this.props.table.startTime)).format('MMM Do YYYY')} </Text>
             </View>
             <View style={[{paddingTop: 15}]}>
               <View style={{marginLeft: 60, marginRight: 60}}>
