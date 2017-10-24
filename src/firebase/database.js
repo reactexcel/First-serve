@@ -62,7 +62,7 @@ class Database {
       firebase.database().ref(userMobilePath).transaction((table) => {
         if(table){
           var curTime = new Date().getTime();
-          debugger
+          // debugger
           if(table.bookedBy){
             return;
           }else if(curTime < table.endTime) {

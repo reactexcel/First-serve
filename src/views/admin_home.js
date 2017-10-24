@@ -28,7 +28,6 @@ import DefaultPreference from 'react-native-default-preference';
 import * as firebase from "firebase";
 import * as Helper from '../helper/helper';
 
-console.log(Helper);
 class AdminHome extends Component {
     static navigationOptions = ({ navigation }) => {
       const {state} = navigation;

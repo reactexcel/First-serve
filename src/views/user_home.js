@@ -767,7 +767,7 @@ class UserHome extends Component {
       const th = this;
       Database.bookTable(this.state.userId, this.state.bookingTable.key, function(isBooked){
         if(isBooked){
-          alert("Your table has been booked.");
+          alert("Your Table has been booked for Mention Date.");
           th.setBookingModalVisible(false)
           th.setState({currentTab: 2});
         }else{
