@@ -47,17 +47,22 @@ class Landing extends Component {
     const th = this;
 
     DefaultPreference.getMultiple(['userType', 'uid', 'name', 'photoUrl']).then(function(value) {
+      let restaurantPath = "/restaurants/" + value[1];
+      firebase.database().ref(restaurantPath).once('value').then(function(child){
       var routeName = null;
       var title = "Restaurants";
       if(value[0] === 'user'){
         routeName = 'UHome';
       }else if (value[0] === 'restaurant') {
+        child.forEach(function(childSnapshot) {
+            var key = childSnapshot.key;
+            var childData = childSnapshot.val();
+            title = childData.name;
+        });
         routeName = 'RHome';
-        title = "Restaurant";
       }else if (value[0] === 'admin') {
         routeName = 'AHome';
       }
-
       if(routeName){
         console.log("componentWillMount routeName called.");
         const resetAction = NavigationActions.reset({
@@ -112,35 +117,45 @@ class Landing extends Component {
 
         this.unsubscribe = firebase.auth().onAuthStateChanged(function(user) {
           if (user) {
-            console.log('User details: ', user);
             let userMobilePath = "/users/" + user.uid;
+            let restaurantPath = "/restaurants/" + user.uid;
             firebase.database().ref(userMobilePath).on('value', (snapshot) => {
-              let routeName = null;
-              let title = "Restaurants";
-              if (snapshot.exists() && snapshot.val().isAdmin) {
-                routeName = 'AHome';
-              }else if (snapshot.exists() && snapshot.val().isRestaurantAdmin) {
-                routeName = 'RHome';
-                title = "Restaurant";
-              }
-              if(routeName){
-                const resetAction = NavigationActions.reset({
-                  index: 0,
-                  actions: [NavigationActions.navigate({routeName: routeName, params: {userId: user.uid, title: title}})]
-                })
-                firestack.auth.unlistenForAuth();
-                if (th.unsubscribe) {
-                  th.unsubscribe();
-                  th.unsubscribe = null;
+              firebase.database().ref(restaurantPath).once('value').then(function(child){
+                let routeName = null;
+                let title = "Restaurants";
+                child.forEach(function(childSnapshot) {
+                    var key = childSnapshot.key;
+                    var childData = childSnapshot.val();
+                    title = childData.name;
+                });
+                if (snapshot.exists() && snapshot.val().isAdmin) {
+                  console.log("AHome");
+                  routeName = 'AHome';
+                }else if (snapshot.exists() && snapshot.val().isRestaurantAdmin) {
+                  routeName = 'RHome';
+                  console.log("rhome");
                 }
-                th.props.navigation.dispatch(resetAction)
-              }
+                if(routeName){
+                  console.log("routeName",routeName);
+                  const resetAction = NavigationActions.reset({
+                    index: 0,
+                    actions: [NavigationActions.navigate({routeName: routeName, params: {userId: user.uid, title: title}})]
+                  })
+                  firestack.auth.unlistenForAuth();
+                  if (th.unsubscribe) {
+                    th.unsubscribe();
+                    th.unsubscribe = null;
+                  }
+                  th.props.navigation.dispatch(resetAction)
+                }
+              });
             });
           }
         });
         th.setState({loading: false});
       }
     });
+  });
   }
 
   componentDidMount(){

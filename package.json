@@ -1,40 +1,40 @@
 {
-	"name": "FirstServed",
-	"version": "0.0.1",
-	"private": true,
-	"scripts": {
-		"start": "node node_modules/react-native/local-cli/cli.js start",
-		"test": "jest"
-	},
-	"dependencies": {
-		"apsl-react-native-button": "^3.1.0",
-		"firebase": "^4.3.0",
-		"moment": "^2.18.1",
-		"react": "16.0.0-alpha.12",
-		"react-native": "0.48.1",
-		"react-native-default-preference": "^1.1.1",
-		"react-native-elements": "^0.16.0",
-		"react-native-fbsdk": "^0.6.1",
-		"react-native-fcm": "^10.0.0",
-		"react-native-fetch-blob": "^0.10.8",
-		"react-native-firestack": "^2.3.9",
-		"react-native-image-picker": "^0.26.7",
-		"react-native-material-bottom-navigation": "^0.5.1",
-		"react-native-modal-datetime-picker": "^4.11.0",
-		"react-native-phone-call": "^1.0.4",
-		"react-native-progress": "^3.4.0",
-		"react-native-swiper": "^1.5.13",
-		"react-native-textinput-effects": "^0.4.0",
-		"react-native-vector-icons": "^4.3.0",
-		"react-navigation": "^1.0.0-beta.11"
-	},
-	"devDependencies": {
-		"babel-jest": "21.0.0",
-		"babel-preset-react-native": "3.0.2",
-		"jest": "21.0.1",
-		"react-test-renderer": "16.0.0-alpha.12"
-	},
-	"jest": {
-		"preset": "react-native"
-	}
+  "name": "FirstServed",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "start": "node node_modules/react-native/local-cli/cli.js start",
+    "test": "jest"
+  },
+  "dependencies": {
+    "apsl-react-native-button": "^3.1.0",
+    "firebase": "^4.3.0",
+    "moment": "^2.18.1",
+    "react": "16.0.0-alpha.12",
+    "react-native": "0.48.1",
+    "react-native-default-preference": "^1.1.1",
+    "react-native-elements": "^0.16.0",
+    "react-native-fbsdk": "^0.6.1",
+    "react-native-fcm": "^10.0.0",
+    "react-native-fetch-blob": "^0.10.8",
+    "react-native-firestack": "^2.3.9",
+    "react-native-image-picker": "^0.26.7",
+    "react-native-material-bottom-navigation": "^0.5.1",
+    "react-native-modal-datetime-picker": "^4.11.0",
+    "react-native-phone-call": "^1.0.4",
+    "react-native-progress": "^3.4.0",
+    "react-native-swiper": "^1.5.13",
+    "react-native-textinput-effects": "^0.4.0",
+    "react-native-vector-icons": "^4.3.0",
+    "react-navigation": "^1.0.0-beta.11"
+  },
+  "devDependencies": {
+    "babel-jest": "21.0.0",
+    "babel-preset-react-native": "3.0.2",
+    "jest": "21.0.1",
+    "react-test-renderer": "16.0.0-alpha.12"
+  },
+  "jest": {
+    "preset": "react-native"
+  }
 }

@@ -10,7 +10,8 @@ import {
     TouchableHighlight,
     ListView,
     Modal,
-    Alert
+    Alert,
+    ScrollView
 } from "react-native";
 
 import Button from "apsl-react-native-button";
@@ -31,7 +32,7 @@ class RestaurantHome extends Component {
   static navigationOptions  = ({navigation}) => {
     const {params = {}} = navigation.state;
     return {
-      title: 'Restaurant',
+      title: params.title,
       headerTitleStyle :{alignSelf: 'center', color: 'white'},
       headerStyle:{
           backgroundColor: HEXCOLOR.lightBrown,
@@ -249,6 +250,7 @@ class RestaurantHome extends Component {
     }else{
       return (
         <View style={CommonStyle.container}>
+          <ScrollView>
           <Modal
             animationType="slide"
             transparent={false}
@@ -331,6 +333,7 @@ class RestaurantHome extends Component {
             underlayColor={HEXCOLOR.pureWhite}>
               <Text style={[CommonStyle.publishText]}>Publish</Text>
           </TouchableHighlight>
+          </ScrollView>
         </View>
       );
     }
