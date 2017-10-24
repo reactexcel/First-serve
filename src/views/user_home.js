@@ -13,7 +13,7 @@ import {
     Image,
     TextInput,
     ScrollView,
-    Picker,
+    // Picker,
     Platform,
     ToastAndroid,
     AlertIOS,
@@ -28,7 +28,10 @@ import MIcon from 'react-native-vector-icons/MaterialIcons'
 import {StackNavigator, NavigationActions,} from 'react-navigation';
 import DateTimePicker from 'react-native-modal-datetime-picker';
 import Moment from 'moment';
+import Picker from 'react-native-wheel-picker';
+var PickerItem = Picker.Item;
 
+import WheelPicker from '../components/wheelPicker'
 import * as Progress from 'react-native-progress';
 import { HEXCOLOR } from "../styles/hexcolor.js";
 import styles from "../styles/common.css";
@@ -108,7 +111,10 @@ class UserHome extends Component {
       favouritesModal:false,
       isDateTimePickerVisible:false,
       UserNotifStartTime:'SET START TIME',
-      UserNotifEndTime:'SET END TIME'
+      UserNotifEndTime:'SET END TIME',
+      itemList: ['0','1', '2', '3', '4', '5', '6', '7', '8'],
+      isOpenWheelPicker:false,
+      selectedMember:2,
     };
 
     this._setUserNoti = this._setUserNoti.bind(this);
@@ -324,7 +330,22 @@ class UserHome extends Component {
     Database.listenUserStop();
     this.ref.orderByChild("bookedBy").equalTo(this.state.userId).off("value");
   }
+    onPikcerSelect(index) {
+      this.setState({
+        selectedindex: index,
+      })
+    }
 
+    onItemSelect() {
+      this.setState({selectedMember: this.state.selectedindex})
+      this.setState({isOpenWheelPicker: false});
+    }
+    onCancel() {
+      this.setState({isOpenWheelPicker: false});
+    }
+    onSelectWheeler(value){
+      this.setState({isOpenWheelPicker: value});
+    }
   render() {
     // console.log(this.state.isBookingModelVisible);
     const buttonName = (this.state.saved  ? "Saved" : "Save Changes" )
@@ -341,6 +362,21 @@ class UserHome extends Component {
             table={this.state.bookingTable}
             setModalVisible={this.setBookingModalVisible}
             bookTable={this.book}/>
+        </Modal>
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={this.state.isOpenWheelPicker}
+          onRequestClose={() => {this.onSelectWheeler(false)}}>
+
+          <WheelPicker
+            itemList={this.state.itemList}
+            selectedMember={this.state.selectedMember}
+            setModalVisible={this.setBookingModalVisible}
+            onPikcerSelect={(index)=>{this.onPikcerSelect(index)}}
+            onItemSelect={()=>this.onItemSelect()}
+            onCancel={()=>this.onCancel()}
+            />
         </Modal>
         {this.state.currentTab == 0 && <View style={styles.container}>
           {/*<View style={[styles.notiView, styles.bottomBorder]}>
@@ -423,22 +459,14 @@ class UserHome extends Component {
                   type='font-awesome'
                   color='#000'/>
                   <Text style={{color: '#626262', fontSize: 16, paddingLeft: 10}}>Table for</Text>
-                  <Picker
-                    style={{width:80  ,borderWidth:1}}
-                    selectedValue={this.state.pax}
-                    onValueChange={(itemValue, itemIndex) => this.setState({pax: itemValue})}>
-                    <Picker.Item  label="0" value="0" />
-                    <Picker.Item  label="1" value="1" />
-                    <Picker.Item  label="2" value="2" />
-                    <Picker.Item  label="3" value="3" />
-                    <Picker.Item  label="4" value="4" />
-                    <Picker.Item  label="5" value="5" />
-                    <Picker.Item  label="6" value="6" />
-                    <Picker.Item  label="7" value="7" />
-                    <Picker.Item  label="8" value="8" />
-                    <Picker.Item  label="9" value="9" />
-                    <Picker.Item  label="10" value="10" />
-                  </Picker>
+                  <TouchableHighlight onPress={()=>{this.onSelectWheeler(true)}}>
+                    <View style={{flexDirection:'row',marginRight:3}}>
+                      <Text style={{marginLeft:8, marginRight:5 }}>
+                        {this.state.selectedMember}
+                      </Text>
+                      <Icon name='sort-desc' size={12} style={{marginTop:1}} type='font-awesome' color='#626262'/>
+                    </View>
+                  </TouchableHighlight>
                   <Text> people</Text>
               </View>
               <View style={[styles.rowContainer, styles.bottomBorder, {paddingTop: 5, justifyContent: 'flex-start'}]}>
@@ -744,7 +772,6 @@ class UserHome extends Component {
     setBookingModalVisible(value){
       this.setState({isBookingModelVisible: value});
     }
-
     book(){
       const th = this;
       Database.bookTable(this.state.userId, this.state.bookingTable.key, function(isBooked){
