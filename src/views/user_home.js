@@ -103,7 +103,6 @@ class UserHome extends Component {
       bookingRestaurantKey: '',
       bookingTable: {pax: 2, startTime: 1489829490000, endTime: 1489829490000},
       bookingRestaurant: {images: [], name: 'rsgdvad', booking_message: 'vad  waefa asf', address: 'kjnvkqwneu asjn aqwegj asg'},
-      pax: 2,
       mobile: '',
       isLoading:true,
       saved:false,
@@ -114,6 +113,7 @@ class UserHome extends Component {
       UserNotifEndTime:'SET END TIME',
       itemList: ['0','1', '2', '3', '4', '5', '6', '7', '8'],
       isOpenWheelPicker:false,
+      selectedindex:2,
       selectedMember:2,
     };
 
@@ -252,7 +252,7 @@ class UserHome extends Component {
           favourites: this.state.favourites,
           notificationOn: userSnap.val().notiOn,
           mobile: userSnap.val().phone_number ? userSnap.val().phone_number : '',
-          pax: userSnap.val().pax ? userSnap.val().pax : '0',
+          selectedMember: userSnap.val().pax ? userSnap.val().pax : '0',
           UserNotifStartTime: userSnap.val().UserNotifStartTime ? userSnap.val().UserNotifStartTime:'SET START TIME' ,
           UserNotifEndTime: userSnap.val().UserNotifEndTime ? userSnap.val().UserNotifEndTime:'SET END TIME',
           favoriteDataSource: this.state.favoriteDataSource.cloneWithRows(favourites),
@@ -624,8 +624,9 @@ class UserHome extends Component {
 
     save(){
       this.setState({isLoading:false,saved:true})
-      if (this.state.mobile && this.state.pax) {
-        Database.setUserData(this.props.navigation.state.params.userId, this.state.pax, this.state.mobile, this.state.UserNotifStartTime,this.state.UserNotifEndTime).then(()=>{
+      if (this.state.mobile && this.state.selectedMember) {
+        console.log(this.state.selectedMember,"selectedMember");
+        Database.setUserData(this.props.navigation.state.params.userId, this.state.selectedMember, this.state.mobile, this.state.UserNotifStartTime,this.state.UserNotifEndTime).then(()=>{
           this.setState({isLoading:true})
         });
       }else {
