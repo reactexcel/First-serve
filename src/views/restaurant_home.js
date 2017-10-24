@@ -8,7 +8,9 @@ import {
     View,
     StyleSheet,
     TouchableHighlight,
-    ListView
+    ListView,
+    Modal,
+    Alert
 } from "react-native";
 
 import Button from "apsl-react-native-button";
@@ -23,6 +25,7 @@ import * as Progress from 'react-native-progress';
 import {Icon} from "react-native-elements";
 import Moment from 'moment';
 import * as firebase from "firebase";
+import TableTypeListItem from "./table_type_item_list";
 
 class RestaurantHome extends Component {
   static navigationOptions  = ({navigation}) => {
@@ -53,12 +56,23 @@ class RestaurantHome extends Component {
   };
   constructor(props) {
     super(props);
+    const dataSource = new ListView.DataSource({
+        rowHasChanged: (row1, row2) => row1 !== row2,
+    });
     const aDataSource = new ListView.DataSource({rowHasChanged: (row1, row2) => {
-      return (row1.startTime !== row2.startTime || row1.endTime !== row2.endTime || row1.bookedBy !== row2.bookedBy);
+      return (row1.startTime !== row2.startTime ||
+        row1.endTime !== row2.endTime ||
+        row1.bookedBy !== row2.bookedBy ||
+        row1.shouldShowName !== row2.shouldShowName
+      );
     }});
 
     const bDataSource = new ListView.DataSource({rowHasChanged: (row1, row2) => {
-      return (row1.startTime !== row2.startTime || row1.endTime !== row2.endTime || row1.bookedBy !== row2.bookedBy);
+      return (row1.startTime !== row2.startTime ||
+        row1.endTime !== row2.endTime ||
+        row1.bookedBy !== row2.bookedBy ||
+        row1.shouldShowName !== row2.shouldShowName
+      );
     }});
 
     this.state = {
@@ -71,6 +85,8 @@ class RestaurantHome extends Component {
       waitingListCount: 0,
       availableTables: [],
       bookedTables: [],
+      isModalVisible: false,
+      dataSource: dataSource.cloneWithRows([]),
       availableTablesDb: aDataSource.cloneWithRows([]),
       bookedTablesDb: bDataSource.cloneWithRows([]),
       curTime: Moment(new Date()).format('MMM DD YYYY, HH:mm')
@@ -79,6 +95,8 @@ class RestaurantHome extends Component {
     this.openPublish = this.openPublish.bind(this);
     this.renderTable = this.renderTable.bind(this);
     this.deleteTable = this.deleteTable.bind(this);
+    this.setModalVisible = this.setModalVisible.bind(this);
+    this._toogleNamePhone = this._toogleNamePhone.bind(this);
   }
 
   componentWillMount(){
@@ -110,52 +128,77 @@ class RestaurantHome extends Component {
       this.setState({restaurant: restaurant, restaurantKey: restaurant._key, progress: false});
 
       const th = this;
-      if(!this.state.watchOnTables){
-        this.ref.orderByChild("restaurantKey").equalTo(this.state.restaurantKey).on("value", function(snapshot) {
-          var aTables = [];
-          var bTables = [];
-          snapshot.forEach((ch) => {
-            if(ch.val().bookedBy){
-              bTables.push({
-                restaurantKey: ch.val().restaurantKey,
-                startTime: ch.val().startTime,
-                bookedBy: ch.val().bookedBy,
-                endTime: ch.val().endTime,
-                people: ch.val().pax,
-                key: ch.key
-              });
-            }else{
-              aTables.push({
-                restaurantKey: ch.val().restaurantKey,
-                startTime: ch.val().startTime,
-                endTime: ch.val().endTime,
-                people: ch.val().pax,
-                key: ch.key
-              });
-            }
-          });
-          th.setState({
-            availableTablesDb: th.state.availableTablesDb.cloneWithRows(aTables),
-            bookedTablesDb: th.state.bookedTablesDb.cloneWithRows(bTables)
-          });
-        });
-        this.setState({watchOnTables: true});
-      }
+
       if(!this.state.watchOnWaitingList){
         this.userRef.orderByChild("restaurants_noti" + "/" + this.state.restaurantKey + "/notiOn").equalTo(true).on("value", function(snapshot) {
           var waitingListCount = 0;
           var users = snapshot.val();
           var keys = Object.keys(users);
+          var tableTypes = {};
           for(i = 0; i < keys.length; i++){
             var u = users[keys[i]];
             waitingListCount++;
+            if(!u.pax) u.pax = '0';
+            if(tableTypes[u.pax]){
+              tableTypes[u.pax] += 1;
+            }else{
+              tableTypes[u.pax] = 1;
+            }
             if(u.notificationId){
               // waitingListCount++;
             }
           }
-          th.setState({waitingListCount: waitingListCount});
+          var tableTypes1 = [];
+          keys = Object.keys(tableTypes);
+          for(i = 0; i < keys.length; i++){
+            tableTypes1.push({tableType: keys[i], noOfUsers: tableTypes[keys[i]]})
+          }
+          th.setState({
+            users: users,
+            dataSource: th.state.dataSource.cloneWithRows(tableTypes1),
+            waitingListCount: waitingListCount
+          });
         });
         this.setState({watchOnWaitingList: true});
+      }
+
+      if(!this.state.watchOnTables){
+        this.ref.orderByChild("restaurantKey").equalTo(this.state.restaurantKey).on("value", function(snapshot) {
+          var aTables = [];
+          var bTables = [];
+          snapshot.forEach((ch) => {
+            var curTime = new Date().getTime();
+            if(curTime < ch.val().endTime) {
+              if(ch.val().bookedBy){
+                bTables.push({
+                  restaurantKey: ch.val().restaurantKey,
+                  startTime: ch.val().startTime,
+                  bookedBy: ch.val().bookedBy,
+                  endTime: ch.val().endTime,
+                  people: ch.val().pax,
+                  shouldShowName: true,
+                  bookedBy: th.state.users[ch.val().bookedBy].name,
+                  bookedByPhone: th.state.users[ch.val().bookedBy].phone_number,
+                  key: ch.key
+                });
+              }else{
+                aTables.push({
+                  restaurantKey: ch.val().restaurantKey,
+                  startTime: ch.val().startTime,
+                  endTime: ch.val().endTime,
+                  people: ch.val().pax,
+                  key: ch.key
+                });
+              }
+            }
+          });
+          th.setState({
+            bookedTables: bTables,
+            availableTablesDb: th.state.availableTablesDb.cloneWithRows(aTables),
+            bookedTablesDb: th.state.bookedTablesDb.cloneWithRows(bTables)
+          });
+        });
+        this.setState({watchOnTables: true});
       }
     });
   }
@@ -190,6 +233,10 @@ class RestaurantHome extends Component {
     });
   }
 
+  setModalVisible(value){
+    this.setState({isModalVisible: value});
+  }
+
   render() {
     if(this.state.progress){
       return(
@@ -202,6 +249,40 @@ class RestaurantHome extends Component {
     }else{
       return (
         <View style={CommonStyle.container}>
+          <Modal
+            animationType="slide"
+            transparent={false}
+            visible={this.state.isModalVisible}
+            onRequestClose={() => {this.setModalVisible(false)}}>
+
+            <View style={{flex: 1, backgroundColor:  HEXCOLOR.black}}>
+              <View style={CommonStyle.navBar}>
+                <View style={CommonStyle.leftContainer}>
+                  <Text
+                    onPress={() => this.setModalVisible(false)}
+                    style={[CommonStyle.text, {fontSize: 22, color: 'white', textAlign: 'left', marginLeft: 10}]}>{'<'}</Text>
+                </View>
+                <Text style={[CommonStyle.navtext, {fontSize: 20, color: 'white'}]}>{this.state.restaurant.name}</Text>
+                <View style={[CommonStyle.rightContainer, {paddingRight: 15}]}>
+                  <TouchableHighlight
+                    onPress={() => this.setModalVisible(false)}>
+                    <View>
+                      <Icon
+                        name='close'
+                        type='font-awesome'
+                        color='white'/>
+                    </View>
+                  </TouchableHighlight>
+                </View>
+              </View>
+              <ListView
+                dataSource={this.state.dataSource}
+                enableEmptySections={true}
+                removeClippedSubviews={false}
+                renderRow={this._renderItem.bind(this)}
+                style={[CommonStyle.listView, {marginTop: 30}]}/>
+            </View>
+          </Modal>
           <View style={[CommonStyle.rowContainerLF, CommonStyle.bottomBorderBrown, {paddingTop: 30}]}>
             <View style={CommonStyle.headingLeft}><Text style={{color: HEXCOLOR.lightBrown}}>Available tables</Text></View>
             <View style={CommonStyle.headingRight}><Text style={{color: HEXCOLOR.lightBrown}}>{this.state.curTime}</Text></View>
@@ -210,7 +291,7 @@ class RestaurantHome extends Component {
             <ListView
               dataSource={this.state.availableTablesDb}
               enableEmptySections={true}
-              renderRow={this.renderTable}/>
+              renderRow={this.renderTable.bind(this)}/>
           </View>
           <View style={[CommonStyle.rowContainerLF, CommonStyle.bottomBorderBrown, {paddingTop: 10}]}>
             <View style={CommonStyle.headingLeft}><Text style={{color: HEXCOLOR.lightBrown}}>Booked tables</Text></View>
@@ -221,17 +302,27 @@ class RestaurantHome extends Component {
             <ListView
               dataSource={this.state.bookedTablesDb}
               enableEmptySections={true}
-              renderRow={this.renderBookedTable}/>
+              renderRow={this.renderBookedTable.bind(this)}/>
           </View>
           <View style={[CommonStyle.rowContainerLF, {paddingTop: 10}]}>
-            <Text style={{color: HEXCOLOR.pureWhite, fontSize: 16}}>Waiting List</Text>
+            <TouchableHighlight
+              onPress={() => this.setModalVisible(true)}
+              underlayColor={HEXCOLOR.pureWhite}>
+              <Text style={{color: HEXCOLOR.pureWhite, fontSize: 16}}>Waiting List</Text>
+            </TouchableHighlight>
           </View>
           <View style={[CommonStyle.rowContainerLF]}>
-            <Icon
-              name='cutlery'
-              type='font-awesome'
-              color={HEXCOLOR.pureWhite}/>
-            <Text style={{color: HEXCOLOR.pureWhite, fontSize: 16, paddingLeft: 10}}>{this.state.waitingListCount} People</Text>
+            <TouchableHighlight
+              onPress={() => this.setModalVisible(true)}
+              underlayColor={HEXCOLOR.pureWhite}>
+              <View style={[CommonStyle.rowContainerLF]}>
+                <Icon
+                  name='cutlery'
+                  type='font-awesome'
+                  color={HEXCOLOR.pureWhite}/>
+                <Text style={{color: HEXCOLOR.pureWhite, fontSize: 16, paddingLeft: 10}}>{this.state.waitingListCount} People</Text>
+              </View>
+            </TouchableHighlight>
           </View>
 
           <TouchableHighlight
@@ -245,11 +336,56 @@ class RestaurantHome extends Component {
     }
   }
 
+  _renderItem(tableType) {
+      return (
+          <TableTypeListItem tableType={tableType}/>
+      );
+  }
+
   deleteTable(tableKey){
-    Database.deleteTable(tableKey, function(res){
-      console.log('deleteTable', res);
+    Alert.alert(
+      'Table',
+      'Are you sure you want to delete this table?',
+      [
+        {text: 'Cancel', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
+        {text: 'Delete', onPress: () => {
+          Database.deleteTable(tableKey, function(res){
+            if(res == 'error'){
+              alert("Unable to delete table. Please try again.");
+            }else{
+              console.log("Delete table", "Table deleted.");
+            }
+          });
+        }},
+      ],
+      { cancelable: false }
+    )
+  }
+
+  _toogleNamePhone(tableKey, isBooked){
+    if(!isBooked) return;
+    var bTables = this.state.bookedTables;
+
+    for (var i = 0; i < bTables.length; i++) {
+      var tbl = bTables[i];
+      if(tbl.key == tableKey){
+        tbl.shouldShowName = !tbl.shouldShowName;
+        break;
+      }
+    }
+
+    const bDataSource = new ListView.DataSource({rowHasChanged: (row1, row2) => {
+      return (row1.startTime !== row2.startTime ||
+        row1.endTime !== row2.endTime ||
+        row1.bookedBy !== row2.bookedBy ||
+        row1.shouldShowName !== row2.shouldShowName
+      );
+    }});
+
+    this.setState({
+      bookedTables: bTables,
+      bookedTablesDb: bDataSource.cloneWithRows(bTables)
     });
-    console.log('deleteTable', '');
   }
 
   renderTable(table) {
@@ -264,6 +400,7 @@ class RestaurantHome extends Component {
     return (
       <TableListItem
         table={table}
+        toogleNamePhone={this._toogleNamePhone}
         deleteTable={this.deleteTable}
         isBooked={true} />
     )

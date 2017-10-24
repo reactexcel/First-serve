@@ -26,6 +26,8 @@ import {Icon} from "react-native-elements";
 import BottomNavigation, { Tab } from 'react-native-material-bottom-navigation'
 import MIcon from 'react-native-vector-icons/MaterialIcons'
 import {StackNavigator, NavigationActions,} from 'react-navigation';
+import DateTimePicker from 'react-native-modal-datetime-picker';
+import Moment from 'moment';
 
 import * as Progress from 'react-native-progress';
 import { HEXCOLOR } from "../styles/hexcolor.js";
@@ -33,6 +35,7 @@ import styles from "../styles/common.css";
 import Database from "../firebase/database";
 import RestaurantListItem from "./restaurant_list_item"
 import FavourateItem from "./favourite_item"
+import RestaurantView from "./restaurant_view";
 import BookedItem from "./booked_item"
 import AvailableTable from "./available_table"
 import DismissKeyboard from "dismissKeyboard";
@@ -86,9 +89,12 @@ class UserHome extends Component {
       isNoFavourite: true,
       isNoBooked: true,
       restaurants: [],
+      tables: [],
       isLoadingRestaurants:true,
       isRestaurantNotiOn: {},
       isModalVisible: {},
+      tableId: '',
+      notif:true,
       isBookingModelVisible: false,
       currentTab: 0,
       bookingRestaurantKey: '',
@@ -99,7 +105,10 @@ class UserHome extends Component {
       isLoading:true,
       saved:false,
       isModalVisibleForViewResurant:{},
-      favouritesModal:false
+      favouritesModal:false,
+      isDateTimePickerVisible:false,
+      UserNotifStartTime:'SET START TIME',
+      UserNotifEndTime:'SET END TIME'
     };
 
     this._setUserNoti = this._setUserNoti.bind(this);
@@ -107,6 +116,10 @@ class UserHome extends Component {
     this._setPax = this._setPax.bind(this);
     this.save = this.save.bind(this);
     this._setFavourite = this._setFavourite.bind(this);
+    this._openMapview = this._openMapview.bind(this);
+    this._setValue = this._setValue.bind(this);
+    this._setModalVisible = this._setModalVisible.bind(this);
+    this._setModalVisibleForViewResurant = this._setModalVisibleForViewResurant.bind(this);
     this.setBookingModalVisible = this.setBookingModalVisible.bind(this);
     this.book = this.book.bind(this);
 
@@ -114,6 +127,7 @@ class UserHome extends Component {
     const os = Platform.OS;
     FCM.on(FCMEvent.Notification, async (notif) => {
         // there are two parts of notif. notif.notification contains the notification payload, notif.data contains data payload
+        console.log(notif,'notification');
         if(notif.local_notification){
           //this is a local notification
         }
@@ -121,6 +135,11 @@ class UserHome extends Component {
           //app is open/resumed because user clicked banner
         }
         // await someAsyncCall();
+        if(this.state.tableId !== ''  && this.state.tableId === notif.tableId){
+          this.setState({notif:false});
+        }else{
+          this.setState({notif:true});
+        }
         var table = {
           restaurantKey: notif.restaurantKey,
           startTime: notif.startTime,
@@ -136,10 +155,12 @@ class UserHome extends Component {
             break;
           }
         }
-        th.setState({bookingTable: table, bookingRestaurant: rest, bookingRestaurantKey: bookingRestaurantKey});
-        if(notif.restaurantKey !== undefined){
+        if(notif.startTime <= this.state.UserNotifEndTime && notif.endTime >= this.state.UserNotifStartTime){
+        th.setState({bookingTable: table, bookingRestaurant: rest, bookingRestaurantKey: bookingRestaurantKey, tableId: notif.tableId});
+        if(notif.restaurantKey !== undefined && this.state.notif){
           th.setBookingModalVisible(true);
         }
+      }
 
         if(os ==='ios'){
           //optional
@@ -198,15 +219,38 @@ class UserHome extends Component {
         var isNoFavourite = true;
         if(favourites.length > 0) isNoFavourite = false;
         console.log("favourites from listen user: ", favourites.length);
+
+        var bookedRestaurant = [];
+        for(i = 0; i < this.state.tables.length; i++){
+          var table = this.state.tables[i];
+          for(j = 0; j < this.state.restaurants.length; j++){
+            var restaurant = this.state.restaurants[j];
+            if(table.restaurantKey == restaurant._key){
+              bookedRestaurant.push({
+               restaurant: restaurant,
+               table: table
+             });
+            }
+          }
+        }
+
+        var isNoBooked = true;
+        if(bookedRestaurant.length > 0) isNoBooked = false;
+        var sourceB = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
+
         this.setState({
           isNoFavourite: isNoFavourite,
+          isNoBooked: isNoBooked,
           isLoadingRestaurants: isLoadingRestaurants,
           isRestaurantNotiOn: isRestaurantNotiOn,
           favourites: this.state.favourites,
           notificationOn: userSnap.val().notiOn,
           mobile: userSnap.val().phone_number ? userSnap.val().phone_number : '',
           pax: userSnap.val().pax ? userSnap.val().pax : '0',
-          favoriteDataSource: this.state.favoriteDataSource.cloneWithRows(favourites)
+          UserNotifStartTime: userSnap.val().UserNotifStartTime ? userSnap.val().UserNotifStartTime:'SET START TIME' ,
+          UserNotifEndTime: userSnap.val().UserNotifEndTime ? userSnap.val().UserNotifEndTime:'SET END TIME',
+          favoriteDataSource: this.state.favoriteDataSource.cloneWithRows(favourites),
+          bookedDataSource: sourceB.cloneWithRows(bookedRestaurant)
         });
       });
       const th = this;
@@ -214,14 +258,17 @@ class UserHome extends Component {
       this.ref.orderByChild("bookedBy").equalTo(this.state.userId).on("value", function(snapshot) {
         var tables = [];
         snapshot.forEach((ch) => {
-          tables.push({
-            restaurantKey: ch.val().restaurantKey,
-            startTime: ch.val().startTime,
-            endTime: ch.val().endTime,
-            pax: ch.val().pax,
-            bookedBy: ch.val().bookedBy,
-            key: ch.key,
-          });
+          var curTime = new Date().getTime();
+          if(curTime < ch.val().endTime) {
+            tables.push({
+              restaurantKey: ch.val().restaurantKey,
+              startTime: ch.val().startTime,
+              endTime: ch.val().endTime,
+              pax: ch.val().pax,
+              bookedBy: ch.val().bookedBy,
+              key: ch.key,
+            });
+          }
         });
         var bookedRestaurant = [];
         for(i = 0; i < tables.length; i++){
@@ -243,6 +290,7 @@ class UserHome extends Component {
         th.setState({
           bookings:tables,
           isNoBooked: isNoBooked,
+          tables: tables,
           bookedDataSource: th.state.bookedDataSource.cloneWithRows(bookedRestaurant)
         });
       });
@@ -404,7 +452,36 @@ class UserHome extends Component {
                     onChangeText={(mobile) => this._setMobile(mobile)}
                     value={this.state.mobile}/>
               </View>
+              <View style={{marginTop:10}} >
+              <Text style={{fontSize:16}} >Notification Time</Text>
+              <View style={[styles.bottomBorder,{flexDirection:'row', paddingLeft:5}]} >
+                  <TouchableHighlight
+                    onPress={() => this._showDateTimePicker(1)}
+                    underlayColor={HEXCOLOR.lightBrown}>
+                    <View >
+                      <Text style={{ fontSize: 16,fontWeight:'bold'}}>
+                        {this.state.UserNotifStartTime === 'SET START TIME' ? this.state.UserNotifStartTime : Moment(this.state.UserNotifStartTime).format('YYYY-MM-DD HH:mm')}
+                      </Text>
+                    </View>
+                  </TouchableHighlight>
+                  <Text style={{marginLeft:5,marginRight:5,fontSize:16}} >To</Text>
+                  <TouchableHighlight
+                    onPress={() => this._showDateTimePicker(2)}
+                    underlayColor={HEXCOLOR.lightBrown}>
+                    <View>
+                      <Text style={{ fontSize: 16,fontWeight:'bold'}}>
+                        {this.state.UserNotifEndTime === 'SET END TIME' ? this.state.UserNotifEndTime : Moment(this.state.UserNotifEndTime).format('YYYY-MM-DD HH:mm')}
+                      </Text>
+                    </View>
+                  </TouchableHighlight>
+                  <DateTimePicker
+                    isVisible={this.state.isDateTimePickerVisible}
+                    onConfirm={this._handleDatePicked}
+                    onCancel={this._hideDateTimePicker}
+                    mode='time'/>
+              </View>
             </View>
+          </View>
             <View style={[{paddingTop: 15}]}>
               <View style={{marginLeft: 60, marginRight: 60}}>
                 <Button onPress={()=>{this.save()}} style={{backgroundColor: '#122438'}} textStyle={{color: '#FFF', fontSize: 18}}>
@@ -414,6 +491,27 @@ class UserHome extends Component {
             </View>
           </View>
         </ScrollView>:<View style={{flex:1,justifyContent:'center',flexDirection:'column',alignItems:'center'}}><Progress.Circle size={30} indeterminate={true} /></View>)}
+        {this.state.restaurants.map((restaurant, key) => {
+          console.log("Model Key", key);
+          return(
+            <Modal
+              key={key}
+              animationType="slide"
+              transparent={false}
+              visible={this.state.isModalVisible[restaurant._key] === true ? true : false}
+              onRequestClose={() => {this.setModalVisible(restaurant._key, false)}}>
+
+              <RestaurantView restaurant={restaurant}
+                setModalVisible={this._setModalVisible}
+                setValue={this._setValue}
+                isAdmin={false}
+                isRestaurantNotiOn={this.state.isRestaurantNotiOn}
+                setFavourite={this._setFavourite}
+                favourites={this.state.favourites}
+                openMap={this._openMapview}/>
+            </Modal>)
+          })
+        }
         <BottomNavigation
           labelColor="white"
           rippleColor="white"
@@ -451,6 +549,21 @@ class UserHome extends Component {
         })
     }
 
+    _showDateTimePicker = (openFor) => {this.setState({ timePickerFor: openFor, isDateTimePickerVisible: true})};
+
+    _hideDateTimePicker = () => this.setState({timePickerFor: 0, isDateTimePickerVisible: false });
+
+    _handleDatePicked = (date) => {
+      if(this.state.timePickerFor == 1 ){
+        this.setState({UserNotifStartTime: date.getTime() });
+      }else if(this.state.timePickerFor == 2 && ( this.state.UserNotifStartTime && date.getTime() > this.state.UserNotifStartTime ) ){
+        this.setState({UserNotifEndTime: date.getTime()});
+      }else{
+        alert("End time must be more than Start time.");
+      }
+      this._hideDateTimePicker();
+    };
+
     tabChanged(idx){
       console.log("currentTab", idx);
       const {setParams} = this.props.navigation;
@@ -482,18 +595,27 @@ class UserHome extends Component {
     }
 
     save(){
-      this.setState({isLoading:false,saved:true})
+      this.setState({isLoading: false, saved: true});
       if (this.state.mobile && this.state.pax) {
-        Database.setUserData(this.props.navigation.state.params.userId, this.state.pax, this.state.mobile).then(()=>{
-          this.setState({isLoading:true})
-        });
+        if(this.state.UserNotifStartTime >= this.state.UserNotifEndTime){
+          this.setState({isLoading: true})
+          if (Platform.OS === 'android') {
+            ToastAndroid.showWithGravity('Notification Start time should be less than End time.', ToastAndroid.SHORT, ToastAndroid.BOTTOM);
+          } else if (Platform.OS === 'ios') {
+            AlertIOS.alert('Notification Start time should be less than End time.');
+          }
+        }else{
+          Database.setUserData(this.props.navigation.state.params.userId, this.state.pax, this.state.mobile, this.state.UserNotifStartTime, this.state.UserNotifEndTime).then(()=>{
+            this.setState({isLoading:true})
+          });
+        }
       }else {
         this.setState({isLoading:true})
         if (Platform.OS === 'android') {
-        ToastAndroid.showWithGravity('Feild can not be empty ', ToastAndroid.SHORT, ToastAndroid.BOTTOM);
-      } else if (Platform.OS === 'ios') {
-        AlertIOS.alert('Feild can not be empty');
-      }
+          ToastAndroid.showWithGravity('Feild can not be empty ', ToastAndroid.SHORT, ToastAndroid.BOTTOM);
+        } else if (Platform.OS === 'ios') {
+          AlertIOS.alert('Feild can not be empty');
+        }
       }
     }
 
@@ -503,11 +625,11 @@ class UserHome extends Component {
             isRestaurantNotiOn={this.state.isRestaurantNotiOn}
             favourites={this.state.favourites}
             isAdmin={false}
-            openMap={this._openMapview.bind(this)}
-            setValue={this._setValue.bind(this)}
+            openMap={this._openMapview}
+            setValue={this._setValue}
             setFavourite={this._setFavourite}
             isModelVisible={this.state.isModalVisible}
-            setModalVisible={this._setModalVisible.bind(this)} />
+            setModalVisible={this._setModalVisible} />
         );
     }
 
@@ -517,10 +639,10 @@ class UserHome extends Component {
         isRestaurantNotiOn={this.state.isRestaurantNotiOn}
         favourites={this.state.favourites}
         setValue={this._setValue.bind(this)}
-        openMap={this._openMapview.bind(this)}
+        openMap={this._openMapview}
         isAdmin={false}
-        isModelVisible={this.state.isModalVisibleForViewResurant}
-        setModalVisible={this._setModalVisibleForViewResurant.bind(this)}
+        isModelVisible={this.state.isModalVisible}
+        setModalVisible={this._setModalVisible}
         setFavourite={this._setFavourite}/>
       );
     }
@@ -529,18 +651,14 @@ class UserHome extends Component {
       return (
         <BookedItem
         restaurant={bookedTable.restaurant}
-        isRestaurantNotiOn={this.state.isRestaurantNotiOn}
-        setValue={this._setValue.bind(this)}
         isAdmin={false}
         table={bookedTable.table}
         favourites={this.state.favourites}
         setFavourite={this._setFavourite}
-        isRestaurantNotiOn={this.state.isRestaurantNotiOn}
         openMap={this._openMapview.bind(this)}
         isAdmin={false}
-        isModelVisible={this.state.isModalVisibleForViewResurant}
-        setModalVisible={this._setModalVisibleForViewBookingResurant.bind(this)}
-        setValue={this._setValue.bind(this)}
+        isModelVisible={this.state.isModalVisible}
+        setModalVisible={this._setModalVisible}
       />
       );
     }
@@ -549,9 +667,22 @@ class UserHome extends Component {
         Database.setUserRestaurantNotiSetting(id, this.state.userId, value);
         this.state.isRestaurantNotiOn[id] = value;
         var source = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
+        var sourceF = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
+        var keys = Object.keys(this.state.favourites);
+        var favourites = [];
+        for(i = 0; i < this.state.restaurants.length; i++){
+          if(keys.indexOf(this.state.restaurants[i]._key) > -1 && this.state.favourites[this.state.restaurants[i]._key]) favourites.push(this.state.restaurants[i]);
+        }
+
+        var isNoFavourite = true;
+        if(favourites.length > 0) isNoFavourite = false;
+
         this.setState({
+          isNoFavourite: isNoFavourite,
+          favourites: this.state.favourites,
           isRestaurantNotiOn: this.state.isRestaurantNotiOn,
-          dataSource: source.cloneWithRows(this.state.restaurants)
+          dataSource: source.cloneWithRows(this.state.restaurants),
+          favoriteDataSource: sourceF.cloneWithRows(favourites)
         });
     }
 
@@ -559,6 +690,8 @@ class UserHome extends Component {
         Database.setUserFavourites(id, this.state.userId, value);
         this.state.favourites[id] = value;
         var source = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
+        var sourceB = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
+        var sourceF = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
 
         var keys = Object.keys(this.state.favourites);
         var favourites = [];
@@ -568,11 +701,31 @@ class UserHome extends Component {
 
         var isNoFavourite = true;
         if(favourites.length > 0) isNoFavourite = false;
+
+        var bookedRestaurant = [];
+        for(i = 0; i < this.state.tables.length; i++){
+          var table = this.state.tables[i];
+          for(j = 0; j < this.state.restaurants.length; j++){
+            var restaurant = this.state.restaurants[j];
+            if(table.restaurantKey == restaurant._key){
+              bookedRestaurant.push({
+               restaurant: restaurant,
+               table: table
+             });
+            }
+          }
+        }
+
+        var isNoBooked = true;
+        if(bookedRestaurant.length > 0) isNoBooked = false;
+
         this.setState({
+          isNoBooked: isNoBooked,
           isNoFavourite: isNoFavourite,
           favourites: this.state.favourites,
           dataSource: source.cloneWithRows(this.state.restaurants),
-          favoriteDataSource: this.state.favoriteDataSource.cloneWithRows(favourites)
+          bookedDataSource: sourceB.cloneWithRows(bookedRestaurant),
+          favoriteDataSource: sourceF.cloneWithRows(favourites)
         });
     }
 
@@ -584,8 +737,8 @@ class UserHome extends Component {
         dataSource: source.cloneWithRows(this.state.restaurants)
       });
     }
-    _setModalVisibleForViewResurant(id,value){
 
+    _setModalVisibleForViewResurant(id,value){
       var source = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
       var keys = Object.keys(this.state.favourites);
       var favourites = [];
@@ -597,32 +750,12 @@ class UserHome extends Component {
       this.state.isModalVisibleForViewResurant[id] = value;
       console.log(this.state.isModalVisibleForViewResurant[id]);
       this.setState({
+        isNoFavourite: isNoFavourite,
         favoriteDataSource: source.cloneWithRows(favourites),
         isModalVisibleForViewResurant: this.state.isModalVisibleForViewResurant,
       });
-      if (true) {
-
-      }
     }
-    _setModalVisibleForViewBookingResurant(id,value){
-      var source = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
-      var keys = Object.keys(this.state.bookedDataSource);
-      var booking = [];
-      for(i = 0; i < this.state.restaurants.length; i++){
-        if(this.state.bookedDataSource._dataBlob.s1[0].restaurant._key === this.state.restaurants[i]._key) booking.push({restaurant:this.state.restaurants[i],table:this.state.bookedDataSource._dataBlob.s1[0].table});
-      }
-      var isNoFavourite = true;
-      if(booking.length > 0) isNoFavourite = false;
-      this.state.isModalVisibleForViewResurant[id] = value;
-      console.log(this.state.isModalVisibleForViewResurant[id]);
-      this.setState({
-        bookedDataSource: source.cloneWithRows(booking),
-        isModalVisibleForViewResurant: this.state.isModalVisibleForViewResurant,
-      });
-      if (true) {
 
-      }
-    }
     _openMapview(address){
       Linking.openURL('https://www.google.com/maps/search/?api=1&query='+ `${address}` );
     }
@@ -638,7 +771,7 @@ class UserHome extends Component {
           th.setBookingModalVisible(false)
           th.setState({currentTab: 2});
         }else{
-          alert("Sorry, Table already booked.");
+          alert("Sorry, Table already booked or not available.");
           th.setState({isBookingModelVisible: false});
         }
         FCM.removeAllDeliveredNotifications();
@@ -700,11 +833,34 @@ class UserHome extends Component {
         if(favourites.length > 0) isNoFavourite = false;
         console.log("favourites from restaurant listener: ", favourites.length);
 
+        var bookedRestaurant = [];
+        for(i = 0; i < this.state.tables.length; i++){
+          var table = this.state.tables[i];
+          for(j = 0; j < this.state.restaurants.length; j++){
+            var restaurant = this.state.restaurants[j];
+            if(table.restaurantKey == restaurant._key){
+              bookedRestaurant.push({
+               restaurant: restaurant,
+               table: table
+             });
+            }
+          }
+        }
+
+        var isNoBooked = true;
+        if(bookedRestaurant.length > 0) isNoBooked = false;
+        var isLoadingRestaurants = true;
+        if(restaurants.length > 0) isLoadingRestaurants = false;
+
+        var sourceB = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
         this.setState({
+          isNoBooked: isNoBooked,
           isNoFavourite: isNoFavourite,
           restaurants: restaurants,
+          isLoadingRestaurants: isLoadingRestaurants,
           bookingRestaurant: rest,
           dataSource: this.state.dataSource.cloneWithRows(restaurants),
+          bookedDataSource: sourceB.cloneWithRows(bookedRestaurant),
           favoriteDataSource: this.state.favoriteDataSource.cloneWithRows(favourites)
         });
       });

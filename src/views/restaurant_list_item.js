@@ -29,23 +29,6 @@ class RestaurantListItem extends Component {
     if(this.props.restaurant.isAddButton !== true){
       return (
         <View style={styles.listItem}>
-          <Modal
-            animationType="slide"
-            transparent={false}
-            visible={this.props.isModelVisible[this.props.restaurant._key] === true ? true : false}
-            onRequestClose={() => {this.props.setModalVisible(this.props.restaurant._key, false)}}>
-
-            <RestaurantView restaurant={this.props.restaurant}
-              setModalVisible={this.props.setModalVisible}
-              setValue={this.props.setValue}
-              isAdmin={this.props.isAdmin}
-              isRestaurantNotiOn={this.props.isRestaurantNotiOn}
-              setFavourite={this.props.setFavourite}
-              favourites={this.props.favourites}
-              openMap={this.props.openMap}
-              editRestaurant={this.props.editRestaurant}
-              deleteRestaurant={this.props.deleteRestaurant}/>
-          </Modal>
           <View style={{flex: 1, borderBottomWidth: 1}}>
             <View style={styles.rowContainer}>
               <TouchableHighlight

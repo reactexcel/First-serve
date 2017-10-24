@@ -73,6 +73,7 @@ class PublishTable extends Component {
       return;
     }
     var table = {
+      restAdmin: this.state.userId,
       restaurantKey: this.state.restaurantKey,
       pax: this.state.people,
       startTime: this.state.startTime,

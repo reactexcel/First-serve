@@ -21,14 +21,31 @@ class TableListItem extends Component {
       <View style={styles.listItem}>
         <View style={styles.rowContainerLF}>
           <View style={styles.headingLeft}>
-            <Text style={{color: HEXCOLOR.pureWhite, fontSize: 18}}>
-              {this.props.table.people} people
-            </Text>
+            <TouchableHighlight
+              onPress={() => this.props.toogleNamePhone(this.props.table.key, this.props.isBooked)}
+              underlayColor='#98866F'>
+              <Text style={{color: HEXCOLOR.pureWhite, fontSize: 18}}>
+                {this.props.table.people} people
+              </Text>
+            </TouchableHighlight>
           </View>
+          {this.props.isBooked && <View style={{flexDirection: 'row', flex: 1, justifyContent: 'center'}}>
+            <TouchableHighlight
+              onPress={() => this.props.toogleNamePhone(this.props.table.key, this.props.isBooked)}
+              underlayColor='#98866F'>
+              <Text style={{color: HEXCOLOR.pureWhite, fontSize: 14}}>
+                {this.props.table.shouldShowName ? this.props.table.bookedBy : this.props.table.bookedByPhone}
+              </Text>
+            </TouchableHighlight>
+          </View>}
           <View style={{flexDirection: 'row', flex: 1, justifyContent: 'flex-end'}}>
-            <Text style={{color: HEXCOLOR.pureWhite, fontSize: 18}}>
-              {Moment(this.props.table.startTime).format('HH:mm')}-{Moment(this.props.table.endTime).format('HH:mm')}
-            </Text>
+            <TouchableHighlight
+              onPress={() => this.props.toogleNamePhone(this.props.table.key, this.props.isBooked)}
+              underlayColor='#98866F'>
+              <Text style={{color: HEXCOLOR.pureWhite, fontSize: 18}}>
+                {Moment(this.props.table.startTime).format('HH:mm')}-{Moment(this.props.table.endTime).format('HH:mm')}
+              </Text>
+            </TouchableHighlight>
           </View>
           {!this.props.isBooked && <TouchableHighlight
             style={styles.headingRight}

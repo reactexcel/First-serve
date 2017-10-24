@@ -61,11 +61,15 @@ class Database {
       let userMobilePath = "/tables/" + tableKey;
       firebase.database().ref(userMobilePath).transaction((table) => {
         if(table){
+          var curTime = new Date().getTime();
+          debugger
           if(table.bookedBy){
             return;
-          }else{
+          }else if(curTime < table.endTime) {
             table.bookedBy = userId;
             return table;
+          }else{
+            return;
           }
         }else{
           return;
@@ -100,12 +104,14 @@ class Database {
       });
     }
 
-    static setUserData(userId, pax, mobile){
+    static setUserData(userId, pax, mobile,startTime,endTime){
       return new Promise((resolve) => {
         let userMobilePath = "/users/" + userId;
         return firebase.database().ref(userMobilePath).update({
             pax: pax,
-            phone_number: mobile
+            phone_number: mobile,
+            UserNotifStartTime:startTime,
+            UserNotifEndTime:endTime
         }).then((val)=>{
           resolve(val)
         });

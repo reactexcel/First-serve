@@ -16,13 +16,13 @@ export default class GallerySwiper extends Component {
     render() {
         return (
           <View style={styles.swiperConatiner}>
-            <Swiper  height={255} horizontal={true} removeClippedSubviews={false} >
-              {this.props.restaurant.images.map((images, key) => {
+            <Swiper  height={255} horizontal={true} removeClippedSubviews={false} dotStyle={{borderWidth:2,borderColor:'white'}} activeDotColor={"white"} >
+              {this.props.restaurant.images.map((image, key) => {
                 return(
                     <View key={key} style={styles.swiperConatiner}>
                       <TouchableHighlight style={styles.swiperConatiner} onPress={()=>{this.props.openModel()}}>
                         <FullWidthImage
-                          source={{uri: this.props.restaurant.images.length > 0 ? images.imageUrl : 'https://firebasestorage.googleapis.com/v0/b/first-served-c9197.appspot.com/o/restaurant_images%2Frestaurant.jpg?alt=media&token=b0ca19be-6594-4bb1-bfdb-3c9474a0b234'}} />
+                          source={{uri: image.imageUrl ? image.imageUrl : 'https://firebasestorage.googleapis.com/v0/b/first-served-c9197.appspot.com/o/restaurant_images%2Frestaurant.jpg?alt=media&token=b0ca19be-6594-4bb1-bfdb-3c9474a0b234'}} />
                       </TouchableHighlight>
                     </View>
                 )
