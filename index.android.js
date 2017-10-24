@@ -1,9 +1,10 @@
 import React, {Component, } from "react";
 
-import {AppRegistry, Text, Image, View, StyleSheet, ActivityIndicator} from "react-native";
+import {AppRegistry, Text, Image, View, StyleSheet, ActivityIndicator, NetInfo} from "react-native";
 import {StackNavigator, NavigationActions,} from 'react-navigation';
 
 import * as firebase from "firebase";
+import * as Progress from 'react-native-progress';
 
 import EmailLogin from "./src/views/email_login";
 import UserHome from "./src/views/user_home";
@@ -36,13 +37,26 @@ class Landing extends Component {
     this.state = {
       loading: true,
       userLoaded: false,
-      firstServedView: null
+      firstServedView: null,
+      isOnline: false
     };
     this.unsubscribe = null;
     this._unlistenForAuth = this._unlistenForAuth.bind(this);
+    this.handleFirstConnectivityChange = this.handleFirstConnectivityChange.bind(this);
+    this.unmountNetworkListner = this.unmountNetworkListner.bind(this);
   }
 
   componentWillMount(){
+    NetInfo.isConnected.fetch().then(isConnected => {
+      console.log('First, is ' + (isConnected ? 'online' : 'offline'));
+      this.setState({isOnline: isConnected});
+    });
+
+    NetInfo.isConnected.addEventListener(
+      'connectionChange',
+      this.handleFirstConnectivityChange
+    );
+
     console.log('componentWillMount index');
     const th = this;
 
@@ -168,12 +182,37 @@ class Landing extends Component {
     if (this.unsubscribe) {
       this.unsubscribe();
     }
+    this.unmountNetworkListner();
+  }
+
+  unmountNetworkListner(){
+    NetInfo.isConnected.removeEventListener(
+      'connectionChange',
+      this.handleFirstConnectivityChange
+    );
+  }
+
+  handleFirstConnectivityChange(isConnected) {
+    console.log('Then, from listener is ' + (isConnected ? 'online' : 'offline'));
+    this.setState({isOnline: isConnected});
   }
 
   render() {
     const { navigate } = this.props.navigation;
     if(this.state.loading){
-      return null;
+      return (
+        <View style={{flex:1,justifyContent:'center',flexDirection:'column',alignItems:'center'}}>
+          <Progress.Circle size={30} indeterminate={true} />
+        </View>
+      );
+    }else if(!this.state.isOnline){
+      return (
+        <View style={styles.container}>
+          <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+            <Text style={styles.headerText}>We can’t seem to connect to the First Served network. Please check your internet connection.</Text>
+          </View>
+        </View>
+      );
     }else{
       return (
         <View style={styles.container}>
