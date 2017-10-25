@@ -60,10 +60,11 @@ class UserHome extends Component {
   static navigationOptions = ({ navigation }) => {
     const {state} = navigation;
     return {
-      title: `${state.params.title}`,
-      headerTitleStyle: {alignSelf: 'center', color: 'white'},
+      title: `${state.params.title}`.toUpperCase(),
+      headerTitleStyle: {fontSize:12,alignSelf: 'center', color: 'white',fontWeight:'bold' },
       headerStyle: {
-        backgroundColor: '#122438',
+        marginBottom:-10,
+        backgroundColor: '#023e4eff',
       }
     }
   };
@@ -614,19 +615,19 @@ class UserHome extends Component {
             onTabChange={(newTabIndex) => this.tabChanged(newTabIndex)}
             activeTab={this.state.currentTab}>
             <Tab
-              barBackgroundColor="#122438"
+              barBackgroundColor="#023e4eff"
               label="Restaurants"
               icon={<Icon size={24} color="white" name="restaurant" />}/>
             <Tab
-              barBackgroundColor="#122438"
+              barBackgroundColor="#023e4eff"
               label="Favourites"
               icon={<Icon size={24} color="white" name="favorite-border" />}/>
             <Tab
-              barBackgroundColor="#122438"
+              barBackgroundColor="#023e4eff"
               label="Bookings"
               icon={<Icon size={24} color="white" name="query-builder" />}/>
             <Tab
-              barBackgroundColor="#122438"
+              barBackgroundColor="#023e4eff"
               label="Account"
               icon={<Icon size={24} color="white" name="account-circle" />}/>
           </BottomNavigation>
