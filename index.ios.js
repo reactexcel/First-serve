@@ -14,6 +14,7 @@ import NewEditRestaurant from "./src/views/new_edit_restaurant";
 import PublishTable from "./src/views/publish_table";
 import Firebase from "./src/firebase/firebase";
 import DefaultPreference from 'react-native-default-preference';
+import SplashScreen from 'react-native-splash-screen'
 
 const FBSDK = require('react-native-fbsdk');
 const {
@@ -26,7 +27,7 @@ const firestack = new Firestack();
 
 class Landing extends Component {
   static navigationOptions = {
-    title: 'Welcome',
+    headerStyle:{ position: 'absolute', backgroundColor: 'transparent', zIndex: 100, top: 0, left: 0, right: 0 }
   };
   constructor(props) {
     super(props);
@@ -137,6 +138,7 @@ class Landing extends Component {
   }
 
   componentDidMount(){
+    SplashScreen.hide();
     console.log('componentDidMount index');
   }
 
