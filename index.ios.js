@@ -192,6 +192,7 @@ class Landing extends Component {
             </View>
           <View style={styles.fbButtonView}>
             <LoginButton
+              style={{height:35,width:220,backgroundColor:'black'}}
               readPermissions={["public_profile", "email"]}
               onLoginFinished={
                 (error, result) => {
