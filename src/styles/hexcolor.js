@@ -6,6 +6,6 @@ export const HEXCOLOR = {
   lightGrey:'#626262',
   black:'#000',
   lightBrown:'#98866F',
-  endeavour: '#122438',
+  endeavour: '#023e4eff',
   blueBerry: '#7873B1',
 };

@@ -33,7 +33,7 @@ class RestaurantListItem extends Component {
             <View style={styles.rowContainer}>
               <TouchableHighlight
                 onPress={() => this.props.setModalVisible(this.props.restaurant._key, true)}>
-                <Text style={styles.listItemTitle}>{this.props.restaurant.name}</Text>
+                <Text style={styles.listItemTitle}>{this.props.restaurant.name.toUpperCase()}</Text>
               </TouchableHighlight>
             </View>
               <GallerySwiper {...this.props} openModel={() => this.props.setModalVisible(this.props.restaurant._key, true)} />
