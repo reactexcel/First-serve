@@ -1,6 +1,6 @@
 import React, {Component, } from "react";
 
-import {AppRegistry, Text, Image, View, StyleSheet, ActivityIndicator, NetInfo} from "react-native";
+import {AppRegistry, Text, Image, View, StyleSheet, ActivityIndicator, NetInfo,Dimensions} from "react-native";
 import {StackNavigator, NavigationActions,} from 'react-navigation';
 
 import * as firebase from "firebase";
@@ -16,7 +16,7 @@ import PublishTable from "./src/views/publish_table";
 import Firebase from "./src/firebase/firebase";
 import DefaultPreference from 'react-native-default-preference';
 import SplashScreen from 'react-native-splash-screen'
-
+var {height, width} = Dimensions.get('window');
 const FBSDK = require('react-native-fbsdk');
 const {
   LoginButton,
@@ -28,7 +28,7 @@ const firestack = new Firestack();
 
 class Landing extends Component {
   static navigationOptions = {
-    title: 'Welcome',
+    headerStyle:{ position: 'absolute', backgroundColor: 'transparent', zIndex: 100, top: 0, left: 0, right: 0 }
   };
   constructor(props) {
     super(props);
@@ -218,12 +218,17 @@ class Landing extends Component {
     }else{
       return (
         <View style={styles.container}>
-          <View style={styles.imageView}>
-            <Image source={require('./src/images/restaurant.png')} />
-          </View>
-          <View style={styles.headerTextView}>
-            <Text style={styles.headerText}>Restaurant Header Text</Text>
-          </View>
+            <Image style={{ flex: 1, alignSelf: 'stretch',width: undefined,height: undefined}} source={require('./src/images/Background.jpg')} >
+        <View style={{marginTop:60,marginBottom:60,marginLeft:20,marginRight:20,flex:1 ,backgroundColor:'white',opacity:0.8}}>
+          <View style={{flex:1,justifyContent:'space-between',alignItems:'center'}}>
+            <View style={{marginTop:55}}>
+                <Image style={{width:160,height:75}}  source={require('./src/images/firstlogo.png')} />
+            </View>
+            <View style={{paddingLeft:45,paddingRight:45,justifyContent:'center',alignItems:'center'}} >
+              <Text style={{fontSize:16.4,textAlign: 'center',color:'#122438'}}>
+                The fastest and easiest way to get a table at a good restaurant today. FirstServed will give you an overview of the best restaurant in town.
+              </Text>
+            </View>
           <View style={styles.fbButtonView}>
             <LoginButton
               readPermissions={["public_profile", "email"]}
@@ -258,10 +263,13 @@ class Landing extends Component {
               }}/>
           </View>
           <View style={styles.btnEmailLogin}>
-            <Text onPress={() => {
+            <Text style={{color:'#122438',fontWeight:'bold'}} onPress={() => {
               navigate('ELogin', { title: 'Login as restaurant', unlistenForAuth: this._unlistenForAuth })}
             }>Login as restaurant</Text>
           </View>
+        </View>
+      </View>
+        </Image>
         </View>
       );
     }
@@ -275,20 +283,15 @@ class Landing extends Component {
 const styles = StyleSheet.create({
     container: {
       flex: 1,
-      padding: 10,
     },
     imageView: {
-        flexDirection: 'row',
-        justifyContent: 'center',
-        alignItems: 'center'
+      flex:1,
     },
     fbButtonView: {
-      flex: 1,
       justifyContent: 'center',
       alignItems: 'center'
     },
     headerTextView: {
-      flexDirection: 'row',
       justifyContent: 'center'
     },
     headerText: {
@@ -296,6 +299,7 @@ const styles = StyleSheet.create({
       fontWeight: 'bold'
     },
     btnEmailLogin: {
+      marginBottom:30,
       flexDirection: 'row',
       justifyContent: 'center'
     }

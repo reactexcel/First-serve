@@ -155,12 +155,17 @@ class Landing extends Component {
     }else{
       return (
         <View style={styles.container}>
-          <View style={styles.imageView}>
-            <Image source={require('./src/images/restaurant.png')} />
-          </View>
-          <View style={styles.headerTextView}>
-            <Text style={styles.headerText}>Restaurant Header Text</Text>
-          </View>
+            <Image style={{ flex: 1, alignSelf: 'stretch',width: undefined,height: undefined}} source={require('./src/images/Background.jpg')} >
+        <View style={{marginTop:60,marginBottom:60,marginLeft:20,marginRight:20,flex:1 ,backgroundColor:'white',opacity:0.8}}>
+          <View style={{flex:1,justifyContent:'space-between',alignItems:'center'}}>
+            <View style={{marginTop:55}}>
+                <Image style={{width:160,height:75}}  source={require('./src/images/firstlogo.png')} />
+            </View>
+            <View style={{paddingLeft:45,paddingRight:45,justifyContent:'center',alignItems:'center'}} >
+              <Text style={{fontSize:16.4,textAlign: 'center',color:'#122438'}}>
+                The fastest and easiest way to get a table at a good restaurant today. FirstServed will give you an overview of the best restaurant in town.
+              </Text>
+            </View>
           <View style={styles.fbButtonView}>
             <LoginButton
               readPermissions={["public_profile", "email"]}
@@ -195,10 +200,13 @@ class Landing extends Component {
               }}/>
           </View>
           <View style={styles.btnEmailLogin}>
-            <Text style={styles.btnText} onPress={() => {
+            <Text style={{color:'#122438',fontWeight:'bold'}} onPress={() => {
               navigate('ELogin', { title: 'Login as restaurant', unlistenForAuth: this._unlistenForAuth })}
             }>Login as restaurant</Text>
           </View>
+        </View>
+      </View>
+        </Image>
         </View>
       );
     }
@@ -210,35 +218,29 @@ class Landing extends Component {
 }
 
 const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      padding: 10,
-    },
-    imageView: {
-        flexDirection: 'row',
-        justifyContent: 'center',
-        alignItems: 'center'
-    },
-    fbButtonView: {
-      flex: 1,
-      justifyContent: 'center',
-      alignItems: 'center'
-    },
-    headerTextView: {
-      flexDirection: 'row',
-      justifyContent: 'center'
-    },
-    headerText: {
-      fontSize: 20,
-      fontWeight: 'bold'
-    },
-    btnEmailLogin: {
-      flexDirection: 'row',
-      justifyContent: 'center'
-    },
-    btnText : {
-      padding:10
-    }
+  container: {
+    flex: 1,
+
+  },
+  imageView: {
+    flex:1,
+  },
+  fbButtonView: {
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  headerTextView: {
+    justifyContent: 'center'
+  },
+  headerText: {
+    fontSize: 20,
+    fontWeight: 'bold'
+  },
+  btnEmailLogin: {
+    marginBottom:30,
+    flexDirection: 'row',
+    justifyContent: 'center'
+  }
 });
 
 const FirstServed = StackNavigator({
