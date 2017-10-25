@@ -10,7 +10,9 @@ import {
     TouchableHighlight,
     ListView,
     Modal,
-    Alert
+    Alert,
+    ScrollView,
+    NetInfo
 } from "react-native";
 
 import Button from "apsl-react-native-button";
@@ -31,7 +33,7 @@ class RestaurantHome extends Component {
   static navigationOptions  = ({navigation}) => {
     const {params = {}} = navigation.state;
     return {
-      title: 'Restaurant',
+      title: params.title,
       headerTitleStyle :{alignSelf: 'center', color: 'white'},
       headerStyle:{
           backgroundColor: HEXCOLOR.lightBrown,
@@ -89,7 +91,8 @@ class RestaurantHome extends Component {
       dataSource: dataSource.cloneWithRows([]),
       availableTablesDb: aDataSource.cloneWithRows([]),
       bookedTablesDb: bDataSource.cloneWithRows([]),
-      curTime: Moment(new Date()).format('MMM DD YYYY, HH:mm')
+      curTime: Moment(new Date()).format('MMM DD YYYY, HH:mm'),
+      isOnline: false
     };
 
     this.openPublish = this.openPublish.bind(this);
@@ -97,9 +100,21 @@ class RestaurantHome extends Component {
     this.deleteTable = this.deleteTable.bind(this);
     this.setModalVisible = this.setModalVisible.bind(this);
     this._toogleNamePhone = this._toogleNamePhone.bind(this);
+    this.handleFirstConnectivityChange = this.handleFirstConnectivityChange.bind(this);
+    this.unmountNetworkListner = this.unmountNetworkListner.bind(this);
   }
 
-  componentWillMount(){
+  componentWillMount() {
+    NetInfo.isConnected.fetch().then(isConnected => {
+      console.log('First, is ' + (isConnected ? 'online' : 'offline'));
+      this.setState({isOnline: isConnected});
+    });
+
+    NetInfo.isConnected.addEventListener(
+      'connectionChange',
+      this.handleFirstConnectivityChange
+    );
+
     console.log("componentWillMount restaurant home.");
     this.restaurantRef = firebase.database().ref("/restaurants/" + this.state.userId);
     this.userRef = firebase.database().ref("users");
@@ -216,6 +231,19 @@ class RestaurantHome extends Component {
     this.restaurantRef.off();
     this.ref.off();
     this.userRef.off();
+    this.unmountNetworkListner();
+  }
+
+  unmountNetworkListner(){
+    NetInfo.isConnected.removeEventListener(
+      'connectionChange',
+      this.handleFirstConnectivityChange
+    );
+  }
+
+  handleFirstConnectivityChange(isConnected) {
+    console.log('Then, from listener is ' + (isConnected ? 'online' : 'offline'));
+    this.setState({isOnline: isConnected});
   }
 
   openSettings(navigation) {
@@ -238,7 +266,15 @@ class RestaurantHome extends Component {
   }
 
   render() {
-    if(this.state.progress){
+    if(!this.state.isOnline){
+      return (
+        <View style={[CommonStyle.container, {padding: 10}]}>
+          <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+            <Text style={[CommonStyle.headerText, {color: '#FFF'}]}>We can’t seem to connect to the First Served network. Please check your internet connection.</Text>
+          </View>
+        </View>
+      );
+    }else if(this.state.progress){
       return(
         <View style={CommonStyle.container}>
           <View style={[CommonStyle.rowContainer, {paddingTop: 25}]}>
@@ -249,6 +285,7 @@ class RestaurantHome extends Component {
     }else{
       return (
         <View style={CommonStyle.container}>
+          <ScrollView>
           <Modal
             animationType="slide"
             transparent={false}
@@ -331,6 +368,7 @@ class RestaurantHome extends Component {
             underlayColor={HEXCOLOR.pureWhite}>
               <Text style={[CommonStyle.publishText]}>Publish</Text>
           </TouchableHighlight>
+          </ScrollView>
         </View>
       );
     }

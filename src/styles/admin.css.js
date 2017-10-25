@@ -196,6 +196,10 @@ const AdminCss = {
 	adminHeaderStyle:{
 		backgroundColor: HEXCOLOR.endeavour,
 	},
+	headerText: {
+		fontSize: 20,
+		fontWeight: 'bold'
+	},
 	bottomNavigation: {
 		height: 56,
 		elevation: 8,

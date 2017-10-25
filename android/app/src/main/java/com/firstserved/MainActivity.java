@@ -1,8 +1,9 @@
 package com.firstserved;
 
 import android.content.Intent;
-
+import org.devio.rn.splashscreen.SplashScreen;
 import com.facebook.react.ReactActivity;
+import android.os.Bundle;
 
 public class MainActivity extends ReactActivity {
 
@@ -19,4 +20,9 @@ public class MainActivity extends ReactActivity {
         super.onActivityResult(requestCode, resultCode, data);
         MainApplication.getCallbackManager().onActivityResult(requestCode, resultCode, data);
     }
+    @Override
+      protected void onCreate(Bundle savedInstanceState) {
+          SplashScreen.show(this,true);
+          super.onCreate(savedInstanceState);
+  }
 }

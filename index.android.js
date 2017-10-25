@@ -1,9 +1,10 @@
 import React, {Component, } from "react";
 
-import {AppRegistry, Text, Image, View, StyleSheet, ActivityIndicator} from "react-native";
+import {AppRegistry, Text, Image, View, StyleSheet, ActivityIndicator, NetInfo} from "react-native";
 import {StackNavigator, NavigationActions,} from 'react-navigation';
 
 import * as firebase from "firebase";
+import * as Progress from 'react-native-progress';
 
 import EmailLogin from "./src/views/email_login";
 import UserHome from "./src/views/user_home";
@@ -14,6 +15,7 @@ import NewEditRestaurant from "./src/views/new_edit_restaurant";
 import PublishTable from "./src/views/publish_table";
 import Firebase from "./src/firebase/firebase";
 import DefaultPreference from 'react-native-default-preference';
+import SplashScreen from 'react-native-splash-screen'
 
 const FBSDK = require('react-native-fbsdk');
 const {
@@ -36,28 +38,46 @@ class Landing extends Component {
     this.state = {
       loading: true,
       userLoaded: false,
-      firstServedView: null
+      firstServedView: null,
+      isOnline: false
     };
     this.unsubscribe = null;
     this._unlistenForAuth = this._unlistenForAuth.bind(this);
+    this.handleFirstConnectivityChange = this.handleFirstConnectivityChange.bind(this);
+    this.unmountNetworkListner = this.unmountNetworkListner.bind(this);
   }
 
   componentWillMount(){
+    NetInfo.isConnected.fetch().then(isConnected => {
+      console.log('First, is ' + (isConnected ? 'online' : 'offline'));
+      this.setState({isOnline: isConnected});
+    });
+
+    NetInfo.isConnected.addEventListener(
+      'connectionChange',
+      this.handleFirstConnectivityChange
+    );
+
     console.log('componentWillMount index');
     const th = this;
 
     DefaultPreference.getMultiple(['userType', 'uid', 'name', 'photoUrl']).then(function(value) {
+      let restaurantPath = "/restaurants/" + value[1];
+      firebase.database().ref(restaurantPath).once('value').then(function(child){
       var routeName = null;
       var title = "Restaurants";
       if(value[0] === 'user'){
         routeName = 'UHome';
       }else if (value[0] === 'restaurant') {
+        child.forEach(function(childSnapshot) {
+            var key = childSnapshot.key;
+            var childData = childSnapshot.val();
+            title = childData.name;
+        });
         routeName = 'RHome';
-        title = "Restaurant";
       }else if (value[0] === 'admin') {
         routeName = 'AHome';
       }
-
       if(routeName){
         console.log("componentWillMount routeName called.");
         const resetAction = NavigationActions.reset({
@@ -112,38 +132,49 @@ class Landing extends Component {
 
         this.unsubscribe = firebase.auth().onAuthStateChanged(function(user) {
           if (user) {
-            console.log('User details: ', user);
             let userMobilePath = "/users/" + user.uid;
+            let restaurantPath = "/restaurants/" + user.uid;
             firebase.database().ref(userMobilePath).on('value', (snapshot) => {
-              let routeName = null;
-              let title = "Restaurants";
-              if (snapshot.exists() && snapshot.val().isAdmin) {
-                routeName = 'AHome';
-              }else if (snapshot.exists() && snapshot.val().isRestaurantAdmin) {
-                routeName = 'RHome';
-                title = "Restaurant";
-              }
-              if(routeName){
-                const resetAction = NavigationActions.reset({
-                  index: 0,
-                  actions: [NavigationActions.navigate({routeName: routeName, params: {userId: user.uid, title: title}})]
-                })
-                firestack.auth.unlistenForAuth();
-                if (th.unsubscribe) {
-                  th.unsubscribe();
-                  th.unsubscribe = null;
+              firebase.database().ref(restaurantPath).once('value').then(function(child){
+                let routeName = null;
+                let title = "Restaurants";
+                child.forEach(function(childSnapshot) {
+                    var key = childSnapshot.key;
+                    var childData = childSnapshot.val();
+                    title = childData.name;
+                });
+                if (snapshot.exists() && snapshot.val().isAdmin) {
+                  console.log("AHome");
+                  routeName = 'AHome';
+                }else if (snapshot.exists() && snapshot.val().isRestaurantAdmin) {
+                  routeName = 'RHome';
+                  console.log("rhome");
                 }
-                th.props.navigation.dispatch(resetAction)
-              }
+                if(routeName){
+                  console.log("routeName",routeName);
+                  const resetAction = NavigationActions.reset({
+                    index: 0,
+                    actions: [NavigationActions.navigate({routeName: routeName, params: {userId: user.uid, title: title}})]
+                  })
+                  firestack.auth.unlistenForAuth();
+                  if (th.unsubscribe) {
+                    th.unsubscribe();
+                    th.unsubscribe = null;
+                  }
+                  th.props.navigation.dispatch(resetAction)
+                }
+              });
             });
           }
         });
         th.setState({loading: false});
       }
     });
+  });
   }
 
   componentDidMount(){
+    SplashScreen.hide();
     console.log('componentDidMount index');
   }
 
@@ -153,12 +184,37 @@ class Landing extends Component {
     if (this.unsubscribe) {
       this.unsubscribe();
     }
+    this.unmountNetworkListner();
+  }
+
+  unmountNetworkListner(){
+    NetInfo.isConnected.removeEventListener(
+      'connectionChange',
+      this.handleFirstConnectivityChange
+    );
+  }
+
+  handleFirstConnectivityChange(isConnected) {
+    console.log('Then, from listener is ' + (isConnected ? 'online' : 'offline'));
+    this.setState({isOnline: isConnected});
   }
 
   render() {
     const { navigate } = this.props.navigation;
     if(this.state.loading){
-      return null;
+      return (
+        <View style={{flex:1,justifyContent:'center',flexDirection:'column',alignItems:'center'}}>
+          <Progress.Circle size={30} indeterminate={true} />
+        </View>
+      );
+    }else if(!this.state.isOnline){
+      return (
+        <View style={styles.container}>
+          <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+            <Text style={styles.headerText}>We can’t seem to connect to the First Served network. Please check your internet connection.</Text>
+          </View>
+        </View>
+      );
     }else{
       return (
         <View style={styles.container}>

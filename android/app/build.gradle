@@ -91,7 +91,7 @@ def enableProguardInReleaseBuilds = false
 
 android {
     compileSdkVersion 23
-    buildToolsVersion '25.0.0'
+    buildToolsVersion '23.0.1'
 
     defaultConfig {
         applicationId "com.firstserved"
@@ -144,6 +144,7 @@ android {
 }
 
 dependencies {
+    compile project(':react-native-splash-screen')
     compile (project(':react-native-fcm')){
       exclude group: "com.google.firebase"
     }
@@ -164,6 +165,7 @@ dependencies {
     compile ('com.google.firebase:firebase-core:10.0.1'){
         force = true;
     }
+    compile project(':react-native-wheel-picker')
 }
 
 // Run this once to be able to run the application with BUCK

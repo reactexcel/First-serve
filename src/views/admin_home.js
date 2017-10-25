@@ -10,7 +10,8 @@ import {
     StyleSheet,
     TouchableHighlight,
     ListView,
-    Alert
+    Alert,
+    NetInfo
 } from "react-native";
 
 import Button from "apsl-react-native-button";
@@ -28,7 +29,6 @@ import DefaultPreference from 'react-native-default-preference';
 import * as firebase from "firebase";
 import * as Helper from '../helper/helper';
 
-console.log(Helper);
 class AdminHome extends Component {
     static navigationOptions = ({ navigation }) => {
       const {state} = navigation;
@@ -53,11 +53,26 @@ class AdminHome extends Component {
             isRestaurantNotiOn: {},
             favourites: {},
             isModalVisible: {},
-            currentTab: 0
+            currentTab: 0,
+            isOnline: false
         };
 
         this._setUserNoti = this._setUserNoti.bind(this);
         this.logout = this.logout.bind(this);
+        this.handleFirstConnectivityChange = this.handleFirstConnectivityChange.bind(this);
+        this.unmountNetworkListner = this.unmountNetworkListner.bind(this);
+    }
+
+    componentWillMount() {
+      NetInfo.isConnected.fetch().then(isConnected => {
+        console.log('First, is ' + (isConnected ? 'online' : 'offline'));
+        this.setState({isOnline: isConnected});
+      });
+
+      NetInfo.isConnected.addEventListener(
+        'connectionChange',
+        this.handleFirstConnectivityChange
+      );
     }
 
     componentDidMount() {
@@ -99,7 +114,32 @@ class AdminHome extends Component {
         }
     }
 
+    componentWillUnmount(){
+      this.unmountNetworkListner();
+    }
+
+    unmountNetworkListner(){
+      NetInfo.isConnected.removeEventListener(
+        'connectionChange',
+        this.handleFirstConnectivityChange
+      );
+    }
+
+    handleFirstConnectivityChange(isConnected) {
+      console.log('Then, from listener is ' + (isConnected ? 'online' : 'offline'));
+      this.setState({isOnline: isConnected});
+    }
+
     render() {
+      if(!this.state.isOnline){
+        return (
+          <View style={[styles.container, {padding: 10}]}>
+            <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+              <Text style={styles.headerText}>We can’t seem to connect to the First Served network. Please check your internet connection.</Text>
+            </View>
+          </View>
+        );
+      }else{
         return (
           <View style={styles.container}>
 {/*              <View style={[styles.notiView, styles.bottomBorder]}>
@@ -152,6 +192,7 @@ class AdminHome extends Component {
               </BottomNavigation>
           </View>
         );
+      }
     }
 
     async logout(){

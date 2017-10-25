@@ -7,6 +7,7 @@ import com.facebook.CallbackManager;
 import com.facebook.FacebookSdk;
 import com.facebook.appevents.AppEventsLogger;
 import com.facebook.react.ReactApplication;
+import org.devio.rn.splashscreen.SplashScreenReactPackage;
 import com.evollu.react.fcm.FIRMessagingPackage;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
@@ -16,6 +17,7 @@ import com.facebook.soloader.SoLoader;
 import com.imagepicker.ImagePickerPackage;
 import com.oblador.vectoricons.VectorIconsPackage;
 import com.reactlibrary.RNDefaultPreferencePackage;
+import com.zyu.ReactNativeWheelPickerPackage;
 
 import java.util.Arrays;
 import java.util.List;
@@ -39,7 +41,9 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
         new MainReactPackage(),
+            new SplashScreenReactPackage(),
             new FIRMessagingPackage(),
+            new ReactNativeWheelPickerPackage(),
         new RNDefaultPreferencePackage(),
         new RNFetchBlobPackage(),
         new VectorIconsPackage(),
