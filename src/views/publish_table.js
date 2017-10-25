@@ -8,7 +8,8 @@ import {
     View,
     StyleSheet,
     TouchableHighlight,
-    Switch
+    Switch,
+    NetInfo
 } from "react-native";
 
 import Button from "apsl-react-native-button";
@@ -44,20 +45,47 @@ class PublishTable extends Component {
       timePickerFor: 0,
       startTime: 'SET START TIME',
       endTime: 'SET END TIME',
+      isOnline: false
     };
 
     this.plus = this.plus.bind(this);
     this.minus = this.minus.bind(this);
     this.publishTable = this.publishTable.bind(this);
+    this.handleFirstConnectivityChange = this.handleFirstConnectivityChange.bind(this);
+    this.unmountNetworkListner = this.unmountNetworkListner.bind(this);
   }
 
   componentWillMount() {
+    NetInfo.isConnected.fetch().then(isConnected => {
+      console.log('First, is ' + (isConnected ? 'online' : 'offline'));
+      this.setState({isOnline: isConnected});
+    });
+
+    NetInfo.isConnected.addEventListener(
+      'connectionChange',
+      this.handleFirstConnectivityChange
+    );
+
     console.log("componentWillMount called publish table.");
   }
 
   componentWillUnmount(){
     console.log('componentWillUnmount publiish table');
+    this.unmountNetworkListner();
   }
+
+  unmountNetworkListner(){
+    NetInfo.isConnected.removeEventListener(
+      'connectionChange',
+      this.handleFirstConnectivityChange
+    );
+  }
+
+  handleFirstConnectivityChange(isConnected) {
+    console.log('Then, from listener is ' + (isConnected ? 'online' : 'offline'));
+    this.setState({isOnline: isConnected});
+  }
+
 
   plus(){
     this.setState({people: (this.state.people + 1)});
@@ -73,6 +101,7 @@ class PublishTable extends Component {
       return;
     }
     var table = {
+      restAdmin: this.state.userId,
       restaurantKey: this.state.restaurantKey,
       pax: this.state.people,
       startTime: this.state.startTime,
@@ -103,68 +132,78 @@ class PublishTable extends Component {
   };
 
   render() {
-    return (
-      <View style={CommonStyle.container}>
-        <View style={[CommonStyle.rowContainerHCenter, {marginTop: 20}]}>
-          <Text style={{color: HEXCOLOR.lightBrown}}>Available table for</Text>
+    if(!this.state.isOnline){
+      return (
+        <View style={[CommonStyle.container, {padding: 10}]}>
+          <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+            <Text style={[CommonStyle.headerText, {color: '#FFF'}]}>We can’t seem to connect to the First Served network. Please check your internet connection.</Text>
+          </View>
         </View>
-        <View style={[CommonStyle.rowContainerHCenter, {marginTop: 20}]}>
-          <View style={[CommonStyle.rectangle, {width: 200, height: 40, flexDirection:'row'}]}>
-            <TouchableHighlight
-              onPress={() => this.minus()}
-              underlayColor={HEXCOLOR.lightBrown}>
-              <View style={[CommonStyle.rectangle, {width: 40, height: 40, flexDirection:'row'}]}>
-                <Text style={{color: HEXCOLOR.pureWhite, fontSize: 24}}>-</Text>
+      );
+    }else{
+      return (
+        <View style={CommonStyle.container}>
+          <View style={[CommonStyle.rowContainerHCenter, {marginTop: 20}]}>
+            <Text style={{color: HEXCOLOR.lightBrown}}>Available table for</Text>
+          </View>
+          <View style={[CommonStyle.rowContainerHCenter, {marginTop: 20}]}>
+            <View style={[CommonStyle.rectangle, {width: 200, height: 40, flexDirection:'row'}]}>
+              <TouchableHighlight
+                onPress={() => this.minus()}
+                underlayColor={HEXCOLOR.lightBrown}>
+                <View style={[CommonStyle.rectangle, {width: 40, height: 40, flexDirection:'row'}]}>
+                  <Text style={{color: HEXCOLOR.pureWhite, fontSize: 24}}>-</Text>
+                </View>
+              </TouchableHighlight>
+              <View style={[CommonStyle.rectangle, {width: 120, height: 40, flexDirection:'row'}]}>
+                <Text style={{color: HEXCOLOR.lightBrown}}>{this.state.people} people</Text>
               </View>
-            </TouchableHighlight>
-            <View style={[CommonStyle.rectangle, {width: 120, height: 40, flexDirection:'row'}]}>
-              <Text style={{color: HEXCOLOR.lightBrown}}>{this.state.people} people</Text>
+              <TouchableHighlight
+                onPress={() => this.plus()}
+                underlayColor={HEXCOLOR.lightBrown}>
+                <View style={[CommonStyle.rectangle, {width: 40, height: 40, flexDirection:'row'}]}>
+                  <Text style={{color: HEXCOLOR.pureWhite, fontSize: 24}}>+</Text>
+                </View>
+              </TouchableHighlight>
             </View>
+          </View>
+          <View style={[CommonStyle.rowContainerHCenter, {marginTop: 20}]}>
             <TouchableHighlight
-              onPress={() => this.plus()}
+              onPress={() => this._showDateTimePicker(1)}
               underlayColor={HEXCOLOR.lightBrown}>
-              <View style={[CommonStyle.rectangle, {width: 40, height: 40, flexDirection:'row'}]}>
-                <Text style={{color: HEXCOLOR.pureWhite, fontSize: 24}}>+</Text>
+              <View style={[CommonStyle.rectangle, {width: 200, height: 40, flexDirection:'row', borderColor: HEXCOLOR.pureWhite}]}>
+                <Text style={{color: HEXCOLOR.pureWhite, fontSize: 18}}>
+                  {this.state.startTime === 'SET START TIME' ? this.state.startTime : Moment(this.state.startTime).format('YYYY-MM-DD HH:mm')}
+                </Text>
               </View>
             </TouchableHighlight>
           </View>
-        </View>
-        <View style={[CommonStyle.rowContainerHCenter, {marginTop: 20}]}>
-          <TouchableHighlight
-            onPress={() => this._showDateTimePicker(1)}
-            underlayColor={HEXCOLOR.lightBrown}>
-            <View style={[CommonStyle.rectangle, {width: 200, height: 40, flexDirection:'row', borderColor: HEXCOLOR.pureWhite}]}>
-              <Text style={{color: HEXCOLOR.pureWhite, fontSize: 18}}>
-                {this.state.startTime === 'SET START TIME' ? this.state.startTime : Moment(this.state.startTime).format('YYYY-MM-DD HH:mm')}
-              </Text>
-            </View>
-          </TouchableHighlight>
-        </View>
-        <View style={[CommonStyle.rowContainerHCenter, {marginTop: 20}]}>
-          <TouchableHighlight
-            onPress={() => this._showDateTimePicker(2)}
-            underlayColor={HEXCOLOR.lightBrown}>
-            <View style={[CommonStyle.rectangle, {width: 200, height: 40, flexDirection:'row', borderColor: HEXCOLOR.pureWhite}]}>
-              <Text style={{color: HEXCOLOR.pureWhite, fontSize: 18}}>
-                {this.state.endTime === 'SET END TIME' ? this.state.endTime : Moment(this.state.endTime).format('YYYY-MM-DD HH:mm')}
-              </Text>
-            </View>
-          </TouchableHighlight>
-        </View>
+          <View style={[CommonStyle.rowContainerHCenter, {marginTop: 20}]}>
+            <TouchableHighlight
+              onPress={() => this._showDateTimePicker(2)}
+              underlayColor={HEXCOLOR.lightBrown}>
+              <View style={[CommonStyle.rectangle, {width: 200, height: 40, flexDirection:'row', borderColor: HEXCOLOR.pureWhite}]}>
+                <Text style={{color: HEXCOLOR.pureWhite, fontSize: 18}}>
+                  {this.state.endTime === 'SET END TIME' ? this.state.endTime : Moment(this.state.endTime).format('YYYY-MM-DD HH:mm')}
+                </Text>
+              </View>
+            </TouchableHighlight>
+          </View>
 
-        <TouchableHighlight
-          style={[CommonStyle.publish, {marginTop: 40}]}
-          onPress={() => this.publishTable()}
-          underlayColor={HEXCOLOR.pureWhite}>
-            <Text style={[CommonStyle.publishText]}>Publish</Text>
-        </TouchableHighlight>
-        <DateTimePicker
-          isVisible={this.state.isDateTimePickerVisible}
-          onConfirm={this._handleDatePicked}
-          onCancel={this._hideDateTimePicker}
-          mode='time'/>
-      </View>
-    );
+          <TouchableHighlight
+            style={[CommonStyle.publish, {marginTop: 40}]}
+            onPress={() => this.publishTable()}
+            underlayColor={HEXCOLOR.pureWhite}>
+              <Text style={[CommonStyle.publishText]}>Publish</Text>
+          </TouchableHighlight>
+          <DateTimePicker
+            isVisible={this.state.isDateTimePickerVisible}
+            onConfirm={this._handleDatePicked}
+            onCancel={this._hideDateTimePicker}
+            mode='time'/>
+        </View>
+      );
+    }
   }
 }
 module.exports = PublishTable;

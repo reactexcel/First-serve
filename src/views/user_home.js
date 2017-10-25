@@ -18,7 +18,8 @@ import {
     ToastAndroid,
     AlertIOS,
     Linking,
-    Modal
+    Modal,
+    NetInfo
 } from "react-native";
 
 import Button from "apsl-react-native-button";
@@ -115,6 +116,7 @@ class UserHome extends Component {
       isOpenWheelPicker:false,
       selectedindex:2,
       selectedMember:2,
+      isOnline: false
     };
 
     this._setUserNoti = this._setUserNoti.bind(this);
@@ -128,6 +130,8 @@ class UserHome extends Component {
     this._setModalVisibleForViewResurant = this._setModalVisibleForViewResurant.bind(this);
     this.setBookingModalVisible = this.setBookingModalVisible.bind(this);
     this.book = this.book.bind(this);
+    this.handleFirstConnectivityChange = this.handleFirstConnectivityChange.bind(this);
+    this.unmountNetworkListner = this.unmountNetworkListner.bind(this);
 
     const th = this;
     const os = Platform.OS;
@@ -194,7 +198,17 @@ class UserHome extends Component {
   }
 
   componentWillMount() {
-      // start listening for firebase updates
+    NetInfo.isConnected.fetch().then(isConnected => {
+      console.log('First, is ' + (isConnected ? 'online' : 'offline'));
+      this.setState({isOnline: isConnected});
+    });
+
+    NetInfo.isConnected.addEventListener(
+      'connectionChange',
+      this.handleFirstConnectivityChange
+    );
+
+    // start listening for firebase updates
     this.listenForRestaurants(this.restaurantRef);
 
     try {
@@ -243,8 +257,17 @@ class UserHome extends Component {
         var isNoBooked = true;
         if(bookedRestaurant.length > 0) isNoBooked = false;
         var sourceB = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
+        var selectedTab = this.state.currentTab;
+        if(userSnap.val().UserNotifStartTime && userSnap.val().UserNotifStartTime == 'SET START TIME'){
+          selectedTab = 3;
+        }else if(userSnap.val().UserNotifEndTime && userSnap.val().UserNotifEndTime == 'SET END TIME'){
+          selectedTab = 3;
+        }else if(!userSnap.val().pax || !userSnap.val().phone_number){
+          selectedTab = 3;
+        }
 
         this.setState({
+          currentTab: selectedTab,
           isNoFavourite: isNoFavourite,
           isNoBooked: isNoBooked,
           isLoadingRestaurants: isLoadingRestaurants,
@@ -329,6 +352,19 @@ class UserHome extends Component {
     this.restaurantRef.off('value');
     Database.listenUserStop();
     this.ref.orderByChild("bookedBy").equalTo(this.state.userId).off("value");
+    this.unmountNetworkListner();
+  }
+
+  unmountNetworkListner(){
+    NetInfo.isConnected.removeEventListener(
+      'connectionChange',
+      this.handleFirstConnectivityChange
+    );
+  }
+
+  handleFirstConnectivityChange(isConnected) {
+    console.log('Then, from listener is ' + (isConnected ? 'online' : 'offline'));
+    this.setState({isOnline: isConnected});
   }
     onPikcerSelect(index) {
       this.setState({
@@ -384,188 +420,219 @@ class UserHome extends Component {
                   <Icon name='bell' type='font-awesome' color='#626262'/>
                   <View style={{paddingLeft: 5}}><Text>Notifications</Text></View>
               </View>
+=======
+    if(!this.state.isOnline){
+      return (
+        <View style={[styles.container, {padding: 10}]}>
+          <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+            <Text style={styles.headerText}>We can’t seem to connect to the First Served network. Please check your internet connection.</Text>
+          </View>
+        </View>
+      );
+    }else{
+      return (
+        <View style={styles.container}>
+          <Modal
+            animationType="slide"
+            transparent={false}
+            visible={this.state.isBookingModelVisible}
+            onRequestClose={() => {this.setBookingModalVisible(false)}}>
 
-              <Switch
-                  onValueChange={(value) => this._setUserNoti(value)}
-                  value={this.state.notificationOn}/>
-          </View>*/}
-          {this.state.isLoadingRestaurants ?
-            <View style={styles.midContainer}>
-             <Text style={{fontSize: 20}}>Loading Restaurants .... </Text>
-           </View>
-           :
-          <ListView
-            dataSource={this.state.dataSource}
-            enableEmptySections={true}
-            removeClippedSubviews={false}
-            renderRow={this._renderItem.bind(this)}
-            style={[styles.listView, {marginTop: 10}]}/>}
-        </View>}
-        {this.state.currentTab == 1 && <View style={styles.container}>
-            {this.state.isNoFavourite ? <View style={styles.midContainer}>
-              <Text style={{fontSize: 20}}>No Favourites</Text>
-            </View>: <ListView
-              dataSource={this.state.favoriteDataSource}
+            <AvailableTable
+              restaurant={this.state.bookingRestaurant}
+              table={this.state.bookingTable}
+              setModalVisible={this.setBookingModalVisible}
+              bookTable={this.book}/>
+          </Modal>
+          {this.state.currentTab == 0 && <View style={styles.container}>
+            {/*<View style={[styles.notiView, styles.bottomBorder]}>
+                <View style={styles.notiIconView}>
+                    <Icon name='bell' type='font-awesome' color='#626262'/>
+                    <View style={{paddingLeft: 5}}><Text>Notifications</Text></View>
+                </View>
+>>>>>>> a0c2c5a229f95918719b5984a28ef5602c6c4122
+
+                <Switch
+                    onValueChange={(value) => this._setUserNoti(value)}
+                    value={this.state.notificationOn}/>
+            </View>*/}
+            {this.state.isLoadingRestaurants ?
+              <View style={styles.midContainer}>
+               <Text style={{fontSize: 20}}>Loading Restaurants .... </Text>
+             </View>
+             :
+            <ListView
+              dataSource={this.state.dataSource}
               enableEmptySections={true}
               removeClippedSubviews={false}
-              renderRow={this._renderFavoriteItem.bind(this)}
+              renderRow={this._renderItem.bind(this)}
               style={[styles.listView, {marginTop: 10}]}/>}
-        </View>}
-        {this.state.currentTab == 2 && <View style={styles.container}>
-          {this.state.isNoBooked ? <View style={styles.midContainer}>
-            <Text style={{fontSize: 20}}>No Bookings</Text>
-          </View>
-          : <ListView
-            dataSource={this.state.bookedDataSource}
-            enableEmptySections={true}
-            removeClippedSubviews={false}
-            renderRow={this._renderBookedItem.bind(this)}
-            style={[styles.listView, {marginTop: 10}]}/>}
-        </View>}
-        {this.state.currentTab == 3 && (this.state.isLoading ?<ScrollView keyboardDismissMode={'none'}>
-          <View style={styles.container}>
-            <View style={styles.navBar}>
-              <TouchableHighlight
-                style={[styles.headingRight]}
-                onPress={() => this.logout(this, function(uh){
-                  DefaultPreference.clearAll();
-                  const resetAction = NavigationActions.reset({
-                    index: 0,
-                    actions: [NavigationActions.navigate({ routeName: 'Home'})]
-                  });
-                  uh.props.navigation.dispatch(resetAction);
-                })}>
-                <View style={[styles.headingRight]}>
-                  <Text style={{color: '#000', fontSize: 16, paddingRight: 10}}>Sign out</Text>
-                  <Icon
-                    name='sign-out'
-                    type='octicon'
-                    color='#000'/>
+          </View>}
+          {this.state.currentTab == 1 && <View style={styles.container}>
+              {this.state.isNoFavourite ? <View style={styles.midContainer}>
+                <Text style={{fontSize: 20}}>No Favourites</Text>
+              </View>: <ListView
+                dataSource={this.state.favoriteDataSource}
+                enableEmptySections={true}
+                removeClippedSubviews={false}
+                renderRow={this._renderFavoriteItem.bind(this)}
+                style={[styles.listView, {marginTop: 10}]}/>}
+          </View>}
+          {this.state.currentTab == 2 && <View style={styles.container}>
+            {this.state.isNoBooked ? <View style={styles.midContainer}>
+              <Text style={{fontSize: 20}}>No Bookings</Text>
+            </View>
+            : <ListView
+              dataSource={this.state.bookedDataSource}
+              enableEmptySections={true}
+              removeClippedSubviews={false}
+              renderRow={this._renderBookedItem.bind(this)}
+              style={[styles.listView, {marginTop: 10}]}/>}
+          </View>}
+          {this.state.currentTab == 3 && (this.state.isLoading ?<ScrollView keyboardDismissMode={'none'}>
+            <View style={styles.container}>
+              <View style={styles.navBar}>
+                <TouchableHighlight
+                  style={[styles.headingRight]}
+                  onPress={() => this.logout(this, function(uh){
+                    DefaultPreference.clearAll();
+                    const resetAction = NavigationActions.reset({
+                      index: 0,
+                      actions: [NavigationActions.navigate({ routeName: 'Home'})]
+                    });
+                    uh.props.navigation.dispatch(resetAction);
+                  })}>
+                  <View style={[styles.headingRight]}>
+                    <Text style={{color: '#000', fontSize: 16, paddingRight: 10}}>Sign out</Text>
+                    <Icon
+                      name='sign-out'
+                      type='octicon'
+                      color='#000'/>
+                  </View>
+                </TouchableHighlight>
+              </View>
+            </View>
+              <View style={[styles.rowContainer]}>
+                <View style={[styles.avtarCircle]}>
+                  <Image style={{position: 'absolute', width: 80, height: 80, borderRadius: 40}} source={{uri: this.props.navigation.state.params.photoUrl ? this.props.navigation.state.params.photoUrl : 'https://firebasestorage.googleapis.com/v0/b/first-served-c9197.appspot.com/o/both.jpg?alt=media&token=9c17e2cf-262f-4450-959a-91d8b109a6fe'}} />
                 </View>
-              </TouchableHighlight>
-            </View>
-            <View style={[styles.rowContainer]}>
-              <View style={[styles.avtarCircle]}>
-                <Image style={{position: 'absolute', width: 80, height: 80, borderRadius: 40}} source={{uri: this.props.navigation.state.params.photoUrl ? this.props.navigation.state.params.photoUrl : 'https://firebasestorage.googleapis.com/v0/b/first-served-c9197.appspot.com/o/both.jpg?alt=media&token=9c17e2cf-262f-4450-959a-91d8b109a6fe'}} />
+              </View>
+              <View style={[styles.rowContainer, {paddingTop: 5}]}>
+                <Text style={{color: '#626262', fontSize: 24}}>{this.props.navigation.state.params.name}</Text>
+              </View>
+              <View style={[styles.container, {flex: 1, paddingLeft: 10, paddingRight: 10, paddingTop: 15}]}>
+                <View style={[styles.rowContainer, styles.bottomTopBorder, {paddingTop: 5, justifyContent: 'flex-start'}]}>
+                  <Icon
+                    name='cutlery'
+                    type='font-awesome'
+                    color='#000'/>
+                    <Text style={{color: '#626262', fontSize: 16, paddingLeft: 10}}>Table for</Text>
+                    <TouchableHighlight onPress={()=>{this.onSelectWheeler(true)}}>
+                      <View style={{flexDirection:'row',marginRight:3}}>
+                        <Text style={{marginLeft:8, marginRight:5 }}>
+                          {this.state.selectedMember}
+                        </Text>
+                        <Icon name='sort-desc' size={12} style={{marginTop:1}} type='font-awesome' color='#626262'/>
+                      </View>
+                    </TouchableHighlight>
+                    <Text> people</Text>
+                </View>
+                <View style={[styles.rowContainer, styles.bottomBorder, {paddingTop: 5, justifyContent: 'flex-start'}]}>
+                  <Icon
+                    name='mobile'
+                    type='font-awesome'
+                    color='#000'/>
+                    <TextInput
+                      style={{color: '#626262', flex: 1, marginLeft: 15, marginRight: 150}}
+                      keyboardType={'phone-pad'}
+                      onChangeText={(mobile) => this._setMobile(mobile)}
+                      value={this.state.mobile}/>
+                </View>
+                <View style={{marginTop:10}} >
+                <Text style={{fontSize:16}} >Notification Time</Text>
+                <View style={[styles.bottomBorder,{flexDirection:'row', paddingLeft:5}]} >
+                    <TouchableHighlight
+                      onPress={() => this._showDateTimePicker(1)}
+                      underlayColor={HEXCOLOR.lightBrown}>
+                      <View >
+                        <Text style={{ fontSize: 16,fontWeight:'bold'}}>
+                          {this.state.UserNotifStartTime === 'SET START TIME' ? this.state.UserNotifStartTime : Moment(this.state.UserNotifStartTime).format('YYYY-MM-DD HH:mm')}
+                        </Text>
+                      </View>
+                    </TouchableHighlight>
+                    <Text style={{marginLeft:5,marginRight:5,fontSize:16}} >To</Text>
+                    <TouchableHighlight
+                      onPress={() => this._showDateTimePicker(2)}
+                      underlayColor={HEXCOLOR.lightBrown}>
+                      <View>
+                        <Text style={{ fontSize: 16,fontWeight:'bold'}}>
+                          {this.state.UserNotifEndTime === 'SET END TIME' ? this.state.UserNotifEndTime : Moment(this.state.UserNotifEndTime).format('YYYY-MM-DD HH:mm')}
+                        </Text>
+                      </View>
+                    </TouchableHighlight>
+                    <DateTimePicker
+                      isVisible={this.state.isDateTimePickerVisible}
+                      onConfirm={this._handleDatePicked}
+                      onCancel={this._hideDateTimePicker}
+                      mode='time'/>
+                </View>
               </View>
             </View>
-            <View style={[styles.rowContainer, {paddingTop: 5}]}>
-              <Text style={{color: '#626262', fontSize: 24}}>{this.props.navigation.state.params.name}</Text>
-            </View>
-            <View style={[styles.container, {flex: 1, paddingLeft: 10, paddingRight: 10, paddingTop: 15}]}>
-              <View style={[styles.rowContainer, styles.bottomTopBorder, {paddingTop: 5, justifyContent: 'flex-start'}]}>
-                <Icon
-                  name='cutlery'
-                  type='font-awesome'
-                  color='#000'/>
-                  <Text style={{color: '#626262', fontSize: 16, paddingLeft: 10}}>Table for</Text>
-                  <TouchableHighlight onPress={()=>{this.onSelectWheeler(true)}}>
-                    <View style={{flexDirection:'row',marginRight:3}}>
-                      <Text style={{marginLeft:8, marginRight:5 }}>
-                        {this.state.selectedMember}
-                      </Text>
-                      <Icon name='sort-desc' size={12} style={{marginTop:1}} type='font-awesome' color='#626262'/>
-                    </View>
-                  </TouchableHighlight>
-                  <Text> people</Text>
+              <View style={[{paddingTop: 15}]}>
+                <View style={{marginLeft: 60, marginRight: 60}}>
+                  <Button onPress={()=>{this.save()}} style={{backgroundColor: '#122438'}} textStyle={{color: '#FFF', fontSize: 18}}>
+                    {buttonName}
+                  </Button>
+                </View>
               </View>
-              <View style={[styles.rowContainer, styles.bottomBorder, {paddingTop: 5, justifyContent: 'flex-start'}]}>
-                <Icon
-                  name='mobile'
-                  type='font-awesome'
-                  color='#000'/>
-                  <TextInput
-                    style={{color: '#626262', flex: 1, marginLeft: 15, marginRight: 150}}
-                    keyboardType={'phone-pad'}
-                    onChangeText={(mobile) => this._setMobile(mobile)}
-                    value={this.state.mobile}/>
-              </View>
-              <View style={{marginTop:10}} >
-              <Text style={{fontSize:16}} >Notification Time</Text>
-              <View style={[styles.bottomBorder,{flexDirection:'row', paddingLeft:5}]} >
-                  <TouchableHighlight
-                    onPress={() => this._showDateTimePicker(1)}
-                    underlayColor={HEXCOLOR.lightBrown}>
-                    <View >
-                      <Text style={{ fontSize: 16,fontWeight:'bold'}}>
-                        {this.state.UserNotifStartTime === 'SET START TIME' ? this.state.UserNotifStartTime : Moment(this.state.UserNotifStartTime).format('YYYY-MM-DD HH:mm')}
-                      </Text>
-                    </View>
-                  </TouchableHighlight>
-                  <Text style={{marginLeft:5,marginRight:5,fontSize:16}} >To</Text>
-                  <TouchableHighlight
-                    onPress={() => this._showDateTimePicker(2)}
-                    underlayColor={HEXCOLOR.lightBrown}>
-                    <View>
-                      <Text style={{ fontSize: 16,fontWeight:'bold'}}>
-                        {this.state.UserNotifEndTime === 'SET END TIME' ? this.state.UserNotifEndTime : Moment(this.state.UserNotifEndTime).format('YYYY-MM-DD HH:mm')}
-                      </Text>
-                    </View>
-                  </TouchableHighlight>
-                  <DateTimePicker
-                    isVisible={this.state.isDateTimePickerVisible}
-                    onConfirm={this._handleDatePicked}
-                    onCancel={this._hideDateTimePicker}
-                    mode='time'/>
-              </View>
-            </View>
-          </View>
-            <View style={[{paddingTop: 15}]}>
-              <View style={{marginLeft: 60, marginRight: 60}}>
-                <Button onPress={()=>{this.save()}} style={{backgroundColor: '#122438'}} textStyle={{color: '#FFF', fontSize: 18}}>
-                  {buttonName}
-                </Button>
-              </View>
-            </View>
-          </View>
-        </ScrollView>:<View style={{flex:1,justifyContent:'center',flexDirection:'column',alignItems:'center'}}><Progress.Circle size={30} indeterminate={true} /></View>)}
-        {this.state.restaurants.map((restaurant, key) => {
-          console.log("Model Key", key);
-          return(
-            <Modal
-              key={key}
-              animationType="slide"
-              transparent={false}
-              visible={this.state.isModalVisible[restaurant._key] === true ? true : false}
-              onRequestClose={() => {this.setModalVisible(restaurant._key, false)}}>
+          </ScrollView>:<View style={{flex:1,justifyContent:'center',flexDirection:'column',alignItems:'center'}}><Progress.Circle size={30} indeterminate={true} /></View>)}
+          {this.state.restaurants.map((restaurant, key) => {
+            console.log("Model Key", key);
+            return(
+              <Modal
+                key={key}
+                animationType="slide"
+                transparent={false}
+                visible={this.state.isModalVisible[restaurant._key] === true ? true : false}
+                onRequestClose={() => {this.setModalVisible(restaurant._key, false)}}>
 
-              <RestaurantView restaurant={restaurant}
-                setModalVisible={this._setModalVisible}
-                setValue={this._setValue}
-                isAdmin={false}
-                isRestaurantNotiOn={this.state.isRestaurantNotiOn}
-                setFavourite={this._setFavourite}
-                favourites={this.state.favourites}
-                openMap={this._openMapview}/>
-            </Modal>)
-          })
-        }
-        <BottomNavigation
-          labelColor="white"
-          rippleColor="white"
-          style={{ height: 56, elevation: 8, position: 'absolute', left: 0, bottom: 0, right: 0 }}
-          onTabChange={(newTabIndex) => this.tabChanged(newTabIndex)}
-          activeTab={this.state.currentTab}>
-          <Tab
-            barBackgroundColor="#122438"
-            label="Restaurants"
-            icon={<Icon size={24} color="white" name="restaurant" />}/>
-          <Tab
-            barBackgroundColor="#122438"
-            label="Favourites"
-            icon={<Icon size={24} color="white" name="favorite-border" />}/>
-          <Tab
-            barBackgroundColor="#122438"
-            label="Bookings"
-            icon={<Icon size={24} color="white" name="query-builder" />}/>
-          <Tab
-            barBackgroundColor="#122438"
-            label="Account"
-            icon={<Icon size={24} color="white" name="account-circle" />}/>
-        </BottomNavigation>
-      </View>
-    );
-  }
+                <RestaurantView restaurant={restaurant}
+                  setModalVisible={this._setModalVisible}
+                  setValue={this._setValue}
+                  isAdmin={false}
+                  isRestaurantNotiOn={this.state.isRestaurantNotiOn}
+                  setFavourite={this._setFavourite}
+                  favourites={this.state.favourites}
+                  openMap={this._openMapview}/>
+              </Modal>)
+            })
+          }
+          <BottomNavigation
+            labelColor="white"
+            rippleColor="white"
+            style={{ height: 56, elevation: 8, position: 'absolute', left: 0, bottom: 0, right: 0 }}
+            onTabChange={(newTabIndex) => this.tabChanged(newTabIndex)}
+            activeTab={this.state.currentTab}>
+            <Tab
+              barBackgroundColor="#122438"
+              label="Restaurants"
+              icon={<Icon size={24} color="white" name="restaurant" />}/>
+            <Tab
+              barBackgroundColor="#122438"
+              label="Favourites"
+              icon={<Icon size={24} color="white" name="favorite-border" />}/>
+            <Tab
+              barBackgroundColor="#122438"
+              label="Bookings"
+              icon={<Icon size={24} color="white" name="query-builder" />}/>
+            <Tab
+              barBackgroundColor="#122438"
+              label="Account"
+              icon={<Icon size={24} color="white" name="account-circle" />}/>
+          </BottomNavigation>
+        </View>
+      );
+    }
     logout(th, callback){
       firestack.auth.signOut()
         .then(res => {
@@ -593,6 +660,14 @@ class UserHome extends Component {
     };
 
     tabChanged(idx){
+      if(this.state.pax == '0' || this.state.mobile == '' || this.state.UserNotifStartTime == 'SET START TIME' || this.state.UserNotifEndTime == 'SET END TIME'){
+        idx = 3;
+        if (Platform.OS === 'android') {
+          ToastAndroid.showWithGravity('Please complete your profile.', ToastAndroid.SHORT, ToastAndroid.BOTTOM);
+        } else if (Platform.OS === 'ios') {
+          AlertIOS.alert('Please complete your profile.');
+        }
+      }
       console.log("currentTab", idx);
       const {setParams} = this.props.navigation;
       let title = "Restaurants";
@@ -607,6 +682,7 @@ class UserHome extends Component {
       // UserHome.navigationOptions.title = "favorites";
       this.setState({currentTab: idx});
       setParams({ title: title });
+      return false;
     }
 
     _setUserNoti(val){
@@ -623,22 +699,22 @@ class UserHome extends Component {
     }
 
     save(){
-      this.setState({isLoading:false,saved:true})
+      this.setState({isLoading: false, saved: true});
       if (this.state.mobile && this.state.selectedMember) {
-        console.log(this.state.selectedMember,"selectedMember");
-        Database.setUserData(this.props.navigation.state.params.userId, this.state.selectedMember, this.state.mobile, this.state.UserNotifStartTime,this.state.UserNotifEndTime).then(()=>{
-          this.setState({isLoading:true})
-        });
-      }else {
-        this.setState({isLoading:true})
-        if (Platform.OS === 'android') {
-        ToastAndroid.showWithGravity('Feild can not be empty ', ToastAndroid.SHORT, ToastAndroid.BOTTOM);
-      } else if (Platform.OS === 'ios') {
-        AlertIOS.alert('Feild can not be empty');
-      }
-      }
+        if(this.state.UserNotifStartTime >= this.state.UserNotifEndTime){
+          this.setState({isLoading: true})
+          if (Platform.OS === 'android') {
+            ToastAndroid.showWithGravity('Notification Start time should be less than End time.', ToastAndroid.SHORT, ToastAndroid.BOTTOM);
+          } else if (Platform.OS === 'ios') {
+            AlertIOS.alert('Notification Start time should be less than End time.');
+          }
+        }else{
+          Database.setUserData(this.props.navigation.state.params.userId, this.state.selectedMember, this.state.mobile, this.state.UserNotifStartTime, this.state.UserNotifEndTime).then(()=>{
+            this.setState({isLoading:true})
+          });
+        }
     }
-
+}
     _renderItem(restaurant) {
         return (
             <RestaurantListItem restaurant={restaurant}
@@ -658,7 +734,7 @@ class UserHome extends Component {
         <FavourateItem restaurant={restaurant}
         isRestaurantNotiOn={this.state.isRestaurantNotiOn}
         favourites={this.state.favourites}
-        setValue={this._setValue}
+        setValue={this._setValue.bind(this)}
         openMap={this._openMapview}
         isAdmin={false}
         isModelVisible={this.state.isModalVisible}
@@ -671,18 +747,14 @@ class UserHome extends Component {
       return (
         <BookedItem
         restaurant={bookedTable.restaurant}
-        isRestaurantNotiOn={this.state.isRestaurantNotiOn}
-        setValue={this._setValue}
         isAdmin={false}
         table={bookedTable.table}
         favourites={this.state.favourites}
         setFavourite={this._setFavourite}
-        isRestaurantNotiOn={this.state.isRestaurantNotiOn}
         openMap={this._openMapview.bind(this)}
         isAdmin={false}
         isModelVisible={this.state.isModalVisible}
         setModalVisible={this._setModalVisible}
-        setValue={this._setValue.bind(this)}
       />
       );
     }
@@ -691,9 +763,22 @@ class UserHome extends Component {
         Database.setUserRestaurantNotiSetting(id, this.state.userId, value);
         this.state.isRestaurantNotiOn[id] = value;
         var source = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
+        var sourceF = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
+        var keys = Object.keys(this.state.favourites);
+        var favourites = [];
+        for(i = 0; i < this.state.restaurants.length; i++){
+          if(keys.indexOf(this.state.restaurants[i]._key) > -1 && this.state.favourites[this.state.restaurants[i]._key]) favourites.push(this.state.restaurants[i]);
+        }
+
+        var isNoFavourite = true;
+        if(favourites.length > 0) isNoFavourite = false;
+
         this.setState({
+          isNoFavourite: isNoFavourite,
+          favourites: this.state.favourites,
           isRestaurantNotiOn: this.state.isRestaurantNotiOn,
-          dataSource: source.cloneWithRows(this.state.restaurants)
+          dataSource: source.cloneWithRows(this.state.restaurants),
+          favoriteDataSource: sourceF.cloneWithRows(favourites)
         });
     }
 

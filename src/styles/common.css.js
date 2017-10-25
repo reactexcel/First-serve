@@ -19,6 +19,11 @@ const Common = {
 		paddingBottom: 5
 	},
 
+	headerText: {
+		fontSize: 20,
+		fontWeight: 'bold'
+	},
+
 	rowContainerLF: {
 		flex: 1,
 		flexDirection:'row',

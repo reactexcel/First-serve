@@ -58,6 +58,22 @@ class FavouriteItem extends Component {
               </View>
             </TouchableOpacity>
           </View>
+
+          <View style={[styles.rowContainer, {paddingTop: 15}]}>
+            <Text style={{fontSize: 11}}>Get notified when additional tables become available</Text>
+          </View>
+          <View style={[styles.listNotiView, {paddingBottom: this.props.isAdmin ? 0 : 58}]}>
+              <View style={styles.notiIconView}>
+                  <Icon
+                      name='bell'
+                      type='font-awesome'
+                      color='#626262'/>
+                  <View style={{paddingLeft: 5}}><Text>Notifications</Text></View>
+              </View>
+
+              <Switch onValueChange={(value) => this.props.setValue(this.props.restaurant._key, value)}
+              value={this.props.isRestaurantNotiOn[this.props.restaurant._key] === true ? true : false}/>
+          </View>
         </View>
       </View>
     );

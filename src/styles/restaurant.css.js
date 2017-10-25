@@ -19,6 +19,11 @@ const RestaurantCss = {
 		paddingBottom: 5
 	},
 
+	headerText: {
+		fontSize: 20,
+		fontWeight: 'bold'
+	},
+
 	navBar: {
     height: 60,
     flexDirection: 'row',
