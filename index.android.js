@@ -15,6 +15,7 @@ import NewEditRestaurant from "./src/views/new_edit_restaurant";
 import PublishTable from "./src/views/publish_table";
 import Firebase from "./src/firebase/firebase";
 import DefaultPreference from 'react-native-default-preference';
+import SplashScreen from 'react-native-splash-screen'
 
 const FBSDK = require('react-native-fbsdk');
 const {
@@ -173,6 +174,7 @@ class Landing extends Component {
   }
 
   componentDidMount(){
+    SplashScreen.hide();
     console.log('componentDidMount index');
   }
 
