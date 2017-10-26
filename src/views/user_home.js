@@ -13,7 +13,7 @@ import {
     Image,
     TextInput,
     ScrollView,
-    Picker,
+    // Picker,
     Platform,
     ToastAndroid,
     AlertIOS,
@@ -29,7 +29,10 @@ import MIcon from 'react-native-vector-icons/MaterialIcons'
 import {StackNavigator, NavigationActions,} from 'react-navigation';
 import DateTimePicker from 'react-native-modal-datetime-picker';
 import Moment from 'moment';
+import Picker from 'react-native-wheel-picker';
+var PickerItem = Picker.Item;
 
+import WheelPicker from '../components/wheelPicker'
 import * as Progress from 'react-native-progress';
 import { HEXCOLOR } from "../styles/hexcolor.js";
 import styles from "../styles/common.css";
@@ -57,10 +60,11 @@ class UserHome extends Component {
   static navigationOptions = ({ navigation }) => {
     const {state} = navigation;
     return {
-      title: `${state.params.title}`,
-      headerTitleStyle: {alignSelf: 'center', color: 'white'},
+      title: `${state.params.title}`.toUpperCase(),
+      headerTitleStyle: {fontSize:12,alignSelf: 'center', color: 'white',fontWeight:'bold' },
       headerStyle: {
-        backgroundColor: '#122438',
+        marginBottom:-10,
+        backgroundColor: '#023e4eff',
       }
     }
   };
@@ -101,7 +105,6 @@ class UserHome extends Component {
       bookingRestaurantKey: '',
       bookingTable: {pax: 2, startTime: 1489829490000, endTime: 1489829490000},
       bookingRestaurant: {images: [], name: 'rsgdvad', booking_message: 'vad  waefa asf', address: 'kjnvkqwneu asjn aqwegj asg'},
-      pax: 2,
       mobile: '',
       isLoading:true,
       saved:false,
@@ -110,6 +113,10 @@ class UserHome extends Component {
       isDateTimePickerVisible:false,
       UserNotifStartTime:'SET START TIME',
       UserNotifEndTime:'SET END TIME',
+      itemList: ['0','1', '2', '3', '4', '5', '6', '7', '8'],
+      isOpenWheelPicker:false,
+      selectedindex:2,
+      selectedMember:2,
       isOnline: false
     };
 
@@ -269,7 +276,7 @@ class UserHome extends Component {
           favourites: this.state.favourites,
           notificationOn: userSnap.val().notiOn,
           mobile: userSnap.val().phone_number ? userSnap.val().phone_number : '',
-          pax: userSnap.val().pax ? userSnap.val().pax : '0',
+          selectedMember: userSnap.val().pax ? userSnap.val().pax : '0',
           UserNotifStartTime: userSnap.val().UserNotifStartTime ? userSnap.val().UserNotifStartTime:'SET START TIME' ,
           UserNotifEndTime: userSnap.val().UserNotifEndTime ? userSnap.val().UserNotifEndTime:'SET END TIME',
           favoriteDataSource: this.state.favoriteDataSource.cloneWithRows(favourites),
@@ -360,10 +367,61 @@ class UserHome extends Component {
     console.log('Then, from listener is ' + (isConnected ? 'online' : 'offline'));
     this.setState({isOnline: isConnected});
   }
+    onPikcerSelect(index) {
+      this.setState({
+        selectedindex: index,
+      })
+    }
 
+    onItemSelect() {
+      this.setState({selectedMember: this.state.selectedindex})
+      this.setState({isOpenWheelPicker: false});
+    }
+    onCancel() {
+      this.setState({isOpenWheelPicker: false});
+    }
+    onSelectWheeler(value){
+      this.setState({isOpenWheelPicker: value});
+    }
   render() {
     // console.log(this.state.isBookingModelVisible);
     const buttonName = (this.state.saved  ? "Saved" : "Save Changes" )
+    return (
+      <View style={styles.container}>
+        <Modal
+          animationType="slide"
+          transparent={false}
+          visible={this.state.isBookingModelVisible}
+          onRequestClose={() => {this.setBookingModalVisible(false)}}>
+
+          <AvailableTable
+            restaurant={this.state.bookingRestaurant}
+            table={this.state.bookingTable}
+            setModalVisible={this.setBookingModalVisible}
+            bookTable={this.book}/>
+        </Modal>
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={this.state.isOpenWheelPicker}
+          onRequestClose={() => {this.onSelectWheeler(false)}}>
+
+          <WheelPicker
+            itemList={this.state.itemList}
+            selectedMember={this.state.selectedMember}
+            setModalVisible={this.setBookingModalVisible}
+            onPikcerSelect={(index)=>{this.onPikcerSelect(index)}}
+            onItemSelect={()=>this.onItemSelect()}
+            onCancel={()=>this.onCancel()}
+            />
+        </Modal>
+        {this.state.currentTab == 0 && <View style={styles.container}>
+          {/*<View style={[styles.notiView, styles.bottomBorder]}>
+              <View style={styles.notiIconView}>
+                  <Icon name='bell' type='font-awesome' color='#626262'/>
+                  <View style={{paddingLeft: 5}}><Text>Notifications</Text></View>
+              </View>
+=======
     if(!this.state.isOnline){
       return (
         <View style={[styles.container, {padding: 10}]}>
@@ -393,6 +451,7 @@ class UserHome extends Component {
                     <Icon name='bell' type='font-awesome' color='#626262'/>
                     <View style={{paddingLeft: 5}}><Text>Notifications</Text></View>
                 </View>
+>>>>>>> a0c2c5a229f95918719b5984a28ef5602c6c4122
 
                 <Switch
                     onValueChange={(value) => this._setUserNoti(value)}
@@ -453,6 +512,7 @@ class UserHome extends Component {
                   </View>
                 </TouchableHighlight>
               </View>
+            </View>
               <View style={[styles.rowContainer]}>
                 <View style={[styles.avtarCircle]}>
                   <Image style={{position: 'absolute', width: 80, height: 80, borderRadius: 40}} source={{uri: this.props.navigation.state.params.photoUrl ? this.props.navigation.state.params.photoUrl : 'https://firebasestorage.googleapis.com/v0/b/first-served-c9197.appspot.com/o/both.jpg?alt=media&token=9c17e2cf-262f-4450-959a-91d8b109a6fe'}} />
@@ -468,21 +528,14 @@ class UserHome extends Component {
                     type='font-awesome'
                     color='#000'/>
                     <Text style={{color: '#626262', fontSize: 16, paddingLeft: 10}}>Table for</Text>
-                    <Picker
-                      style={{width:80  ,borderWidth:1}}
-                      selectedValue={this.state.pax}
-                      onValueChange={(itemValue, itemIndex) => this.setState({pax: itemValue})}>
-                      <Picker.Item  label="1" value="1" />
-                      <Picker.Item  label="2" value="2" />
-                      <Picker.Item  label="3" value="3" />
-                      <Picker.Item  label="4" value="4" />
-                      <Picker.Item  label="5" value="5" />
-                      <Picker.Item  label="6" value="6" />
-                      <Picker.Item  label="7" value="7" />
-                      <Picker.Item  label="8" value="8" />
-                      <Picker.Item  label="9" value="9" />
-                      <Picker.Item  label="10" value="10" />
-                    </Picker>
+                    <TouchableHighlight onPress={()=>{this.onSelectWheeler(true)}}>
+                      <View style={{flexDirection:'row',marginRight:3}}>
+                        <Text style={{marginLeft:8, marginRight:5 }}>
+                          {this.state.selectedMember}
+                        </Text>
+                        <Icon name='sort-desc' size={12} style={{marginTop:1}} type='font-awesome' color='#626262'/>
+                      </View>
+                    </TouchableHighlight>
                     <Text> people</Text>
                 </View>
                 <View style={[styles.rowContainer, styles.bottomBorder, {paddingTop: 5, justifyContent: 'flex-start'}]}>
@@ -533,7 +586,6 @@ class UserHome extends Component {
                   </Button>
                 </View>
               </View>
-            </View>
           </ScrollView>:<View style={{flex:1,justifyContent:'center',flexDirection:'column',alignItems:'center'}}><Progress.Circle size={30} indeterminate={true} /></View>)}
           {this.state.restaurants.map((restaurant, key) => {
             console.log("Model Key", key);
@@ -563,26 +615,25 @@ class UserHome extends Component {
             onTabChange={(newTabIndex) => this.tabChanged(newTabIndex)}
             activeTab={this.state.currentTab}>
             <Tab
-              barBackgroundColor="#122438"
+              barBackgroundColor="#023e4eff"
               label="Restaurants"
               icon={<Icon size={24} color="white" name="restaurant" />}/>
             <Tab
-              barBackgroundColor="#122438"
+              barBackgroundColor="#023e4eff"
               label="Favourites"
               icon={<Icon size={24} color="white" name="favorite-border" />}/>
             <Tab
-              barBackgroundColor="#122438"
+              barBackgroundColor="#023e4eff"
               label="Bookings"
               icon={<Icon size={24} color="white" name="query-builder" />}/>
             <Tab
-              barBackgroundColor="#122438"
+              barBackgroundColor="#023e4eff"
               label="Account"
               icon={<Icon size={24} color="white" name="account-circle" />}/>
           </BottomNavigation>
         </View>
       );
     }
-  }
     logout(th, callback){
       firestack.auth.signOut()
         .then(res => {
@@ -650,7 +701,7 @@ class UserHome extends Component {
 
     save(){
       this.setState({isLoading: false, saved: true});
-      if (this.state.mobile && this.state.pax) {
+      if (this.state.mobile && this.state.selectedMember) {
         if(this.state.UserNotifStartTime >= this.state.UserNotifEndTime){
           this.setState({isLoading: true})
           if (Platform.OS === 'android') {
@@ -659,20 +710,12 @@ class UserHome extends Component {
             AlertIOS.alert('Notification Start time should be less than End time.');
           }
         }else{
-          Database.setUserData(this.props.navigation.state.params.userId, this.state.pax, this.state.mobile, this.state.UserNotifStartTime, this.state.UserNotifEndTime).then(()=>{
+          Database.setUserData(this.props.navigation.state.params.userId, this.state.selectedMember, this.state.mobile, this.state.UserNotifStartTime, this.state.UserNotifEndTime).then(()=>{
             this.setState({isLoading:true})
           });
         }
-      }else {
-        this.setState({isLoading:true})
-        if (Platform.OS === 'android') {
-          ToastAndroid.showWithGravity('Feild can not be empty ', ToastAndroid.SHORT, ToastAndroid.BOTTOM);
-        } else if (Platform.OS === 'ios') {
-          AlertIOS.alert('Feild can not be empty');
-        }
-      }
     }
-
+}
     _renderItem(restaurant) {
         return (
             <RestaurantListItem restaurant={restaurant}
@@ -816,7 +859,6 @@ class UserHome extends Component {
     setBookingModalVisible(value){
       this.setState({isBookingModelVisible: value});
     }
-
     book(){
       const th = this;
       Database.bookTable(this.state.userId, this.state.bookingTable.key, function(isBooked){

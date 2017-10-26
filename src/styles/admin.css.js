@@ -13,7 +13,8 @@ const AdminCss = {
 		flexDirection:'row',
 		alignItems:'center',
 		justifyContent: 'center',
-		paddingBottom: 5
+		marginTop:10,
+		marginBottom:15
 	},
 
 	rowContainerLF: {
@@ -63,11 +64,14 @@ const AdminCss = {
 		flexDirection:'row',
 		alignItems:'center',
 		justifyContent: 'center',
+		paddingTop:3,
 		paddingBottom:10
 	},
 
 	listItemTitle: {
-		fontSize: 20
+		fontWeight:'400',
+		color:'#023e4eff',
+		fontSize: 18.5
 	},
 
 	submit:{
