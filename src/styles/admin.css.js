@@ -65,7 +65,7 @@ const AdminCss = {
 		alignItems:'center',
 		justifyContent: 'center',
 		paddingTop:3,
-		paddingBottom:10
+		paddingBottom:0
 	},
 
 	listItemTitle: {

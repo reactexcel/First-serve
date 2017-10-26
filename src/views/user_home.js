@@ -415,7 +415,7 @@ class UserHome extends Component {
             onCancel={()=>this.onCancel()}
             />
         </Modal>
-        {this.state.currentTab == 0 && <View style={styles.container}>
+        {this.state.currentTab == 0 && <View style={[styles.container,{marginBottom:56}]}>
           {/*<View style={[styles.notiView, styles.bottomBorder]}>
               <View style={styles.notiIconView}>
                   <Icon name='bell' type='font-awesome' color='#626262'/>
@@ -469,7 +469,7 @@ class UserHome extends Component {
               renderRow={this._renderItem.bind(this)}
               style={[styles.listView, {marginTop: 10}]}/>}
           </View>}
-          {this.state.currentTab == 1 && <View style={styles.container}>
+          {this.state.currentTab == 1 && <View style={[styles.container,{marginBottom:56}]}>
               {this.state.isNoFavourite ? <View style={styles.midContainer}>
                 <Text style={{fontSize: 20}}>No Favourites</Text>
               </View>: <ListView
@@ -479,7 +479,7 @@ class UserHome extends Component {
                 renderRow={this._renderFavoriteItem.bind(this)}
                 style={[styles.listView, {marginTop: 10}]}/>}
           </View>}
-          {this.state.currentTab == 2 && <View style={styles.container}>
+          {this.state.currentTab == 2 && <View style={[styles.container,{marginBottom:56}]}>
             {this.state.isNoBooked ? <View style={styles.midContainer}>
               <Text style={{fontSize: 20}}>No Bookings</Text>
             </View>
@@ -490,7 +490,7 @@ class UserHome extends Component {
               renderRow={this._renderBookedItem.bind(this)}
               style={[styles.listView, {marginTop: 10}]}/>}
           </View>}
-          {this.state.currentTab == 3 && (this.state.isLoading ?<View style={{flex:1, marginBottom:40}}>
+          {this.state.currentTab == 3 && (this.state.isLoading ?<View style={{flex:1, marginBottom:56}}>
             <ScrollView keyboardDismissMode={'none'}>
             <View style={styles.container}>
               <View style={styles.navBar}>

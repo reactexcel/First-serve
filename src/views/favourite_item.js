@@ -32,7 +32,7 @@ class FavouriteItem extends Component {
               <Text style={styles.listItemTitle}>{this.props.restaurant.name.toUpperCase()}</Text>
             </TouchableHighlight>
           </View>
-          <View style={styles.rowContainer}>
+          <View style={[styles.rowContainer,{marginTop:0}]}>
             <GallerySwiper {...this.props} openModel={() => this.props.setModalVisible(this.props.restaurant._key, true)} />
           </View>
           <View style={[styles.notiView, {alignItems:'center',marginTop:13}]}>
