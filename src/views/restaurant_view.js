@@ -103,7 +103,7 @@ class RestaurantView extends Component {
                   </View>
               {/* </View> */}
             </View>
-              <View style={{marginTop:-55,marginBottom:25,marginRight:25}}>
+              <View style={{flexDirection:'row',justifyContent:'flex-end',marginTop:-55,marginBottom:25,marginRight:25}}>
                 <Switch onValueChange={(value) => this.props.setValue(this.props.restaurant._key, value)}
                   value={this.props.isRestaurantNotiOn[this.props.restaurant._key] === true ? true : false}/>
               </View>
