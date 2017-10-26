@@ -71,12 +71,10 @@ class RestaurantView extends Component {
 
   render() {
     return (
-      <View style={[CommonStyle.container, {paddingBottom: 16}]}>
+      <View style={[CommonStyle.container, {paddingBottom: 16 }]}>
         <View style={CommonStyle.navBar}>
           <View style={CommonStyle.leftContainer}>
-            <Text
-              onPress={() => this.props.setModalVisible(this.props.restaurant._key, false)}
-              style={[CommonStyle.text, {textAlign: 'left', marginLeft:10}]}>{'<'}</Text>
+
           </View>
           <Text style={[CommonStyle.navtext, {color: 'white'}]}>{this.props.restaurant.name}</Text>
           <View style={CommonStyle.rightContainer}>
@@ -96,22 +94,19 @@ class RestaurantView extends Component {
             <GallerySwiper {...this.props} openModel={() => {}} />
           </View>
           <View style={[{paddingLeft: 15, paddingRight: 15}]}>
-            <Text style={[{paddingTop: 16, paddingBottom: 20}]}>{this.props.restaurant.long_description}</Text>
-            <View style={[CommonStyle.rowContainer, CommonStyle.topBorder, {paddingTop: 15}]}>
-              <Text style={{fontSize: 11}}>Get notified when additional tables become available</Text>
-            </View>
-            <View style={[CommonStyle.listNotiView, CommonStyle.bottomBorder, {paddingBottom: 16}]}>
-                <View style={CommonStyle.notiIconView}>
-                    <Icon
-                        name='bell'
-                        type='font-awesome'
-                        color={HEXCOLOR.lightGrey}/>
-                    <View style={{paddingLeft: 5}}><Text>Notifications</Text></View>
-                </View>
+            <Text style={[{color: '#023e4eff', paddingTop: 16, paddingBottom: 20}]}>{this.props.restaurant.long_description}</Text>
 
-                <Switch onValueChange={(value) => this.props.setValue(this.props.restaurant._key, value)}
-                value={this.props.isRestaurantNotiOn[this.props.restaurant._key] === true ? true : false}/>
+            <View style={[CommonStyle.listNotiView, CommonStyle.bottomBorder,CommonStyle.topBorder, {paddingBottom: 33,paddingTop:30}]}>
+              {/* <View style={[CommonStyle.listNotiView, {paddingBottom: this.props.isAdmin ? 0 : 0}]}> */}
+                  <View style={CommonStyle.notiIconView}>
+                      <Text style={{paddingTop:3,color:'#023e4eff',fontWeight:'bold',fontSize:13}}>TABLE NOTIFICATIONS</Text>
+                  </View>
+              {/* </View> */}
             </View>
+              <View style={{marginTop:-55,marginBottom:25,marginRight:25}}>
+                <Switch onValueChange={(value) => this.props.setValue(this.props.restaurant._key, value)}
+                  value={this.props.isRestaurantNotiOn[this.props.restaurant._key] === true ? true : false}/>
+              </View>
             <View style={{paddingBottom: 16}}>
               <View style={[CommonStyle.rowContainer, {paddingTop: 16}]}>
                 <TouchableHighlight
@@ -123,9 +118,20 @@ class RestaurantView extends Component {
                       <Icon
                         name={this.props.favourites[this.props.restaurant._key] === true ? 'heart' : 'heart-o'}
                         type='font-awesome'
-                        color={HEXCOLOR.lightGrey}/>
+                        color={this.props.favourites[this.props.restaurant._key] === true ? '#023e4eff' : '#023e4eff'}/>
                     </View>
-                    <Text>Favourite</Text>
+                    <Text style={{color:'#023e4eff'}}>Favourite</Text>
+                  </View>
+                </TouchableHighlight>
+                <TouchableHighlight
+                  style={CommonStyle.centerContainer}
+                  onPress={() => this.props.setFavourite(this.props.restaurant._key, (this.props.favourites[this.props.restaurant._key] === true ? false : true))}
+                  underlayColor={HEXCOLOR.pureWhite}>
+                  <View style={CommonStyle.centerContainer}>
+                    <View style={CommonStyle.circle}>
+                      <Text style={{color:'#023e4eff',fontSize:17}}>3/4</Text>
+                    </View>
+                    <Text style={{color:'#023e4eff'}}>Price Level</Text>
                   </View>
                 </TouchableHighlight>
                 <TouchableHighlight
@@ -141,11 +147,12 @@ class RestaurantView extends Component {
                   <View style={CommonStyle.centerContainer}>
                     <View style={CommonStyle.circle}>
                       <Icon
-                        name='home'
-                        type='font-awesome'
-                        color={HEXCOLOR.lightGrey}/>
+                        size={28}
+                        name='ios-home-outline'
+                        type='ionicon'
+                        color={'#023e4eff'  }/>
                     </View>
-                    <Text>Website</Text>
+                    <Text style={{color:'#023e4eff'}}>Website</Text>
                   </View>
                 </TouchableHighlight>
               </View>
@@ -165,9 +172,23 @@ class RestaurantView extends Component {
                       <Icon
                         name='instagram'
                         type='font-awesome'
-                        color={HEXCOLOR.lightGrey}/>
+                        color={'#023e4eff'}/>
                     </View>
-                    <Text>Instagram</Text>
+                    <Text style={{color:'#023e4eff'}}>Instagram</Text>
+                  </View>
+                </TouchableHighlight>
+                <TouchableHighlight
+                  style={CommonStyle.centerContainer}
+                  onPress={() => this.props.setFavourite(this.props.restaurant._key, (this.props.favourites[this.props.restaurant._key] === true ? false : true))}
+                  underlayColor={HEXCOLOR.pureWhite}>
+                  <View style={CommonStyle.centerContainer}>
+                    <View style={CommonStyle.circle}>
+                      <Icon
+                        name='calendar'
+                        type='font-awesome'
+                        color={'#023e4eff'}/>
+                    </View>
+                    <Text style={{color:'#023e4eff'}}>Online booking</Text>
                   </View>
                 </TouchableHighlight>
                 <TouchableHighlight
@@ -185,23 +206,34 @@ class RestaurantView extends Component {
                       <Icon
                         name='phone'
                         type='font-awesome'
-                        color={HEXCOLOR.lightGrey}/>
+                        color={'#023e4eff'}/>
                     </View>
-                    <Text>{this.props.restaurant.phone_number}</Text>
+                    <Text style={{color:'#023e4eff'}}>{this.props.restaurant.phone_number}</Text>
                   </View>
                 </TouchableHighlight>
+
               </View>
             </View>
             <View style={CommonStyle.rowContainer}>
-              <TouchableOpacity
-                onPress={()=>{this.props.openMap(this.props.restaurant.address)}}
-                >
-              <Icon
-                name='map-marker'
-                type='font-awesome'
-                color={HEXCOLOR.lightGrey}/>
-              <Text style={{paddingLeft: 5}}>{this.props.restaurant.address}</Text>
-            </TouchableOpacity>
+              <View>
+                <TouchableOpacity
+                  onPress={()=>{this.props.openMap(this.props.restaurant.address)}}
+                  >
+                  <View style={{justifyContent:'center',alignItems:'center'}}>
+                      <Icon
+                          size={18}
+                          color='#023e4eff'
+                          name='map-marker'
+                          type='font-awesome'/>
+                  </View>
+
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={()=>{this.props.openMap(this.props.restaurant.address)}}
+                  >
+                <View style={{paddingLeft: 5,paddingTop:5}}><Text style={{fontSize:14,fontWeight:'bold',color:'#023e4eff'}}>{this.props.restaurant.address}</Text></View>
+              </TouchableOpacity>
+              </View>
             </View>
             {this.props.isAdmin && <View style={[CommonStyle.rowContainer, {paddingBottom: 40}]}>
               <TouchableHighlight

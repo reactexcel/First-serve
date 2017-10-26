@@ -1,4 +1,4 @@
-import { Dimensions} from 'react-native'
+import { Dimensions,Platform} from 'react-native'
 const { width } = Dimensions.get('window')
 import { HEXCOLOR } from './hexcolor';
 
@@ -114,7 +114,7 @@ const AdminCss = {
 		color: 'white'
 	},
 	navtext:{
-		paddingTop:12,
+		paddingTop:(Platform.OS === 'ios') ? 12 : 0,
 		fontSize:18,
 		color: 'white'
 	},
@@ -166,7 +166,7 @@ const AdminCss = {
     flexDirection: 'row',
     justifyContent: 'flex-end',
     alignItems: 'center',
-		paddingTop:11,
+		paddingTop:(Platform.OS === 'ios') ? 12 : 0,
 		paddingRight: 12
   },
 	circle: {
@@ -175,7 +175,8 @@ const AdminCss = {
 		borderRadius: 20,
 		borderWidth: 1,
 		alignItems:'center',
-		justifyContent: 'center'
+		justifyContent: 'center',
+		borderColor:'#023e4eff'
 	},
 	swiperConatiner:{
 		flex:1,
