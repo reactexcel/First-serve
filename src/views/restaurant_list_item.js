@@ -96,7 +96,7 @@ class RestaurantListItem extends Component {
                     <Text style={{color:'#023e4eff',fontWeight:'bold',fontSize:13}}>TABLE NOTIFICATIONS</Text>
                 </View>
             </View>
-            <View style={{marginTop:-22,marginBottom:24,marginRight:25}}>
+            <View style={{flexDirection:'row',justifyContent:'flex-end',marginTop:-22,marginBottom:24,marginRight:25}}>
               <Switch onValueChange={(value) => this.props.setValue(this.props.restaurant._key, value)}
                 value={this.props.isRestaurantNotiOn[this.props.restaurant._key] === true ? true : false}/>
             </View>
