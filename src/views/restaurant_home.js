@@ -117,8 +117,8 @@ class RestaurantHome extends Component {
 
     console.log("componentWillMount restaurant home.");
     this.restaurantRef = firebase.database().ref("/restaurants/" + this.state.userId);
-    this.userRef = firebase.database().ref("users");
-    this.ref = firebase.database().ref("tables");
+    this.userRef = firebase.database().ref("/users");
+    this.ref = firebase.database().ref("/tables");
 
     this.restaurantRef.on('value', (dataSnapshot) => {
       restaurant = {};

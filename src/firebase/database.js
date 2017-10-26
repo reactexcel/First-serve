@@ -67,6 +67,9 @@ class Database {
             return;
           }else if(curTime < table.endTime) {
             table.bookedBy = userId;
+            table.isBooked = true;
+            table.searchKey = table.restaurantKey + "_1";
+
             return table;
           }else{
             return;
