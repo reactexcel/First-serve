@@ -38,7 +38,7 @@ const AdminCss = {
 		flexDirection: 'row',
 		alignItems: 'center',
 		justifyContent: 'space-around',
-		paddingTop: 10,
+		paddingTop: 7,
 		paddingBottom: 10
 	},
 
@@ -69,9 +69,9 @@ const AdminCss = {
 	},
 
 	listItemTitle: {
-		fontWeight:'400',
+		fontWeight:'bold',
 		color:'#023e4eff',
-		fontSize: 18.5
+		fontSize: 18.8
 	},
 
 	submit:{
