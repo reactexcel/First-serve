@@ -14,6 +14,7 @@ import NewEditRestaurant from "./src/views/new_edit_restaurant";
 import PublishTable from "./src/views/publish_table";
 import Firebase from "./src/firebase/firebase";
 import DefaultPreference from 'react-native-default-preference';
+import SplashScreen from 'react-native-splash-screen'
 
 const FBSDK = require('react-native-fbsdk');
 const {
@@ -26,7 +27,7 @@ const firestack = new Firestack();
 
 class Landing extends Component {
   static navigationOptions = {
-    title: 'Welcome',
+    headerStyle:{ position: 'absolute', backgroundColor: 'transparent', zIndex: 100, top: 0, left: 0, right: 0 }
   };
   constructor(props) {
     super(props);
@@ -47,15 +48,22 @@ class Landing extends Component {
     const th = this;
 
     DefaultPreference.getMultiple(['userType', 'uid', 'name', 'photoUrl']).then(function(value) {
+      let restaurantPath = "/restaurants/" + value[1];
+      firebase.database().ref(restaurantPath).once('value').then(function(child){
       var routeName = null;
+      var title = "Restaurants";
       if(value[0] === 'user'){
         routeName = 'UHome';
       }else if (value[0] === 'restaurant') {
+        child.forEach(function(childSnapshot) {
+            var key = childSnapshot.key;
+            var childData = childSnapshot.val();
+            title = childData.name;
+        });
         routeName = 'RHome';
       }else if (value[0] === 'admin') {
         routeName = 'AHome';
       }
-
       if(routeName){
         console.log("componentWillMount routeName called.");
         const resetAction = NavigationActions.reset({
@@ -63,6 +71,7 @@ class Landing extends Component {
           actions: [NavigationActions.navigate({
             routeName: routeName,
             params: {
+              title: title,
               userId: value[1],
               name: value[2],
               photoUrl: value[3]
@@ -83,11 +92,13 @@ class Landing extends Component {
             firebase.database().ref(userMobilePath).on('value', (snapshot) => {
               if (snapshot.exists() && snapshot.val().isUser) {
                 routeName = 'UHome';
+                title = "Restaurants";
                 const resetAction = NavigationActions.reset({
                   index: 0,
                   actions: [NavigationActions.navigate({
                     routeName: routeName,
                     params: {
+                      title: title,
                       userId: evt.user.uid,
                       photoUrl: evt.user.photoUrl,
                       name: evt.user.displayName
@@ -107,36 +118,49 @@ class Landing extends Component {
 
         this.unsubscribe = firebase.auth().onAuthStateChanged(function(user) {
           if (user) {
-            console.log('User details: ', user);
             let userMobilePath = "/users/" + user.uid;
+            let restaurantPath = "/restaurants/" + user.uid;
             firebase.database().ref(userMobilePath).on('value', (snapshot) => {
-              let routeName = null;
-              if (snapshot.exists() && snapshot.val().isAdmin) {
-                routeName = 'AHome';
-              }else if (snapshot.exists() && snapshot.val().isRestaurantAdmin) {
-                routeName = 'RHome';
-              }
-              if(routeName){
-                const resetAction = NavigationActions.reset({
-                  index: 0,
-                  actions: [NavigationActions.navigate({ routeName: routeName, params: {userId: user.uid}})]
-                })
-                firestack.auth.unlistenForAuth();
-                if (th.unsubscribe) {
-                  th.unsubscribe();
-                  th.unsubscribe = null;
+              firebase.database().ref(restaurantPath).once('value').then(function(child){
+                let routeName = null;
+                let title = "Restaurants";
+                child.forEach(function(childSnapshot) {
+                    var key = childSnapshot.key;
+                    var childData = childSnapshot.val();
+                    title = childData.name;
+                });
+                if (snapshot.exists() && snapshot.val().isAdmin) {
+                  console.log("AHome");
+                  routeName = 'AHome';
+                }else if (snapshot.exists() && snapshot.val().isRestaurantAdmin) {
+                  routeName = 'RHome';
+                  console.log("rhome");
                 }
-                th.props.navigation.dispatch(resetAction)
-              }
+                if(routeName){
+                  console.log("routeName",routeName);
+                  const resetAction = NavigationActions.reset({
+                    index: 0,
+                    actions: [NavigationActions.navigate({routeName: routeName, params: {userId: user.uid, title: title}})]
+                  })
+                  firestack.auth.unlistenForAuth();
+                  if (th.unsubscribe) {
+                    th.unsubscribe();
+                    th.unsubscribe = null;
+                  }
+                  th.props.navigation.dispatch(resetAction)
+                }
+              });
             });
           }
         });
         th.setState({loading: false});
       }
     });
+  });
   }
 
   componentDidMount(){
+    SplashScreen.hide();
     console.log('componentDidMount index');
   }
 
@@ -168,6 +192,7 @@ class Landing extends Component {
             </View>
           <View style={styles.fbButtonView}>
             <LoginButton
+              style={{height:35,width:220,backgroundColor:'black'}}
               readPermissions={["public_profile", "email"]}
               onLoginFinished={
                 (error, result) => {
