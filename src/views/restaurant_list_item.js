@@ -52,23 +52,30 @@ class RestaurantListItem extends Component {
                           size={30}
                           name={this.props.favourites[this.props.restaurant._key] === true ? 'heart' : 'heart-o'}
                           type='font-awesome'
-                          color='red'/>
+                          color={this.props.favourites[this.props.restaurant._key] === true ? 'red' : 'black'}/>
                   </View>
                 </TouchableHighlight>
             </View>
             <View style={styles.notiView}>
-              <TouchableOpacity
-                onPress={()=>{this.props.openMap(this.props.restaurant.address)}}
-                >
-                <View style={{justifyContent:'center',alignItems:'center'}}>
-                    <Icon
-                        size={18}
-                        color='#023e4eff'
-                        name='map-marker'
-                        type='font-awesome'/>
-                </View>
+              <View>
+                <TouchableOpacity
+                  onPress={()=>{this.props.openMap(this.props.restaurant.address)}}
+                  >
+                  <View style={{justifyContent:'center',alignItems:'center'}}>
+                      <Icon
+                          size={18}
+                          color='#023e4eff'
+                          name='map-marker'
+                          type='font-awesome'/>
+                  </View>
+
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={()=>{this.props.openMap(this.props.restaurant.address)}}
+                  >
                 <View style={{paddingLeft: 5,paddingTop:5}}><Text style={{fontSize:14,fontWeight:'bold',color:'#023e4eff'}}>{this.props.restaurant.address}</Text></View>
               </TouchableOpacity>
+              </View>
             </View>
             {/* <TouchableHighlight
               style={this.props.restaurant.fully_booked ? styles.submitDisable : styles.submit}
