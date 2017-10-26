@@ -27,51 +27,64 @@ class FavouriteItem extends Component {
       <View style={styles.listItem}>
         <View style={{flex: 1, borderBottomWidth: 1}}>
           <View style={styles.rowContainer}>
-            <Text style={styles.listItemTitle}>{this.props.restaurant.name}</Text>
+            <TouchableHighlight
+              onPress={() => this.props.setModalVisible(this.props.restaurant._key, true)}>
+              <Text style={styles.listItemTitle}>{this.props.restaurant.name.toUpperCase()}</Text>
+            </TouchableHighlight>
           </View>
           <View style={styles.rowContainer}>
             <GallerySwiper {...this.props} openModel={() => this.props.setModalVisible(this.props.restaurant._key, true)} />
           </View>
-          <View style={[styles.notiView, {paddingLeft: 15, paddingRight: 15, justifyContent: 'center'}]}>
+          <View style={[styles.notiView, {alignItems:'center',marginTop:13}]}>
+            <View style={{justifyContent:'center',alignItems:'center'}}><Text style={{textAlign:'center',fontSize:12,color:'#a79a95ff',fontWeight:'bold'}}>{this.props.restaurant.type.toUpperCase()}</Text></View>
+
+          </View>
+          <View style={{flexDirection:'row',justifyContent:'flex-end',marginTop:-30,marginRight:25}}>
             <TouchableHighlight
             style={{flexDirection: 'row'}}
               onPress={() => this.props.setFavourite(this.props.restaurant._key, (this.props.favourites[this.props.restaurant._key] === true ? false : true))}
               underlayColor='#fff'>
-                <View style={[styles.notiIconView, {flexDirection: 'row'}]}>
+                <View style={styles.notiIconView}>
                     <Icon
+                        size={30}
                         name={this.props.favourites[this.props.restaurant._key] === true ? 'heart' : 'heart-o'}
                         type='font-awesome'
-                        color='red'/>
-                        <View style={[{paddingLeft: 10}]}><Text>{this.props.restaurant.short_description}</Text></View>
+                        color={this.props.favourites[this.props.restaurant._key] === true ? 'red' : 'black'}/>
                 </View>
               </TouchableHighlight>
           </View>
-          <View style={[styles.notiView, {paddingBottom: 58}]}>
-            <TouchableOpacity
-              onPress={()=>{this.props.openMap(this.props.restaurant.address)}}
-              >
-              <View style={styles.notiIconView}>
-                  <Icon
-                      name='map-marker'
-                      type='font-awesome'/>
-                  <View style={{paddingLeft: 5}}><Text>{this.props.restaurant.address}</Text></View>
-              </View>
+          <View style={styles.notiView}>
+            <View>
+              <TouchableOpacity
+                onPress={()=>{this.props.openMap(this.props.restaurant.address)}}
+                >
+                <View style={{justifyContent:'center',alignItems:'center'}}>
+                    <Icon
+                        size={18}
+                        color='#023e4eff'
+                        name='map-marker'
+                        type='font-awesome'/>
+                </View>
+
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={()=>{this.props.openMap(this.props.restaurant.address)}}
+                >
+              <View style={{paddingLeft: 5,paddingTop:5}}><Text style={{fontSize:14,fontWeight:'bold',color:'#023e4eff'}}>{this.props.restaurant.address}</Text></View>
             </TouchableOpacity>
+            </View>
           </View>
 
-          <View style={[styles.rowContainer, {paddingTop: 15}]}>
-            <Text style={{fontSize: 11}}>Get notified when additional tables become available</Text>
+          <View style={[{flex: 1,flexDirection:'row',alignItems:'center',justifyContent: 'center'}, {paddingTop: 8,paddingBottom:10}]}>
+            <Text style={{fontSize: 12,textAlign:'center',paddingLeft:30,paddingRight:30,color:'#a79a95ff',fontWeight:'bold'}}>{this.props.restaurant.short_description}</Text>
           </View>
-          <View style={[styles.listNotiView, {paddingBottom: this.props.isAdmin ? 0 : 58}]}>
+          <View style={[styles.listNotiView, {paddingBottom: this.props.isAdmin ? 0 : 0}]}>
               <View style={styles.notiIconView}>
-                  <Icon
-                      name='bell'
-                      type='font-awesome'
-                      color='#626262'/>
-                  <View style={{paddingLeft: 5}}><Text>Notifications</Text></View>
+                  <Text style={{color:'#023e4eff',fontWeight:'bold',fontSize:13}}>TABLE NOTIFICATIONS</Text>
               </View>
-
-              <Switch onValueChange={(value) => this.props.setValue(this.props.restaurant._key, value)}
+          </View>
+          <View style={{flexDirection:'row',justifyContent:'flex-end',marginTop:-22,marginBottom:24,marginRight:25}}>
+            <Switch onValueChange={(value) => this.props.setValue(this.props.restaurant._key, value)}
               value={this.props.isRestaurantNotiOn[this.props.restaurant._key] === true ? true : false}/>
           </View>
         </View>
