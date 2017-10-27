@@ -73,7 +73,7 @@ class RestaurantListItem extends Component {
                 <TouchableOpacity
                   onPress={()=>{this.props.openMap(this.props.restaurant.address)}}
                   >
-                <View style={{paddingLeft: 5,paddingTop:5}}><Text style={{fontSize:14,fontWeight:'bold',color:'#023e4eff'}}>{this.props.restaurant.address}</Text></View>
+                <View style={{paddingLeft: 5,paddingTop:5}}><Text style={{fontSize:13,fontWeight:'bold',color:'#023e4eff'}}>{this.props.restaurant.address}</Text></View>
               </TouchableOpacity>
               </View>
             </View>
@@ -96,7 +96,7 @@ class RestaurantListItem extends Component {
             <View>
             </View>
             <View style={[{flex: 1,flexDirection:'row',alignItems:'center',justifyContent: 'center'}, {paddingTop: 8,paddingBottom:10}]}>
-              <Text style={{fontSize: 12,textAlign:'center',paddingLeft:30,paddingRight:30,color:'#a79a95ff',fontWeight:'bold'}}>{this.props.restaurant.short_description}</Text>
+              <Text style={{fontSize: 13,textAlign:'center',paddingLeft:30,paddingRight:30,color:'#a79a95ff',fontWeight:'bold'}}>{this.props.restaurant.short_description}</Text>
             </View>
             <View style={[styles.listNotiView, {paddingBottom: this.props.isAdmin ? 0 : 0}]}>
                 <View style={styles.notiIconView}>

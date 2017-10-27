@@ -50,6 +50,7 @@ class AvailableTable extends Component {
   }
 
   render() {
+    console.log(this.props);
     return (
       <View style={[CommonStyle.container, {paddingBottom: 0}]}>
         <View style={CommonStyle.navBar}>
