@@ -34,9 +34,10 @@ class RestaurantHome extends Component {
     const {params = {}} = navigation.state;
     return {
       title: params.title,
-      headerTitleStyle :{alignSelf: 'center', color: 'white'},
+      headerTitleStyle :{marginLeft:0,fontSize:13,alignSelf: 'center', color: 'white'},
+      headerLeft: <View/>,
       headerStyle:{
-          backgroundColor: HEXCOLOR.lightBrown,
+          backgroundColor: '#023e4eff',
       },
       headerRight: (
         <TouchableHighlight
@@ -48,6 +49,7 @@ class RestaurantHome extends Component {
           }}>
           <View style={{paddingRight: 8}}>
             <Icon
+              fontSize={14}
               name='cog'
               type='font-awesome'
               color='white'/>
@@ -91,7 +93,7 @@ class RestaurantHome extends Component {
       dataSource: dataSource.cloneWithRows([]),
       availableTablesDb: aDataSource.cloneWithRows([]),
       bookedTablesDb: bDataSource.cloneWithRows([]),
-      curTime: Moment(new Date()).format('MMM DD YYYY, HH:mm'),
+      curTime: Moment(new Date()).format('DD-MM-YYYY'),
       isOnline: false
     };
 
@@ -284,7 +286,7 @@ class RestaurantHome extends Component {
       )
     }else{
       return (
-        <View style={CommonStyle.container}>
+        <View style={[CommonStyle.container,{padding:20,paddingTop:0}]}>
           <ScrollView>
           <Modal
             animationType="slide"
@@ -321,52 +323,53 @@ class RestaurantHome extends Component {
             </View>
           </Modal>
           <View style={[CommonStyle.rowContainerLF, CommonStyle.bottomBorderBrown, {paddingTop: 30}]}>
-            <View style={CommonStyle.headingLeft}><Text style={{color: HEXCOLOR.lightBrown}}>Available tables</Text></View>
-            <View style={CommonStyle.headingRight}><Text style={{color: HEXCOLOR.lightBrown}}>{this.state.curTime}</Text></View>
+            <View style={CommonStyle.headingLeft}><Text style={{fontWeight:'500',color: '#023e4eff'}}>Available tables</Text></View>
+            <View style={CommonStyle.headingRight}><Text style={{fontWeight:'500',color: '#023e4eff'}}>{this.state.curTime}</Text></View>
           </View>
-          <View style={[CommonStyle.rowContainerLF]}>
+          <View style={[CommonStyle.rowContainerLF,{marginTop:15}]}>
             <ListView
               dataSource={this.state.availableTablesDb}
               enableEmptySections={true}
               renderRow={this.renderTable.bind(this)}/>
           </View>
           <View style={[CommonStyle.rowContainerLF, CommonStyle.bottomBorderBrown, {paddingTop: 10}]}>
-            <View style={CommonStyle.headingLeft}><Text style={{color: HEXCOLOR.lightBrown}}>Booked tables</Text></View>
-            <View style={CommonStyle.headingRight}><Text style={{color: HEXCOLOR.lightBrown}}>{this.state.curTime}</Text></View>
+            <View style={CommonStyle.headingLeft}><Text style={{fontWeight:'500',color: '#023e4eff'}}>Booked tables</Text></View>
+            <View style={CommonStyle.headingRight}><Text style={{fontWeight:'500',color: '#023e4eff'}}>{this.state.curTime}</Text></View>
           </View>
 
-          <View style={[CommonStyle.rowContainerLF]}>
+          <View style={[CommonStyle.rowContainerLF,{marginTop:15}]}>
             <ListView
               dataSource={this.state.bookedTablesDb}
               enableEmptySections={true}
               renderRow={this.renderBookedTable.bind(this)}/>
           </View>
-          <View style={[CommonStyle.rowContainerLF, {paddingTop: 10}]}>
+          <View style={[CommonStyle.rowContainerLF,CommonStyle.bottomBorderBrown, {color:'#023e4eff',paddingTop: 10}]}>
             <TouchableHighlight
               onPress={() => this.setModalVisible(true)}
               underlayColor={HEXCOLOR.pureWhite}>
-              <Text style={{color: HEXCOLOR.pureWhite, fontSize: 16}}>Waiting List</Text>
+              <Text style={{fontWeight:'500',color: '#023e4eff', fontSize: 14}}>Waiting List</Text>
             </TouchableHighlight>
           </View>
-          <View style={[CommonStyle.rowContainerLF]}>
+          <View style={[CommonStyle.rowContainerLF,{marginTop:20,marginLeft:7}]}>
             <TouchableHighlight
               onPress={() => this.setModalVisible(true)}
               underlayColor={HEXCOLOR.pureWhite}>
               <View style={[CommonStyle.rowContainerLF]}>
                 <Icon
+                  size={20}
                   name='cutlery'
                   type='font-awesome'
-                  color={HEXCOLOR.pureWhite}/>
-                <Text style={{color: HEXCOLOR.pureWhite, fontSize: 16, paddingLeft: 10}}>{this.state.waitingListCount} People</Text>
+                  color={'grey'}/>
+                <Text style={{color: 'grey', fontSize: 14, paddingLeft: 10}}>{this.state.waitingListCount} People</Text>
               </View>
             </TouchableHighlight>
           </View>
 
           <TouchableHighlight
-            style={[CommonStyle.publish, {marginTop: 40}]}
+            style={[CommonStyle.publish, {marginTop: 40,backgroundColor:'#023e4eff',borderRadius:0}]}
             onPress={() => this.openPublish()}
             underlayColor={HEXCOLOR.pureWhite}>
-              <Text style={[CommonStyle.publishText]}>Publish</Text>
+              <Text style={[CommonStyle.publishText,{color:'white'}]}>Publish Table </Text>
           </TouchableHighlight>
           </ScrollView>
         </View>

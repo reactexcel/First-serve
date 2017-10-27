@@ -144,7 +144,8 @@ class PublishTable extends Component {
       );
     }else{
       return (
-        <View style={CommonStyle.container}>
+        <View style={{flex: 1,
+    		backgroundColor: 'black'}}>
           <View style={[CommonStyle.rowContainerHCenter, {marginTop: 20}]}>
             <Text style={{color: HEXCOLOR.lightBrown}}>Available table for</Text>
           </View>
