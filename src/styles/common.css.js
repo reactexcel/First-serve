@@ -92,12 +92,15 @@ const Common = {
 	bgContainer: { flex:1, width: null, height: null },
 
 	bottomBorder: {
-		borderBottomWidth: 1
+		borderBottomColor:'#023e4eff',
+		borderBottomWidth: 2
 	},
 
 	bottomTopBorder: {
-		borderTopWidth: 1,
-		borderBottomWidth: 1
+		borderTopColor:'#023e4eff',
+		borderBottomColor:'#023e4eff',
+		borderTopWidth: 2,
+		borderBottomWidth: 2
 	},
 
 	edtText: {
@@ -119,6 +122,7 @@ const Common = {
 
 	headingRight: {
 		flex: 1,
+		paddingTop:8,
 		flexDirection: 'row',
 		justifyContent: 'flex-end',
 		alignItems: 'center',
@@ -126,10 +130,9 @@ const Common = {
   },
 
 	avtarCircle: {
-		width: 80,
-		height: 80,
-		borderRadius: 40,
-		borderWidth: 1,
+		width: 95,
+		height: 95,
+		borderRadius: 55,
 		alignItems:'center',
 		justifyContent: 'center',
 		overflow: 'hidden'

@@ -444,7 +444,7 @@ class UserHome extends Component {
             onCancel={()=>this.onCancel()}
             />
         </Modal>
-        {this.state.currentTab == 0 && <View style={styles.container}>
+        {this.state.currentTab == 0 && <View style={[styles.container,{marginBottom:56}]}>
           {/*<View style={[styles.notiView, styles.bottomBorder]}>
               <View style={styles.notiIconView}>
                   <Icon name='bell' type='font-awesome' color='#626262'/>
@@ -498,7 +498,7 @@ class UserHome extends Component {
               renderRow={this._renderItem.bind(this)}
               style={[styles.listView, {marginTop: 10}]}/>}
           </View>}
-          {this.state.currentTab == 1 && <View style={styles.container}>
+          {this.state.currentTab == 1 && <View style={[styles.container,{marginBottom:56}]}>
               {this.state.isNoFavourite ? <View style={styles.midContainer}>
                 <Text style={{fontSize: 20}}>No Favourites</Text>
               </View>: <ListView
@@ -508,7 +508,7 @@ class UserHome extends Component {
                 renderRow={this._renderFavoriteItem.bind(this)}
                 style={[styles.listView, {marginTop: 10}]}/>}
           </View>}
-          {this.state.currentTab == 2 && <View style={styles.container}>
+          {this.state.currentTab == 2 && <View style={[styles.container,{marginBottom:56}]}>
             {this.state.isNoBooked ? <View style={styles.midContainer}>
               <Text style={{fontSize: 20}}>No Bookings</Text>
             </View>
@@ -519,7 +519,8 @@ class UserHome extends Component {
               renderRow={this._renderBookedItem.bind(this)}
               style={[styles.listView, {marginTop: 10}]}/>}
           </View>}
-          {this.state.currentTab == 3 && (this.state.isLoading ?<ScrollView keyboardDismissMode={'none'}>
+          {this.state.currentTab == 3 && (this.state.isLoading ?<View style={{flex:1, marginBottom:56}}>
+            <ScrollView keyboardDismissMode={'none'}>
             <View style={styles.container}>
               <View style={styles.navBar}>
                 <TouchableHighlight
@@ -533,89 +534,108 @@ class UserHome extends Component {
                     uh.props.navigation.dispatch(resetAction);
                   })}>
                   <View style={[styles.headingRight]}>
-                    <Text style={{color: '#000', fontSize: 16, paddingRight: 10}}>Sign out</Text>
+                    <Text style={{marginBottom:5, color: '#023e4eff', fontSize: 16, paddingRight: 10}}>Sign out</Text>
                     <Icon
                       name='sign-out'
                       type='octicon'
-                      color='#000'/>
+                      color='#023e4eff'/>
                   </View>
                 </TouchableHighlight>
               </View>
             </View>
-              <View style={[styles.rowContainer]}>
+              <View style={[styles.rowContainer,{paddingTop:15,paddingBottom:5}]}>
                 <View style={[styles.avtarCircle]}>
-                  <Image style={{position: 'absolute', width: 80, height: 80, borderRadius: 40}} source={{uri: this.props.navigation.state.params.photoUrl ? this.props.navigation.state.params.photoUrl : 'https://firebasestorage.googleapis.com/v0/b/first-served-c9197.appspot.com/o/both.jpg?alt=media&token=9c17e2cf-262f-4450-959a-91d8b109a6fe'}} />
+                  <Image style={{position: 'absolute', width: 95, height: 95, borderRadius: 50}} source={{uri: this.props.navigation.state.params.photoUrl ? this.props.navigation.state.params.photoUrl : 'https://firebasestorage.googleapis.com/v0/b/first-served-c9197.appspot.com/o/both.jpg?alt=media&token=9c17e2cf-262f-4450-959a-91d8b109a6fe'}} />
                 </View>
               </View>
-              <View style={[styles.rowContainer, {paddingTop: 5}]}>
-                <Text style={{color: '#626262', fontSize: 24}}>{this.props.navigation.state.params.name}</Text>
+              <View style={[styles.rowContainer, {paddingTop: 10}]}>
+                <Text style={{fontWeight:'600',color: '#023e4eff', fontSize: 18}}>{this.props.navigation.state.params.name.toUpperCase()}</Text>
               </View>
-              <View style={[styles.container, {flex: 1, paddingLeft: 10, paddingRight: 10, paddingTop: 15}]}>
-                <View style={[styles.rowContainer, styles.bottomTopBorder, {paddingTop: 5, justifyContent: 'flex-start'}]}>
+              <View style={[styles.container, {flex: 1, paddingLeft: 10, paddingRight: 10, paddingTop: 40}]}>
+                <View style={[styles.rowContainer, styles.bottomTopBorder, {paddingTop: 17,paddingBottom:17, justifyContent: 'flex-start'}]}>
                   <Icon
+                    size={33}
                     name='cutlery'
                     type='font-awesome'
-                    color='#000'/>
-                    <Text style={{color: '#626262', fontSize: 16, paddingLeft: 10}}>Table for</Text>
-                    <TouchableHighlight onPress={()=>{this.onSelectWheeler(true)}}>
-                      <View style={{flexDirection:'row',marginRight:3}}>
-                        <Text style={{marginLeft:8, marginRight:5 }}>
-                          {this.state.selectedMember}
-                        </Text>
-                        <Icon name='sort-desc' size={12} style={{marginTop:1}} type='font-awesome' color='#626262'/>
-                      </View>
-                    </TouchableHighlight>
-                    <Text> people</Text>
+                    color='#023e4eff'/>
+                    <View style={{flexDirection:'row',marginLeft:10}}>
+                      <Text style={{color: '#023e4eff', fontSize: 16, paddingLeft: 10}}>Table for</Text>
+                      <TouchableHighlight onPress={()=>{this.onSelectWheeler(true)}}>
+                        <View style={{flexDirection:'row',marginRight:3}}>
+                          <Text style={{fontSize: 16, color:'#023e4eff',marginLeft:8, marginRight:5 }}>
+                            {this.state.selectedMember}
+                          </Text>
+                          <Icon name='sort-desc' size={12} style={{marginTop:1}} type='font-awesome' color='#626262'/>
+                        </View>
+                      </TouchableHighlight>
+                      <Text style={{fontSize: 16, color:'#023e4eff'}}> people</Text>
+                    </View>
                 </View>
-                <View style={[styles.rowContainer, styles.bottomBorder, {paddingTop: 5, justifyContent: 'flex-start'}]}>
+                <View style={[styles.rowContainer, styles.bottomBorder, {paddingTop: 9,paddingBottom:9, justifyContent: 'flex-start'}]}>
                   <Icon
+                    size={50}
+                    style={{marginLeft:4}}
                     name='mobile'
                     type='font-awesome'
-                    color='#000'/>
+                    color='#023e4eff'/>
                     <TextInput
-                      style={{color: '#626262', flex: 1, marginLeft: 15, marginRight: 150}}
+                      style={{color: '#023e4eff', flex: 1, marginLeft: 22, marginRight: 150}}
+
                       keyboardType={'phone-pad'}
                       onChangeText={(mobile) => this._setMobile(mobile)}
                       value={this.state.mobile}/>
                 </View>
-                <View style={{marginTop:10}} >
-                <Text style={{fontSize:16}} >Notification Time</Text>
-                <View style={[styles.bottomBorder,{flexDirection:'row', paddingLeft:5}]} >
-                    <TouchableHighlight
-                      onPress={() => this._showDateTimePicker(1)}
-                      underlayColor={HEXCOLOR.lightBrown}>
-                      <View >
-                        <Text style={{ fontSize: 16,fontWeight:'bold'}}>
-                          {this.state.UserNotifStartTime === 'SET START TIME' ? this.state.UserNotifStartTime : Moment(this.state.UserNotifStartTime).format('YYYY-MM-DD HH:mm')}
-                        </Text>
+                <View style={[styles.bottomBorder,{marginTop:8,marginBottom:8}]} >
+                  <View style={{flexDirection:'row'}} >
+                    <Icon
+                      size={39}
+                      style={{marginTop:3}}
+                      name='md-time'
+                      type='ionicon'
+                      color='#023e4eff'/>
+                      <View style={{marginTop:7, marginLeft:19,flexDirection:'column'}}>
+                        <Text style={{marginTop:5,fontSize:16,color:'#023e4eff'}} >Notifiy me of tables between:</Text>
+                        <View style={{flexDirection:'row', paddingTop:10,paddingBottom:20}} >
+                            <TouchableHighlight
+                              onPress={() => this._showDateTimePicker(1)}
+                              underlayColor={HEXCOLOR.lightBrown}>
+                              <View >
+                                <Text style={{ color:'#023e4eff', fontSize: 16,fontWeight:'bold'}}>
+                                  {this.state.UserNotifStartTime === 'SET START TIME' ? this.state.UserNotifStartTime : Moment(this.state.UserNotifStartTime).format(' HH:mm')}*
+                                </Text>
+                              </View>
+                            </TouchableHighlight>
+                            <Text style={{color:'#023e4eff',marginLeft:5,marginRight:5,fontSize:16}} >and</Text>
+                            <TouchableHighlight
+                              onPress={() => this._showDateTimePicker(2)}
+                              underlayColor={HEXCOLOR.lightBrown}>
+                              <View>
+                                <Text style={{color:'#023e4eff', fontSize: 16,fontWeight:'bold'}}>
+                                  {this.state.UserNotifEndTime === 'SET END TIME' ? this.state.UserNotifEndTime : Moment(this.state.UserNotifEndTime).format('HH:mm')}*
+                                </Text>
+                              </View>
+                            </TouchableHighlight>
+                            <DateTimePicker
+                              isVisible={this.state.isDateTimePickerVisible}
+                              onConfirm={this._handleDatePicked}
+                              onCancel={this._hideDateTimePicker}
+                              mode='time'/>
+                        </View>
                       </View>
-                    </TouchableHighlight>
-                    <Text style={{marginLeft:5,marginRight:5,fontSize:16}} >To</Text>
-                    <TouchableHighlight
-                      onPress={() => this._showDateTimePicker(2)}
-                      underlayColor={HEXCOLOR.lightBrown}>
-                      <View>
-                        <Text style={{ fontSize: 16,fontWeight:'bold'}}>
-                          {this.state.UserNotifEndTime === 'SET END TIME' ? this.state.UserNotifEndTime : Moment(this.state.UserNotifEndTime).format('YYYY-MM-DD HH:mm')}
-                        </Text>
-                      </View>
-                    </TouchableHighlight>
-                    <DateTimePicker
-                      isVisible={this.state.isDateTimePickerVisible}
-                      onConfirm={this._handleDatePicked}
-                      onCancel={this._hideDateTimePicker}
-                      mode='time'/>
-                </View>
+                  </View>
+
               </View>
             </View>
-              <View style={[{paddingTop: 15}]}>
+              <View style={[{marginTop:20,marginBottom:30}]}>
                 <View style={{marginLeft: 60, marginRight: 60}}>
-                  <Button onPress={()=>{this.save()}} style={{backgroundColor: '#122438'}} textStyle={{color: '#FFF', fontSize: 18}}>
+                  <Button onPress={()=>{this.save()}} style={{backgroundColor: '#023e4eff',borderRadius:0}} textStyle={{color: '#FFF', fontSize: 18}}>
                     {buttonName}
                   </Button>
                 </View>
               </View>
-          </ScrollView>:<View style={{flex:1,justifyContent:'center',flexDirection:'column',alignItems:'center'}}><Progress.Circle size={30} indeterminate={true} /></View>)}
+          </ScrollView>
+        </View>
+          :<View style={{flex:1,justifyContent:'center',flexDirection:'column',alignItems:'center'}}><Progress.Circle size={30} indeterminate={true} /></View>)}
           {this.state.restaurants.map((restaurant, key) => {
             console.log("Model Key", key);
             return(
