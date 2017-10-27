@@ -71,7 +71,7 @@ class AvailableTable extends Component {
         </View>
         <ScrollView keyboardDismissMode={'none'}>
           <View style={[CommonStyle.rowContainer, {paddingTop: 8,paddingBottom:0,marginBottom:2}]}>
-            <Text style={{color:'#023e4eff',fontSize:15}}>A new table has just become available</Text></View>
+            <Text style={{fontWeight:'500',color:'#023e4eff',fontSize:14}}>A new table has just become available</Text></View>
           <View style={[CommonStyle.rowContainer, { paddingTop: 0,paddingBottom:7}]}>
             <Text style={CommonStyle.listItemTitle}>{this.props.restaurant.name}</Text></View>
           <FullWidthImage source={{uri: this.props.restaurant.images.length > 0 ? this.props.restaurant.images[0].imageUrl : 'https://firebasestorage.googleapis.com/v0/b/first-served-c9197.appspot.com/o/restaurant_images%2Frestaurant.jpg?alt=media&token=b0ca19be-6594-4bb1-bfdb-3c9474a0b234'}} />
@@ -105,8 +105,8 @@ class AvailableTable extends Component {
         <View style={[ CommonStyle.bottomBorder,CommonStyle.topBorder,{margin:15,marginTop:17}]}>
 
             <View style={[{paddingTop: 20,paddingBottom:20}]}>
-              <Text style={{color:'#023e4eff', fontSize: 13,textAlign:'center'}}>TABLE FOR {this.props.table.pax} PEPOLE</Text>
-              <Text style={{color:'#023e4eff',fontSize: 13,textAlign:'center'}}>{Moment(parseInt(this.props.table.startTime)).format('HH:mm')} - {Moment(parseInt(this.props.table.endTime)).format('HH:mm')} </Text>
+              <Text style={{fontWeight:'500',color:'#023e4eff', fontSize: 13,textAlign:'center'}}>TABLE FOR {this.props.table.pax} PEPOLE</Text>
+              <Text style={{fontWeight:'500',color:'#023e4eff',fontSize: 13,textAlign:'center'}}>{Moment(parseInt(this.props.table.startTime)).format('HH:mm')} - {Moment(parseInt(this.props.table.endTime)).format('HH:mm')} </Text>
             </View>
 
           </View>
