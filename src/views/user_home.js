@@ -912,11 +912,24 @@ class UserHome extends Component {
       const th = this;
       Database.bookTable(this.state.userId, this.state.bookingTable.key, function(isBooked){
         if(isBooked){
-          alert("Your Table has been booked for Mention Date.");
+          if (Platform.OS === 'android') {
+            alert("Your Table has been booked for Mention Date.");
+          } else if (Platform.OS === 'ios') {
+            AlertIOS.alert(
+             'Congratulations! The table has  been booked',
+             'Looking forward to seeking you',
+            );
+          }
           th.setBookingModalVisible(false)
           th.setState({currentTab: 2});
         }else{
-          alert("Sorry, Table already booked or not available.");
+          if (Platform.OS === 'android') {
+            alert("Sorry, Table already booked or not available.");
+          } else if (Platform.OS === 'ios') {
+            AlertIOS.alert(
+             'Sorry, Table already booked or not available.',
+            );
+          }
           th.setState({isBookingModelVisible: false});
         }
         FCM.removeAllDeliveredNotifications();
