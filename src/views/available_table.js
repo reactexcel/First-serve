@@ -13,7 +13,8 @@ import {
     TouchableHighlight,
     ListView,
     ScrollView,
-    Platform
+    Platform,
+    TouchableOpacity
 } from "react-native";
 
 import Button from "apsl-react-native-button";
@@ -50,17 +51,17 @@ class AvailableTable extends Component {
 
   render() {
     return (
-      <View style={[CommonStyle.container, {paddingBottom: 16}]}>
+      <View style={[CommonStyle.container, {paddingBottom: 0}]}>
         <View style={CommonStyle.navBar}>
           <View style={CommonStyle.leftContainer}>
-            <Text style={[CommonStyle.text, {textAlign: 'left'}]}>{'<'}</Text>
           </View>
-          <Text style={[CommonStyle.text, {color: 'white'}]}>Avaible Table</Text>
+          <Text style={[CommonStyle.text, {paddingTop:0,fontSize:12,alignSelf: 'center', color: 'white',fontWeight:'bold' }]}>AVAIBLE TABLE</Text>
           <View style={CommonStyle.rightContainer}>
             <TouchableHighlight
               onPress={() => this.props.setModalVisible(false)}>
               <View>
                 <Icon
+                  size={14}
                   name='close'
                   type='font-awesome'
                   color='white'/>
@@ -69,31 +70,50 @@ class AvailableTable extends Component {
           </View>
         </View>
         <ScrollView keyboardDismissMode={'none'}>
-          <View style={[CommonStyle.rowContainer, {paddingTop: 10}]}><Text>A table has just become available</Text></View>
-          <View style={[CommonStyle.rowContainer, {paddingTop: 10}]}><Text style={CommonStyle.listItemTitle}>{this.props.restaurant.name}</Text></View>
+          <View style={[CommonStyle.rowContainer, {paddingTop: 8,paddingBottom:0,marginBottom:2}]}>
+            <Text style={{color:'#023e4eff',fontSize:15}}>A new table has just become available</Text></View>
+          <View style={[CommonStyle.rowContainer, { paddingTop: 0,paddingBottom:7}]}>
+            <Text style={CommonStyle.listItemTitle}>{this.props.restaurant.name}</Text></View>
           <FullWidthImage source={{uri: this.props.restaurant.images.length > 0 ? this.props.restaurant.images[0].imageUrl : 'https://firebasestorage.googleapis.com/v0/b/first-served-c9197.appspot.com/o/restaurant_images%2Frestaurant.jpg?alt=media&token=b0ca19be-6594-4bb1-bfdb-3c9474a0b234'}} />
-          <View style={[CommonStyle.rowContainer, {paddingTop: 10}]}>
-            <Text style={[CommonStyle.listItemTitle, {paddingTop: 10}]}>{this.props.restaurant.booking_message}</Text>
+          <View style={[CommonStyle.notiView, {alignItems:'center',marginTop:13}]}>
+            <View style={{justifyContent:'center',alignItems:'center'}}><Text style={{textAlign:'center',fontSize:12,color:'#a79a95ff',fontWeight:'bold'}}>{this.props.restaurant.type.toUpperCase()}</Text></View>
           </View>
-          <View style={[{paddingLeft: 15, paddingRight: 15, paddingTop: 10}]}>
-            <View style={CommonStyle.rowContainer}>
-              <Icon
-                name='map-marker'
-                type='font-awesome'
-                color='#626262'/>
-              <Text style={{paddingLeft: 5}}>{this.props.restaurant.address}</Text>
+
+          <View style={CommonStyle.notiView}>
+            <View>
+              <TouchableOpacity
+                onPress={()=>{this.props.openMap(this.props.restaurant.address)}}
+                >
+                <View style={{justifyContent:'center',alignItems:'center'}}>
+                    <Icon
+                        size={18}
+                        color='#023e4eff'
+                        name='map-marker'
+                        type='font-awesome'/>
+                </View>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={()=>{this.props.openMap(this.props.restaurant.address)}}
+                >
+              <View style={{paddingLeft: 5,paddingTop:5}}><Text style={{fontSize:14,fontWeight:'bold',color:'#023e4eff'}}>{this.props.restaurant.address}</Text></View>
+            </TouchableOpacity>
             </View>
-            <View style={[{paddingTop: 15}]}>
-              <Text style={{fontSize: 18}}>{this.props.table.pax} people</Text>
-              <Text style={{fontSize: 18}}>{Moment(parseInt(this.props.table.startTime)).format('HH:mm')} - {Moment(parseInt(this.props.table.endTime)).format('HH:mm')} for {Moment(parseInt(this.props.table.startTime)).format('MMM Do YYYY')} </Text>
+          </View>
+          <View style={[{flex: 1,flexDirection:'row',alignItems:'center',justifyContent: 'center'}, {paddingTop: 8,paddingBottom:10}]}>
+            <Text style={{fontSize: 12,textAlign:'center',paddingLeft:30,paddingRight:30,color:'#a79a95ff',fontWeight:'bold'}}>{this.props.restaurant.booking_message}</Text>
+          </View>
+        <View style={[ CommonStyle.bottomBorder,CommonStyle.topBorder,{margin:15,marginTop:17}]}>
+
+            <View style={[{paddingTop: 20,paddingBottom:20}]}>
+              <Text style={{color:'#023e4eff', fontSize: 13,textAlign:'center'}}>TABLE FOR {this.props.table.pax} PEPOLE</Text>
+              <Text style={{color:'#023e4eff',fontSize: 13,textAlign:'center'}}>{Moment(parseInt(this.props.table.startTime)).format('HH:mm')} - {Moment(parseInt(this.props.table.endTime)).format('HH:mm')} </Text>
             </View>
-            <View style={[{paddingTop: 15}]}>
-              <View style={{marginLeft: 60, marginRight: 60}}>
-                <Button onPress={this.props.bookTable} style={{backgroundColor: '#122438'}} textStyle={{color: '#FFF', fontSize: 18}}>
-                  Book now
-                </Button>
-              </View>
-            </View>
+
+          </View>
+          <View style={[{flexDirection:'row',alignItems:'center',justifyContent:'center',paddingTop: 15,paddingBottom:18}]}>
+              <Button onPress={this.props.bookTable} style={{borderRadius:0,width:147,height:45 ,backgroundColor: '#023e4eff',borderWidth:0}} textStyle={{color: '#FFF', fontSize: 15}}>
+                Book table
+              </Button>
           </View>
         </ScrollView>
       </View>
