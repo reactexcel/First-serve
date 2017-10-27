@@ -105,7 +105,9 @@ class PublishTable extends Component {
       restaurantKey: this.state.restaurantKey,
       pax: this.state.people,
       startTime: this.state.startTime,
-      endTime: this.state.endTime
+      endTime: this.state.endTime,
+      isBooked: false,
+      searchKey: this.state.restaurantKey + "_0"
     };
 
     const th = this;

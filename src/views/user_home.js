@@ -117,7 +117,8 @@ class UserHome extends Component {
       isOpenWheelPicker:false,
       selectedindex:2,
       selectedMember:2,
-      isOnline: false
+      isOnline: false,
+      hasToOpenBookingModal: false
     };
 
     this._setUserNoti = this._setUserNoti.bind(this);
@@ -147,10 +148,16 @@ class UserHome extends Component {
         }
         // await someAsyncCall();
         if(this.state.tableId !== ''  && this.state.tableId === notif.tableId){
-          this.setState({notif:false});
+          if(notif.byNotiChange){
+            this.setState({notif: true});
+          }else{
+            this.setState({notif: false});
+          }
         }else{
-          this.setState({notif:true});
+          this.setState({notif: true});
         }
+        notif.startTime = parseInt(notif.startTime);
+        notif.endTime = parseInt(notif.endTime);
         var table = {
           restaurantKey: notif.restaurantKey,
           startTime: notif.startTime,
@@ -166,12 +173,34 @@ class UserHome extends Component {
             break;
           }
         }
-        if(notif.startTime <= this.state.UserNotifEndTime && notif.endTime >= this.state.UserNotifStartTime){
-        th.setState({bookingTable: table, bookingRestaurant: rest, bookingRestaurantKey: bookingRestaurantKey, tableId: notif.tableId});
-        if(notif.restaurantKey !== undefined && this.state.notif){
-          th.setBookingModalVisible(true);
+        var uEndTime = this.state.UserNotifEndTime;
+        var uStartTime = this.state.UserNotifStartTime;
+        var curDate = new Date();
+        if(uEndTime && uEndTime !== 'SET END TIME'){
+          uEndTime = new Date(uEndTime);
+          uEndTime.setDate(curDate.getDate());
+          uEndTime.setMonth(curDate.getMonth());
+          uEndTime.setFullYear(curDate.getFullYear());
+          uEndTime = uEndTime.getTime();
         }
-      }
+        if(uStartTime && uStartTime !== 'SET START TIME'){
+          uStartTime = new Date(uStartTime);
+          uStartTime.setDate(curDate.getDate());
+          uStartTime.setMonth(curDate.getMonth());
+          uStartTime.setFullYear(curDate.getFullYear());
+          uStartTime = uStartTime.getTime();
+        }
+
+        var chk = true;
+
+        if(uEndTime && uStartTime && (notif.endTime < uStartTime || notif.startTime > uEndTime)) chk = false;
+
+        if(chk){
+          th.setState({bookingTable: table, bookingRestaurant: rest, bookingRestaurantKey: bookingRestaurantKey, tableId: notif.tableId});
+          if(notif.restaurantKey !== undefined && this.state.notif){
+            th.setBookingModalVisible(true);
+          }
+        }
 
         if(os ==='ios'){
           //optional
