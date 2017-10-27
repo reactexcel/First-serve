@@ -9,7 +9,8 @@ import {
     View,
     StyleSheet,
     dismissKeyboard,
-    TouchableWithoutFeedback
+    TouchableWithoutFeedback,
+    TouchableOpacity
 } from "react-native";
 import {NavigationActions,} from 'react-navigation';
 import React, {Component} from "react";
@@ -20,12 +21,18 @@ import {Sae} from "react-native-textinput-effects";
 import DismissKeyboard from "dismissKeyboard";
 import DefaultPreference from 'react-native-default-preference';
 import { HEXCOLOR } from "../styles/hexcolor.js";
-
+import {Icon} from "react-native-elements";
 import CommonStyle from "../styles/common.css";
 
 class EmailLogin extends Component {
     static navigationOptions = {
         title: 'Login as restaurant',
+        headerTitleStyle: {marginLeft:-15,extAlign: 'center',fontSize:15,alignSelf: "center", color: 'white',fontWeight:'bold' },
+        headerStyle: {
+          marginBottom:-10,
+          backgroundColor: '#023e4eff',
+        },
+        headerTintColor: 'white',
     };
     constructor(props) {
         super(props);
