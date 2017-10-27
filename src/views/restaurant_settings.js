@@ -29,7 +29,7 @@ class RestaurantSettings extends Component {
     title: 'Restaurant Settings',
     headerTitleStyle :{alignSelf: 'center', color: 'white'},
     headerStyle:{
-      backgroundColor: HEXCOLOR.lightBrown,
+      backgroundColor: '#023e4eff',
     },
     headerTintColor: HEXCOLOR.pureWhite
   };
@@ -134,7 +134,8 @@ class RestaurantSettings extends Component {
       );
     }else{
       return (
-        <View style={CommonStyle.container}>
+        <View style={{flex: 1,
+    		backgroundColor: 'black'}}>
           <TouchableHighlight
             onPress={() => this.logout()}>
             <View style={[CommonStyle.rowContainerLF, {paddingTop: 25}]}>
@@ -148,7 +149,7 @@ class RestaurantSettings extends Component {
             </View>
           </TouchableHighlight>
 
-          <View style={[CommonStyle.rowContainerLF, {paddingTop: 25}]}>
+          <View style={[CommonStyle.rowContainerLF, {paddingTop: 25,backgroundColor:'black'}]}>
             <View style={[CommonStyle.headingLeft]}>
               <Text style={{color: HEXCOLOR.pureWhite, fontSize: 24, paddingLeft: 10}}>Fully booked</Text>
             </View>

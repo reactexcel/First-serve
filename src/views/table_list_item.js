@@ -18,13 +18,13 @@ class TableListItem extends Component {
     // We are going to return a simple list item with just a title for now
     // this.props.setModalVisible(this.props.restaurant._key, true)
     return (
-      <View style={styles.listItem}>
-        <View style={styles.rowContainerLF}>
+      <View style={[styles.listItem,]}>
+        <View style={[styles.rowContainerLF]}>
           <View style={styles.headingLeft}>
             <TouchableHighlight
               onPress={() => this.props.toogleNamePhone(this.props.table.key, this.props.isBooked)}
               underlayColor='#98866F'>
-              <Text style={{color: HEXCOLOR.pureWhite, fontSize: 18}}>
+              <Text style={{fontWeight:'500', color: 'grey', fontSize: 14}}>
                 {this.props.table.people} people
               </Text>
             </TouchableHighlight>
@@ -33,7 +33,7 @@ class TableListItem extends Component {
             <TouchableHighlight
               onPress={() => this.props.toogleNamePhone(this.props.table.key, this.props.isBooked)}
               underlayColor='#98866F'>
-              <Text style={{color: HEXCOLOR.pureWhite, fontSize: 14}}>
+              <Text style={{fontWeight:'500', color: 'grey', fontSize: 14}}>
                 {this.props.table.shouldShowName ? this.props.table.bookedBy : this.props.table.bookedByPhone}
               </Text>
             </TouchableHighlight>
@@ -42,7 +42,7 @@ class TableListItem extends Component {
             <TouchableHighlight
               onPress={() => this.props.toogleNamePhone(this.props.table.key, this.props.isBooked)}
               underlayColor='#98866F'>
-              <Text style={{color: HEXCOLOR.pureWhite, fontSize: 18}}>
+              <Text style={{fontWeight:'500', color: 'grey', fontSize: 14}}>
                 {Moment(this.props.table.startTime).format('HH:mm')}-{Moment(this.props.table.endTime).format('HH:mm')}
               </Text>
             </TouchableHighlight>
@@ -53,9 +53,10 @@ class TableListItem extends Component {
             underlayColor='#98866F'>
             <View>
               <Icon
-                name='trashcan'
-                type='octicon'
-                color={HEXCOLOR.pureWhite}/>
+                size={20}
+                name='ios-trash'
+                type='ionicon'
+                color={'grey'}/>
               </View>
           </TouchableHighlight>}
         </View>

@@ -26,8 +26,8 @@ import CommonStyle from "../styles/common.css";
 
 class EmailLogin extends Component {
     static navigationOptions = {
-        title: 'Login as restaurant',
-        headerTitleStyle: {marginLeft:-15,extAlign: 'center',fontSize:15,alignSelf: "center", color: 'white',fontWeight:'bold' },
+        title: 'LOGIN AS RESTAURANT',
+        headerTitleStyle: {marginLeft:-15,extAlign: 'center',fontSize:13,alignSelf: "center", color: 'white',fontWeight:'bold' },
         headerStyle: {
           marginBottom:-10,
           backgroundColor: '#023e4eff',
@@ -119,24 +119,29 @@ class EmailLogin extends Component {
                             label={"Email Address"}
                             iconClass={FontAwesomeIcon}
                             iconName={"pencil"}
-                            iconColor={HEXCOLOR.lightBrown}
-                            inputStyle={{ color: HEXCOLOR.lightBrown }}
+                            style={{borderBottomWidth:1,borderBottomColor:'#023e4eff'}}
+                            labelStyle={{color:'#023e4eff'}}
+                            iconColor={'#023e4eff'}
+                            inputStyle={{color: '#023e4eff' }}
                             onChangeText={(email) => this.setState({email})}
                             keyboardType="email-address"
                             autoCapitalize="none"/>
+                            <View style={{margin:8}}/>
                         <Sae
                             label={"Password"}
                             iconClass={FontAwesomeIcon}
                             iconName={"key"}
-                            iconColor={HEXCOLOR.lightBrown}
-                            inputStyle={{ color: HEXCOLOR.lightBrown }}
+                            style={{borderBottomWidth:1,borderBottomColor:'#023e4eff'}}
+                            labelStyle={{color:'#023e4eff'}}
+                            iconColor={'#023e4eff'}
+                            inputStyle={{ color: '#023e4eff' }}
                             onChangeText={(password) => this.setState({password})}
                             password={true}
                             secureTextEntry={true}
                             autoCapitalize="none"/>
 
-                        <View style={styles.submit}>
-                            <Button onPress={this.login} style={styles.buttons} textStyle={{fontSize: 18}}>
+                        <View style={[styles.submit,{marginTop:30,flexDirection:'row',justifyContent:'center', alignItems:'center'}]}>
+                            <Button onPress={this.login} style={[styles.buttons,{width:145,borderWidth:0,borderRadius:0,backgroundColor:'#023e4eff'}]} textStyle={{color:'white',fontSize: 15}}>
                                 Login
                             </Button>
                         </View>
