@@ -2,7 +2,7 @@ import { HEXCOLOR } from './hexcolor';
 const RestaurantCss = {
 	container: {
 		flex: 1,
-		backgroundColor:  HEXCOLOR.black
+		backgroundColor: 'white'
 	},
 
 	rowContainer: {
@@ -114,8 +114,8 @@ const RestaurantCss = {
 	},
 
 	bottomBorderBrown: {
-		borderBottomWidth: 1,
-		borderColor: HEXCOLOR.lightBrown
+		borderBottomWidth: 2,
+		borderColor: '#023e4eff'
 	},
 
 	edtText: {

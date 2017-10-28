@@ -130,11 +130,13 @@ const AdminCss = {
 	bgContainer: { flex:1, width: null, height: null },
 
 	bottomBorder: {
-		borderBottomWidth: 1
+		borderColor:'#023e4eff',
+		borderBottomWidth: 2
 	},
 
 	topBorder: {
-		borderTopWidth: 1
+		borderColor:'#023e4eff',
+		borderTopWidth: 2
 	},
 
 	edtText: {
