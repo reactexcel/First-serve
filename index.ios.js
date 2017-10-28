@@ -187,7 +187,7 @@ class Landing extends Component {
             </View>
             <View style={{paddingLeft:45,paddingRight:45,justifyContent:'center',alignItems:'center'}} >
               <Text style={{fontSize:16.4,textAlign: 'center',color:'#122438'}}>
-                The fastest and easiest way to get a table at a good restaurant today. FirstServed will give you an overview of the best restaurant in town.
+                The fastest and easiest way to get a table at a good restaurant today. FirstServed will give you an overview of the best restaurants in town.
               </Text>
             </View>
           <View style={styles.fbButtonView}>

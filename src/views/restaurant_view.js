@@ -125,7 +125,7 @@ class RestaurantView extends Component {
                 </TouchableHighlight>
                 <TouchableHighlight
                   style={CommonStyle.centerContainer}
-                  onPress={() => this.props.setFavourite(this.props.restaurant._key, (this.props.favourites[this.props.restaurant._key] === true ? false : true))}
+                  onPress={() =>{}}
                   underlayColor={HEXCOLOR.pureWhite}>
                   <View style={CommonStyle.centerContainer}>
                     <View style={CommonStyle.circle}>
@@ -179,7 +179,7 @@ class RestaurantView extends Component {
                 </TouchableHighlight>
                 <TouchableHighlight
                   style={CommonStyle.centerContainer}
-                  onPress={() => this.props.setFavourite(this.props.restaurant._key, (this.props.favourites[this.props.restaurant._key] === true ? false : true))}
+                  onPress={() => {}}
                   underlayColor={HEXCOLOR.pureWhite}>
                   <View style={CommonStyle.centerContainer}>
                     <View style={CommonStyle.circle}>
