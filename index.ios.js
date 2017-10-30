@@ -39,7 +39,6 @@ class Landing extends Component {
       userLoaded: false,
       firstServedView: null
     };
-    this.unsubscribe = null;
     this._unlistenForAuth = this._unlistenForAuth.bind(this);
   }
 
@@ -79,7 +78,6 @@ class Landing extends Component {
           })]
         })
         firestack.auth.unlistenForAuth();
-        if (th.unsubscribe) {th.unsubscribe(); th.unsubscribe = null;}
         th.props.navigation.dispatch(resetAction);
       }else{
         console.log("componentWillMount not routeName called.");
@@ -106,53 +104,12 @@ class Landing extends Component {
                   })]
                 })
                 firestack.auth.unlistenForAuth();
-                if (th.unsubscribe) {
-                  th.unsubscribe();
-                  th.unsubscribe = null;
-                }
                 th.props.navigation.dispatch(resetAction)
               }
             })
           }
         }).then(() => console.log('Listening for authentication changes'))
 
-        this.unsubscribe = firebase.auth().onAuthStateChanged(function(user) {
-          if (user) {
-            let userMobilePath = "/users/" + user.uid;
-            let restaurantPath = "/restaurants/" + user.uid;
-            firebase.database().ref(userMobilePath).on('value', (snapshot) => {
-              firebase.database().ref(restaurantPath).once('value').then(function(child){
-                let routeName = null;
-                let title = "Restaurants";
-                child.forEach(function(childSnapshot) {
-                    var key = childSnapshot.key;
-                    var childData = childSnapshot.val();
-                    title = childData.name;
-                });
-                if (snapshot.exists() && snapshot.val().isAdmin) {
-                  console.log("AHome");
-                  routeName = 'AHome';
-                }else if (snapshot.exists() && snapshot.val().isRestaurantAdmin) {
-                  routeName = 'RHome';
-                  console.log("rhome");
-                }
-                if(routeName){
-                  console.log("routeName",routeName);
-                  const resetAction = NavigationActions.reset({
-                    index: 0,
-                    actions: [NavigationActions.navigate({routeName: routeName, params: {userId: user.uid, title: title}})]
-                  })
-                  firestack.auth.unlistenForAuth();
-                  if (th.unsubscribe) {
-                    th.unsubscribe();
-                    th.unsubscribe = null;
-                  }
-                  th.props.navigation.dispatch(resetAction)
-                }
-              });
-            });
-          }
-        });
         th.setState({loading: false});
       }
     });
@@ -167,9 +124,6 @@ class Landing extends Component {
   componentWillUnmount(){
     console.log('componentWillUnmount index');
     firestack.auth.unlistenForAuth();
-    if (this.unsubscribe) {
-      this.unsubscribe();
-    }
   }
 
   render() {
