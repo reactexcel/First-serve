@@ -12,7 +12,8 @@ import {
     Modal,
     Alert,
     ScrollView,
-    NetInfo
+    NetInfo,
+    Platform
 } from "react-native";
 
 import Button from "apsl-react-native-button";
@@ -33,7 +34,7 @@ class RestaurantHome extends Component {
   static navigationOptions  = ({navigation}) => {
     const {params = {}} = navigation.state;
     return {
-      title: params.title,
+      title: params.title.toUpperCase(),
       headerTitleStyle :{marginLeft:0,fontSize:13,alignSelf: 'center', color: 'white'},
       headerLeft: <View style={{marginLeft:15}}/>,
       headerStyle:{
@@ -299,7 +300,7 @@ class RestaurantHome extends Component {
                 <View style={CommonStyle.leftContainer}>
 
                 </View>
-                <Text style={[CommonStyle.navtext, {fontWeight:'bold',marginLeft:30,fontSize: 13, color: 'white'}]}>{this.state.restaurant.name}</Text>
+                <Text style={[CommonStyle.navtext, {fontWeight:'bold',marginLeft:30,fontSize: 13,marginTop:(Platform.OS === 'ios') ? 5 : 0, color: 'white'}]}>{this.state.restaurant.name.toUpperCase()}</Text>
                 <View style={[CommonStyle.rightContainer, {paddingRight: 15}]}>
                   <TouchableHighlight
                     onPress={() => this.setModalVisible(false)}>
