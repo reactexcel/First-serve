@@ -39,7 +39,8 @@ class Landing extends Component {
       loading: true,
       userLoaded: false,
       firstServedView: null,
-      isOnline: false
+      isOnline: false,
+      isLoggedIn: false
     };
     this.unsubscribe = null;
     this._unlistenForAuth = this._unlistenForAuth.bind(this);
@@ -62,24 +63,19 @@ class Landing extends Component {
     const th = this;
 
     DefaultPreference.getMultiple(['userType', 'uid', 'name', 'photoUrl']).then(function(value) {
+      console.log("========================**********************=====================", th.state.isLoggedIn);
       let restaurantPath = "/restaurants/" + value[1];
-      firebase.database().ref(restaurantPath).once('value').then(function(child){
       var routeName = null;
       var title = "Restaurants";
       if(value[0] === 'user'){
         routeName = 'UHome';
       }else if (value[0] === 'restaurant') {
-        child.forEach(function(childSnapshot) {
-            var key = childSnapshot.key;
-            var childData = childSnapshot.val();
-            title = childData.name;
-        });
         routeName = 'RHome';
+        title = "Loading...";
       }else if (value[0] === 'admin') {
         routeName = 'AHome';
       }
       if(routeName){
-        console.log("componentWillMount routeName called.");
         const resetAction = NavigationActions.reset({
           index: 0,
           actions: [NavigationActions.navigate({
@@ -91,7 +87,7 @@ class Landing extends Component {
               photoUrl: value[3]
             }
           })]
-        })
+        });
         firestack.auth.unlistenForAuth();
         if (th.unsubscribe) {th.unsubscribe(); th.unsubscribe = null;}
         th.props.navigation.dispatch(resetAction);
@@ -128,49 +124,12 @@ class Landing extends Component {
               }
             })
           }
-        }).then(() => console.log('Listening for authentication changes'))
-
-        this.unsubscribe = firebase.auth().onAuthStateChanged(function(user) {
-          if (user) {
-            let userMobilePath = "/users/" + user.uid;
-            let restaurantPath = "/restaurants/" + user.uid;
-            firebase.database().ref(userMobilePath).on('value', (snapshot) => {
-              firebase.database().ref(restaurantPath).once('value').then(function(child){
-                let routeName = null;
-                let title = "Restaurants";
-                child.forEach(function(childSnapshot) {
-                    var key = childSnapshot.key;
-                    var childData = childSnapshot.val();
-                    title = childData.name;
-                });
-                if (snapshot.exists() && snapshot.val().isAdmin) {
-                  console.log("AHome");
-                  routeName = 'AHome';
-                }else if (snapshot.exists() && snapshot.val().isRestaurantAdmin) {
-                  routeName = 'RHome';
-                  console.log("rhome");
-                }
-                if(routeName){
-                  console.log("routeName",routeName);
-                  const resetAction = NavigationActions.reset({
-                    index: 0,
-                    actions: [NavigationActions.navigate({routeName: routeName, params: {userId: user.uid, title: title}})]
-                  })
-                  firestack.auth.unlistenForAuth();
-                  if (th.unsubscribe) {
-                    th.unsubscribe();
-                    th.unsubscribe = null;
-                  }
-                  th.props.navigation.dispatch(resetAction)
-                }
-              });
-            });
-          }
+        }).then(() => {
+          console.log('Listening for authentication changes')
         });
         th.setState({loading: false});
       }
     });
-  });
   }
 
   componentDidMount(){

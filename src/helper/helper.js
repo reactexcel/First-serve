@@ -33,6 +33,7 @@ export function listenRestaurants(dataSnapshot) {
             _key: ch.key
           });
         });
+        console.log(restaurants);
         reslove (restaurants);
       });
   });

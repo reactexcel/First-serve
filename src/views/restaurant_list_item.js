@@ -21,6 +21,7 @@ import {Icon} from "react-native-elements";
 import FullWidthImage from "../components/full_width_image"
 import GallerySwiper from "../components/swiper"
 import RestaurantView from "./restaurant_view";
+import PopoverTooltip from 'react-native-popover-tooltip';
 
 class RestaurantListItem extends Component {
   render() {
@@ -104,8 +105,21 @@ class RestaurantListItem extends Component {
                 </View>
             </View>
             <View style={{flexDirection:'row',justifyContent:'flex-end',marginTop:-22,marginBottom:24,marginRight:25}}>
+            <PopoverTooltip
+        ref={'tooltip' + this.props.restaurant._key}
+        buttonComponent={
               <Switch onValueChange={(value) => this.props.setValue(this.props.restaurant._key, value)}
                 value={this.props.isRestaurantNotiOn[this.props.restaurant._key] === true ? true : false}/>
+              }
+        items={[
+          {
+            label: 'Fet notified when tables become available and be the first to claim the table!',
+            onPress: () => {this.refs['tooltip' + this.props.restaurant._key].toggle();}
+          }
+        ]}
+        // animationType='timming'
+        // using the default timming animation
+        />
             </View>
             {this.props.isAdmin && <View style={[styles.rowContainer, {paddingBottom: 58}]}>
               <TouchableHighlight

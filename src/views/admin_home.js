@@ -37,7 +37,7 @@ class AdminHome extends Component {
         headerTitleStyle : styles.headerTitleStyle,
         headerStyle: styles.adminHeaderStyle
       }
-};
+    };
     constructor(props) {
         super(props);
         this.restaurantRef = firebase.database().ref("/restaurants");
@@ -115,7 +115,11 @@ class AdminHome extends Component {
     }
 
     componentWillUnmount(){
+      console.log("componentWillUnmount", "Admin Home");
       this.unmountNetworkListner();
+      this.restaurantRef.off();
+      Database.unListenUserRestaurantNotiSetting(this.props.navigation.state.params.userId);
+      Database.unListenUserFavourites(this.props.navigation.state.params.userId);
     }
 
     unmountNetworkListner(){

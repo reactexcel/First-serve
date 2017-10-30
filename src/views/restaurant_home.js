@@ -101,7 +101,7 @@ class RestaurantHome extends Component {
     this.renderTable = this.renderTable.bind(this);
     this.deleteTable = this.deleteTable.bind(this);
     this.setModalVisible = this.setModalVisible.bind(this);
-    this._toogleNamePhone = this._toogleNamePhone.bind(this);
+    this.toogleNamePhone = this.toogleNamePhone.bind(this);
     this.handleFirstConnectivityChange = this.handleFirstConnectivityChange.bind(this);
     this.unmountNetworkListner = this.unmountNetworkListner.bind(this);
   }
@@ -141,7 +141,8 @@ class RestaurantHome extends Component {
           _key: ch.key
         };
       });
-
+      const {setParams} = this.props.navigation;
+      setParams({ title: restaurant.name });
       this.setState({restaurant: restaurant, restaurantKey: restaurant._key, progress: false});
 
       const th = this;
@@ -183,10 +184,10 @@ class RestaurantHome extends Component {
         this.ref.orderByChild("restaurantKey").equalTo(this.state.restaurantKey).on("value", function(snapshot) {
           var aTables = [];
           var bTables = [];
+          var curTime = new Date().getTime();
           snapshot.forEach((ch) => {
-            var curTime = new Date().getTime();
             if(curTime < ch.val().endTime) {
-              if(ch.val().bookedBy){
+              if(ch.val().isBooked){
                 bTables.push({
                   restaurantKey: ch.val().restaurantKey,
                   startTime: ch.val().startTime,
@@ -207,6 +208,8 @@ class RestaurantHome extends Component {
                   key: ch.key
                 });
               }
+            }else{
+
             }
           });
           th.setState({
@@ -403,7 +406,7 @@ class RestaurantHome extends Component {
     )
   }
 
-  _toogleNamePhone(tableKey, isBooked){
+  toogleNamePhone(tableKey, isBooked){
     if(!isBooked) return;
     var bTables = this.state.bookedTables;
 
@@ -433,6 +436,7 @@ class RestaurantHome extends Component {
     return (
       <TableListItem
         table={table}
+        toogleNamePhone={this.toogleNamePhone}
         deleteTable={this.deleteTable}
         isBooked={false} />
     )
@@ -441,7 +445,7 @@ class RestaurantHome extends Component {
     return (
       <TableListItem
         table={table}
-        toogleNamePhone={this._toogleNamePhone}
+        toogleNamePhone={this.toogleNamePhone}
         deleteTable={this.deleteTable}
         isBooked={true} />
     )

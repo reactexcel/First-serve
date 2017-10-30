@@ -40,12 +40,12 @@ class EmailLogin extends Component {
         this.state = {
             email: "",
             password: "",
-            response: ""
+            response: "",
+            isLoggedIn: false
         };
 
         this.signup = this.signup.bind(this);
         this.login = this.login.bind(this);
-        this.unsubscribe = null;
     }
 
     async signup() {
@@ -75,25 +75,45 @@ class EmailLogin extends Component {
         try {
           this.unsubscribe = firebase.auth().onAuthStateChanged(function(user) {
             if (user) {
-              console.log("No user is signed in: " + user.uid);
+              if(th.state.isLoggedIn) return;
+              th.setState({isLoggedIn: true})
               let userMobilePath = "/users/" + user.uid;
-              firebase.database().ref(userMobilePath).on('value', (snapshot) => {
-                DefaultPreference.setMultiple({userType: 'restaurant', uid: user.uid});
+              let restaurantPath = "/restaurants/" + user.uid;
+              let userP = firebase.database().ref(userMobilePath).once('value');
+              let restP = firebase.database().ref(restaurantPath).once('value');
+              Promise.all([userP, restP]).then(results => {
+                let usr = results[0].val();
+                let rest = results[1].val();
+                let routeName = null;
+                let title = "Restaurants";
+                if(rest){
+                  let keys = Object.keys(rest);
+                  let key = keys[0];
+                  rest = rest[key];
+                  title = rest.name;
+                }
 
-                if (snapshot.exists() && snapshot.val().isAdmin) {
+                if (usr && usr.isAdmin) {
                   DefaultPreference.setMultiple({userType: 'admin', uid: user.uid});
+                  routeName = 'AHome';
+                }else if (usr && usr.isRestaurantAdmin) {
+                  DefaultPreference.setMultiple({userType: 'restaurant', uid: user.uid});
+                  routeName = 'RHome';
+                  title = "Loading...";
                 }
 
-                th.props.navigation.state.params.unlistenForAuth();
-                if (th.unsubscribe) {
-                  th.unsubscribe();
-                  th.unsubscribe = null;
+                if(routeName){
+                  console.log("routeName",routeName);
+                  const resetAction = NavigationActions.reset({
+                    index: 0,
+                    actions: [NavigationActions.navigate({routeName: routeName, params: {userId: user.uid, title: title}})]
+                  });
+                  if (th.unsubscribe && th.unsubscribe()) {
+                    th.unsubscribe = undefined;
+                  }
+                  th.props.navigation.dispatch(resetAction)
                 }
-                console.log("user is signed in go back.");
-                th.props.navigation.goBack('Home');
               });
-            } else {
-              console.log("No user is signed in.");
             }
           });
           await firebase.auth().signInWithEmailAndPassword(this.state.email, this.state.password);
@@ -104,9 +124,8 @@ class EmailLogin extends Component {
     }
 
     componentWillUnmount(){
-      if (this.unsubscribe) {
-        this.unsubscribe();
-        this.unsubscribe = null;
+      if(this.unsubscribe && this.unsubscribe()){
+        this.unsubscribe = undefined;
       }
     }
 

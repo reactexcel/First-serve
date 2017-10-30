@@ -203,6 +203,7 @@ class PublishTable extends Component {
             isVisible={this.state.isDateTimePickerVisible}
             onConfirm={this._handleDatePicked}
             onCancel={this._hideDateTimePicker}
+            is24Hour={true}
             mode='time'/>
         </View>
       );

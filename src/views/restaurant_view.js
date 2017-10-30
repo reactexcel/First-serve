@@ -138,7 +138,7 @@ class RestaurantView extends Component {
                   style={CommonStyle.centerContainer}
                   onPress={() => {
                     if(this.props.restaurant.website_url.length > 0){
-                      Linking.openURL(this.props.restaurant.website_url)
+                      Linking.openURL(this.props.restaurant.website_url.startsWith('http') ? this.props.restaurant.website_url : 'http://' + this.props.restaurant.website_url)
                     }else{
                       console.log('Website', "Url Not Present.")
                     }
@@ -161,7 +161,7 @@ class RestaurantView extends Component {
                   style={CommonStyle.centerContainer}
                   onPress={() => {
                     if(this.props.restaurant.instagram_url.length > 0){
-                      Linking.openURL(this.props.restaurant.instagram_url)
+                      Linking.openURL(this.props.restaurant.instagram_url.startsWith('http') ? this.props.restaurant.instagram_url : 'http://' + this.props.restaurant.instagram_url)
                     }else{
                       console.log('Instagram', "Url Not Present.")
                     }
@@ -179,7 +179,13 @@ class RestaurantView extends Component {
                 </TouchableHighlight>
                 <TouchableHighlight
                   style={CommonStyle.centerContainer}
-                  onPress={() => {}}
+                  onPress={() => {
+                    if(this.props.restaurant.instagram_url.length > 0){
+                      Linking.openURL(this.props.restaurant.booking_url.startsWith('http') ? this.props.restaurant.booking_url : 'http://' + this.props.restaurant.booking_url)
+                    }else{
+                      console.log('Instagram', "Url Not Present.")
+                    }
+                  }}
                   underlayColor={HEXCOLOR.pureWhite}>
                   <View style={CommonStyle.centerContainer}>
                     <View style={CommonStyle.circle}>

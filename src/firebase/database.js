@@ -171,7 +171,7 @@ class Database {
 
     static listenUserStop(userId) {
         let userMobilePath = "/users/" + userId;
-        firebase.database().ref(userMobilePath).off('value');
+        firebase.database().ref(userMobilePath).off();
     }
 
     /**
@@ -186,6 +186,10 @@ class Database {
           firebase.database().ref(userMobilePath).off('value');
             callback(snapshot)
         });
+    }
+    static unListenUserRestaurantNotiSetting(userId){
+      let userMobilePath = "/users/" + userId + "/restaurants_noti";
+      firebase.database().ref(userMobilePath).off();
     }
 
     static setUserFavourites(restaurantId, userId, isFavourite){
@@ -213,6 +217,11 @@ class Database {
           firebase.database().ref(userMobilePath).off('value');
             callback(snapshot)
         });
+    }
+    static unListenUserFavourites(userId){
+      let userMobilePath = "/users/" + userId + "/favourite_restaurants";
+
+      firebase.database().ref(userMobilePath).off();
     }
 
     static addRestaurant(email, password, restaurant, callback){

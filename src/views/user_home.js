@@ -378,11 +378,12 @@ class UserHome extends Component {
   }
 
   componentWillUnmount(){
-    this.notificationListener.remove();
-    this.restaurantRef.off('value');
+    console.log("componentWillUnmount", "User Home");
+    this.restaurantRef.off();
     Database.listenUserStop();
-    this.ref.orderByChild("bookedBy").equalTo(this.state.userId).off("value");
+    this.ref.off();
     this.unmountNetworkListner();
+    this.notificationListener.remove();
   }
 
   unmountNetworkListner(){
@@ -644,7 +645,7 @@ class UserHome extends Component {
                 animationType="slide"
                 transparent={false}
                 visible={this.state.isModalVisible[restaurant._key] === true ? true : false}
-                onRequestClose={() => {this.setModalVisible(restaurant._key, false)}}>
+                onRequestClose={() => {this._setModalVisible(restaurant._key, false)}}>
 
                 <RestaurantView restaurant={restaurant}
                   setModalVisible={this._setModalVisible}
