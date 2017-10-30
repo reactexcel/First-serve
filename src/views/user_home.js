@@ -19,7 +19,8 @@ import {
     AlertIOS,
     Linking,
     Modal,
-    NetInfo
+    NetInfo,
+    Alert
 } from "react-native";
 
 import Button from "apsl-react-native-button";
@@ -914,7 +915,8 @@ class UserHome extends Component {
       Database.bookTable(this.state.userId, this.state.bookingTable.key, function(isBooked){
         if(isBooked){
           if (Platform.OS === 'android') {
-            alert("Your Table has been booked for Mention Date.");
+            Alert.alert( 'Congratulations! The table has  been booked', 'Looking forward to seeking you',
+            [{text: 'OK', onPress: () => console.log('OK Pressed')}, ], { cancelable: false } )
           } else if (Platform.OS === 'ios') {
             AlertIOS.alert(
              'Congratulations! The table has  been booked',
