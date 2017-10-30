@@ -87,12 +87,8 @@ class BookedItem extends Component {
             <Text numberOfLines={2} style={{fontSize: 12,textAlign:'center',paddingLeft:30,paddingRight:30,color:'#a79a95ff',fontWeight:'bold'}}>{this.props.restaurant.booking_message}</Text>
           </View>
           <TouchableHighlight
-            onPress={() => {
-              if(this.props.restaurant.phone_number.length > 0){
-                call({number: this.props.restaurant.phone_number, prompt: false}).catch(console.error);
-              }else{
-                console.log('PhoneNumber', "Not Present.")
-              }
+            onPress={()=>{
+              Linking.openURL(`tel:${this.props.restaurant.phone_number}`)
             }}
             >
           <View style={[{marginTop:7,marginBottom:5,alignItems:'center'}]}>
@@ -107,7 +103,7 @@ class BookedItem extends Component {
           <TouchableHighlight
             onPress={() => {
               if(this.props.restaurant.phone_number.length > 0){
-                call({number: this.props.restaurant.phone_number, prompt: false}).catch(console.error);
+                Linking.openURL(`tel:${this.props.restaurant.phone_number}`)
               }else{
                 console.log('PhoneNumber', "Not Present.")
               }

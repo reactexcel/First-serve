@@ -76,13 +76,12 @@ class RestaurantView extends Component {
           <View style={CommonStyle.leftContainer}>
 
           </View>
-          <Text style={[CommonStyle.navtext, {paddingTop:0,fontSize:13,alignSelf: 'center', color: 'white',fontWeight:'bold' }]}>{this.props.restaurant.name}</Text>
+          <Text style={[CommonStyle.navtext, {color: 'white'}]}>{this.props.restaurant.name}</Text>
           <View style={CommonStyle.rightContainer}>
             <TouchableHighlight
               onPress={() => this.props.setModalVisible(this.props.restaurant._key, false)}>
               <View>
                 <Icon
-                  size={16}
                   name='close'
                   type='font-awesome'
                   color='white'/>
@@ -196,7 +195,7 @@ class RestaurantView extends Component {
                   style={CommonStyle.centerContainer}
                   onPress={() => {
                     if(this.props.restaurant.phone_number.length > 0){
-                      call({number: this.props.restaurant.phone_number, prompt: false}).catch(console.error);
+                      Linking.openURL(`tel:${this.props.restaurant.phone_number}`)
                     }else{
                       console.log('PhoneNumber', "Not Present.")
                     }

@@ -322,7 +322,7 @@ class RestaurantHome extends Component {
             </View>
           </Modal>
           <View style={[CommonStyle.rowContainerLF, CommonStyle.bottomBorderBrown, {paddingTop: 30}]}>
-            <View style={CommonStyle.headingLeft}><Text style={{fontWeight:'500'}}>Available tables</Text></View>
+            <View style={CommonStyle.headingLeft}><Text style={{fontWeight:'500',color: '#023e4eff'}}>Available tables</Text></View>
             <View style={CommonStyle.headingRight}><Text style={{fontWeight:'500',color: '#023e4eff'}}>{this.state.curTime}</Text></View>
           </View>
           <View style={[CommonStyle.rowContainerLF,{marginTop:15}]}>
