@@ -294,19 +294,18 @@ class RestaurantHome extends Component {
             visible={this.state.isModalVisible}
             onRequestClose={() => {this.setModalVisible(false)}}>
 
-            <View style={{flex: 1, backgroundColor:  HEXCOLOR.black}}>
+            <View style={{flex: 1, backgroundColor:  HEXCOLOR.pureWhite}}>
               <View style={CommonStyle.navBar}>
                 <View style={CommonStyle.leftContainer}>
-                  <Text
-                    onPress={() => this.setModalVisible(false)}
-                    style={[CommonStyle.text, {fontSize: 22, color: 'white', textAlign: 'left', marginLeft: 10}]}>{'<'}</Text>
+
                 </View>
-                <Text style={[CommonStyle.navtext, {fontSize: 20, color: 'white'}]}>{this.state.restaurant.name}</Text>
+                <Text style={[CommonStyle.navtext, {fontWeight:'bold',marginLeft:30,fontSize: 13, color: 'white'}]}>{this.state.restaurant.name}</Text>
                 <View style={[CommonStyle.rightContainer, {paddingRight: 15}]}>
                   <TouchableHighlight
                     onPress={() => this.setModalVisible(false)}>
                     <View>
                       <Icon
+                        size={21}
                         name='close'
                         type='font-awesome'
                         color='white'/>

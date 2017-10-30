@@ -29,7 +29,7 @@ const RestaurantCss = {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: HEXCOLOR.lightBrown
+    backgroundColor: '#023e4eff'
   },
 
 	rowContainerHCenter: {
