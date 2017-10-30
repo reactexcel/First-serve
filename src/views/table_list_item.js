@@ -24,7 +24,7 @@ class TableListItem extends Component {
             <TouchableHighlight
               onPress={() => this.props.toogleNamePhone(this.props.table.key, this.props.isBooked)}
               underlayColor='#98866F'>
-              <Text style={{fontWeight:'500', color: 'grey', fontSize: 14}}>
+              <Text style={{fontWeight:'500', color: 'grey', fontSize: 12.6}}>
                 {this.props.table.people} people
               </Text>
             </TouchableHighlight>
@@ -33,7 +33,7 @@ class TableListItem extends Component {
             <TouchableHighlight
               onPress={() => this.props.toogleNamePhone(this.props.table.key, this.props.isBooked)}
               underlayColor='#98866F'>
-              <Text style={{fontWeight:'500', color: 'grey', fontSize: 14}}>
+              <Text style={{fontWeight:'500', color: 'grey', fontSize: 12.6}}>
                 {this.props.table.shouldShowName ? this.props.table.bookedBy : this.props.table.bookedByPhone}
               </Text>
             </TouchableHighlight>
@@ -42,7 +42,7 @@ class TableListItem extends Component {
             <TouchableHighlight
               onPress={() => this.props.toogleNamePhone(this.props.table.key, this.props.isBooked)}
               underlayColor='#98866F'>
-              <Text style={{fontWeight:'500', color: 'grey', fontSize: 14}}>
+              <Text style={{fontWeight:'500', color: 'grey', fontSize: 12.6}}>
                 {Moment(this.props.table.startTime).format('HH:mm')}-{Moment(this.props.table.endTime).format('HH:mm')}
               </Text>
             </TouchableHighlight>
