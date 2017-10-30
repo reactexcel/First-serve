@@ -35,7 +35,7 @@ class RestaurantHome extends Component {
     return {
       title: params.title,
       headerTitleStyle :{marginLeft:0,fontSize:13,alignSelf: 'center', color: 'white'},
-      headerLeft: <View/>,
+      headerLeft: <View style={{marginLeft:15}}/>,
       headerStyle:{
           backgroundColor: '#023e4eff',
       },
@@ -322,7 +322,7 @@ class RestaurantHome extends Component {
             </View>
           </Modal>
           <View style={[CommonStyle.rowContainerLF, CommonStyle.bottomBorderBrown, {paddingTop: 30}]}>
-            <View style={CommonStyle.headingLeft}><Text style={{fontWeight:'500',color: '#023e4eff'}}>Available tables</Text></View>
+            <View style={CommonStyle.headingLeft}><Text style={{fontWeight:'500'}}>Available tables</Text></View>
             <View style={CommonStyle.headingRight}><Text style={{fontWeight:'500',color: '#023e4eff'}}>{this.state.curTime}</Text></View>
           </View>
           <View style={[CommonStyle.rowContainerLF,{marginTop:15}]}>
@@ -342,7 +342,7 @@ class RestaurantHome extends Component {
               enableEmptySections={true}
               renderRow={this.renderBookedTable.bind(this)}/>
           </View>
-          <View style={[CommonStyle.rowContainerLF,CommonStyle.bottomBorderBrown, {color:'#023e4eff',paddingTop: 10}]}>
+          <View style={[CommonStyle.rowContainerLF,CommonStyle.bottomBorderBrown, {paddingTop: 10}]}>
             <TouchableHighlight
               onPress={() => this.setModalVisible(true)}
               underlayColor={HEXCOLOR.pureWhite}>
