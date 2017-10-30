@@ -426,6 +426,7 @@ class UserHome extends Component {
           <AvailableTable
             restaurant={this.state.bookingRestaurant}
             table={this.state.bookingTable}
+            openMap={this._openMapview}
             setModalVisible={this.setBookingModalVisible}
             bookTable={this.book}/>
         </Modal>

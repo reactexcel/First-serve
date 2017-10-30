@@ -76,12 +76,13 @@ class RestaurantView extends Component {
           <View style={CommonStyle.leftContainer}>
 
           </View>
-          <Text style={[CommonStyle.navtext, {color: 'white'}]}>{this.props.restaurant.name}</Text>
+          <Text style={[CommonStyle.navtext, {paddingTop:0,fontSize:13,alignSelf: 'center', color: 'white',fontWeight:'bold' }]}>{this.props.restaurant.name}</Text>
           <View style={CommonStyle.rightContainer}>
             <TouchableHighlight
               onPress={() => this.props.setModalVisible(this.props.restaurant._key, false)}>
               <View>
                 <Icon
+                  size={16}
                   name='close'
                   type='font-awesome'
                   color='white'/>
