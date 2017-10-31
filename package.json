@@ -21,6 +21,7 @@
     "react-native-image-picker": "^0.26.7",
     "react-native-material-bottom-navigation": "^0.5.1",
     "react-native-modal-datetime-picker": "^4.11.0",
+    "react-native-modalbox": "^1.4.2",
     "react-native-phone-call": "^1.0.4",
     "react-native-popover-tooltip": "^1.1.1",
     "react-native-progress": "^3.4.0",

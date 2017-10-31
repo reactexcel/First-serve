@@ -9,6 +9,7 @@ import {
     View,
     StyleSheet,
     TouchableHighlight,
+    TouchableOpacity,
     ListView,
     Image,
     TextInput,
@@ -49,6 +50,7 @@ import FixWidthImage from "../components/fix_width_image"
 import * as firebase from "firebase";
 import Firestack from 'react-native-firestack';
 import FCM, {FCMEvent, RemoteNotificationResult, WillPresentNotificationResult, NotificationType} from 'react-native-fcm';
+import MOdal from 'react-native-modalbox';
 
 const FBSDK = require('react-native-fbsdk');
 const {
@@ -119,7 +121,8 @@ class UserHome extends Component {
       selectedindex:2,
       selectedMember:2,
       isOnline: false,
-      hasToOpenBookingModal: false
+      hasToOpenBookingModal: false,
+      isDisabled:false
     };
 
     this._setUserNoti = this._setUserNoti.bind(this);
@@ -447,6 +450,19 @@ class UserHome extends Component {
             onCancel={()=>this.onCancel()}
             />
         </Modal>
+        <MOdal swipeToClose={false} backButtonClose={true} style={[{height: 190,width: 280,borderRadius:5,backgroundColor:'white'}]} position={"center"} ref={"modal3"} isDisabled={this.state.isDisabled}>
+          <View style={{flex:1,flexDirection:'column',justifyContent:'center',borderBottomWidth:1,borderBottomColor:'black'}}>
+            <Text style={{color:'black',marginTop:-15,marginLeft:10,marginRight:10,fontSize:14.5,fontWeight:'bold',textAlign:'center'}}>You are FirstServed - we look forward to welcoming you at our restaurant.</Text>
+            <Text style={{color:'black',marginTop:25, fontSize:13.5,textAlign:'center'}}>
+              View booking details under 'bookings'
+            </Text>
+          </View>
+          <TouchableOpacity onPress={() =>this.refs.modal3.close()} >
+            <Text style={{color:'#3498DB',marginTop:10,marginBottom:10,fontSize:16,fontWeight:'bold',textAlign:'center'}}>
+              Ok
+            </Text>
+          </TouchableOpacity>
+        </MOdal>
         {this.state.currentTab == 0 && <View style={[styles.container,{marginBottom:56}]}>
           {/*<View style={[styles.notiView, styles.bottomBorder]}>
               <View style={styles.notiIconView}>
@@ -629,9 +645,14 @@ class UserHome extends Component {
 
               </View>
             </View>
-              <View style={[{marginTop:20,marginBottom:30}]}>
+              <View style={{marginTop:20,marginBottom:10}}>
+                <Text style={{color: '#023e4eff',textAlign:'center',fontWeight:'bold' }}>
+                  Save changes to view restaurants
+                </Text>
+              </View>
+              <View style={[{marginTop:10,marginBottom:20, alignItems:'center'}]}>
                 <View style={{marginLeft: 60, marginRight: 60}}>
-                  <Button onPress={()=>{this.save()}} style={{backgroundColor: '#023e4eff',borderRadius:0}} textStyle={{color: '#FFF', fontSize: 18}}>
+                  <Button onPress={()=>{this.save()}} style={{width:165,backgroundColor: '#023e4eff',borderRadius:0}} textStyle={{color: '#FFF', fontSize: 15}}>
                     {buttonName}
                   </Button>
                 </View>
@@ -915,15 +936,7 @@ class UserHome extends Component {
       const th = this;
       Database.bookTable(this.state.userId, this.state.bookingTable.key, function(isBooked){
         if(isBooked){
-          if (Platform.OS === 'android') {
-            Alert.alert( 'Congratulations! The table has  been booked', 'Looking forward to seeking you',
-            [{text: 'OK', onPress: () => console.log('OK Pressed')}, ], { cancelable: false } )
-          } else if (Platform.OS === 'ios') {
-            AlertIOS.alert(
-             'Congratulations! The table has  been booked',
-             'Looking forward to seeking you',
-            );
-          }
+          th.refs.modal3.open()
           th.setBookingModalVisible(false)
           th.setState({currentTab: 2});
         }else{
