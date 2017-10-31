@@ -56,7 +56,7 @@ class AvailableTable extends Component {
         <View style={CommonStyle.navBar}>
           <View style={CommonStyle.leftContainer}>
           </View>
-          <Text style={[CommonStyle.text, {paddingTop:0,fontSize:12,alignSelf: 'center', color: 'white',fontWeight:'bold' }]}>AVAIBLE TABLE</Text>
+          <Text style={[CommonStyle.text, {paddingTop:0,fontSize:12,alignSelf: 'center', color: 'white',fontWeight:'bold',marginLeft:15 }]}>AVAIBLE TABLE</Text>
           <View style={CommonStyle.rightContainer}>
             <TouchableHighlight
               onPress={() => this.props.setModalVisible(false)}>
@@ -74,7 +74,7 @@ class AvailableTable extends Component {
           <View style={[CommonStyle.rowContainer, {paddingTop: 8,paddingBottom:0,marginBottom:2}]}>
             <Text style={{fontWeight:'500',color:'#023e4eff',fontSize:14}}>A new table has just become available</Text></View>
           <View style={[CommonStyle.rowContainer, { paddingTop: 0,paddingBottom:7}]}>
-            <Text style={CommonStyle.listItemTitle}>{this.props.restaurant.name}</Text></View>
+            <Text style={CommonStyle.listItemTitle}>{this.props.restaurant.name.toUpperCase()}</Text></View>
           <FullWidthImage source={{uri: this.props.restaurant.images.length > 0 ? this.props.restaurant.images[0].imageUrl : 'https://firebasestorage.googleapis.com/v0/b/first-served-c9197.appspot.com/o/restaurant_images%2Frestaurant.jpg?alt=media&token=b0ca19be-6594-4bb1-bfdb-3c9474a0b234'}} />
           <View style={[CommonStyle.notiView, {alignItems:'center',marginTop:13}]}>
             <View style={{justifyContent:'center',alignItems:'center'}}><Text style={{textAlign:'center',fontSize:12,color:'#a79a95ff',fontWeight:'bold'}}>{this.props.restaurant.type.toUpperCase()}</Text></View>

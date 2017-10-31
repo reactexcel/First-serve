@@ -201,7 +201,7 @@ class RestaurantView extends Component {
                   style={CommonStyle.centerContainer}
                   onPress={() => {
                     if(this.props.restaurant.phone_number.length > 0){
-                      call({number: this.props.restaurant.phone_number, prompt: false}).catch(console.error);
+                      Linking.openURL(`tel:${this.props.restaurant.phone_number}`)
                     }else{
                       console.log('PhoneNumber', "Not Present.")
                     }

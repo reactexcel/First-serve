@@ -29,7 +29,7 @@ const RestaurantCss = {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: HEXCOLOR.lightBrown
+    backgroundColor: '#023e4eff'
   },
 
 	rowContainerHCenter: {
@@ -133,12 +133,12 @@ const RestaurantCss = {
 		flexDirection: 'row',
 		justifyContent: 'flex-end',
 		alignItems: 'center',
-		paddingRight: 8
+		marginRight: 8
   },
 
 	rectangle: {
 		borderWidth: 1,
-		borderColor: HEXCOLOR.lightBrown,
+		borderColor: '#023e4eff',
 		alignItems:'center',
 		justifyContent: 'center'
 	}

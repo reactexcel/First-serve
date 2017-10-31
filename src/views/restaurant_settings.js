@@ -25,13 +25,18 @@ import {Icon} from "react-native-elements";
 import * as firebase from "firebase";
 
 class RestaurantSettings extends Component {
-  static navigationOptions = {
-    title: 'Restaurant Settings',
-    headerTitleStyle :{alignSelf: 'center', color: 'white'},
+  static navigationOptions = ({navigation}) => {
+    const {params = {}} = navigation.state;
+    return {
+    title: 'RESTAURANT SETTINGS',
+    headerLeft: <View style={{marginLeft:15}}/>,
+    headerRight: <Icon style={{marginRight:10}} size={19}  name='close' onPress={() => params.handleSave(navigation)} type='font-awesome' color='white'/>,
+    headerTitleStyle :{marginLeft:0,fontSize:13,alignSelf: 'center', color: 'white'},
     headerStyle:{
       backgroundColor: '#023e4eff',
     },
     headerTintColor: HEXCOLOR.pureWhite
+    }
   };
   constructor(props) {
     super(props);
@@ -103,7 +108,12 @@ class RestaurantSettings extends Component {
     this.restaurantRef.off();
     this.unmountNetworkListner();
   }
-
+  componentDidMount() {
+    this.props.navigation.setParams({ handleSave: this.handleClose });
+  }
+  handleClose(navigation){
+    navigation.dispatch(NavigationActions.back())
+  }
   unmountNetworkListner(){
     NetInfo.isConnected.removeEventListener(
       'connectionChange',
@@ -124,6 +134,7 @@ class RestaurantSettings extends Component {
   }
 
   render() {
+    console.log(this.props);
     if(!this.state.isOnline){
       return (
         <View style={[CommonStyle.container, {padding: 10}]}>
@@ -135,27 +146,28 @@ class RestaurantSettings extends Component {
     }else{
       return (
         <View style={{flex: 1,
-    		backgroundColor: 'black'}}>
+    		backgroundColor: HEXCOLOR.pureWhite}}>
           <TouchableHighlight
             onPress={() => this.logout()}>
             <View style={[CommonStyle.rowContainerLF, {paddingTop: 25}]}>
               <View style={[CommonStyle.headingRight]}>
                 <Icon
+                  size={22}
                   name='sign-out'
                   type='octicon'
-                  color={HEXCOLOR.pureWhite}/>
-                <Text style={{color: HEXCOLOR.pureWhite, fontSize: 16, paddingLeft: 10}}>Sign out</Text>
+                  color={"#023e4eff"}/>
+                <Text style={{color: "#023e4eff", fontSize: 14, paddingLeft: 10}}>Sign out</Text>
               </View>
             </View>
           </TouchableHighlight>
 
-          <View style={[CommonStyle.rowContainerLF, {paddingTop: 25,backgroundColor:'black'}]}>
+          <View style={[CommonStyle.rowContainerLF, {paddingTop: 25,backgroundColor:HEXCOLOR.pureWhite}]}>
             <View style={[CommonStyle.headingLeft]}>
-              <Text style={{color: HEXCOLOR.pureWhite, fontSize: 24, paddingLeft: 10}}>Fully booked</Text>
+              <Text style={{color: '#023e4eff', fontSize: 14, paddingLeft: 10}}>Fully booked</Text>
             </View>
             <View style={[CommonStyle.headingRight]}>
               <Switch onValueChange={(value) => this.setFullyBooked(value)}
-                onTintColor={HEXCOLOR.pureWhite}
+                onTintColor={'#023e4eff'}
                 style={{marginBottom: 10}}
                 thumbTintColor={HEXCOLOR.pureWhite}
                 tintColor={HEXCOLOR.lightBrown}

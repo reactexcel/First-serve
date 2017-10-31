@@ -12,7 +12,8 @@ import {
     Modal,
     Alert,
     ScrollView,
-    NetInfo
+    NetInfo,
+    Platform
 } from "react-native";
 
 import Button from "apsl-react-native-button";
@@ -33,9 +34,9 @@ class RestaurantHome extends Component {
   static navigationOptions  = ({navigation}) => {
     const {params = {}} = navigation.state;
     return {
-      title: params.title,
+      title: params.title.toUpperCase(),
       headerTitleStyle :{marginLeft:0,fontSize:13,alignSelf: 'center', color: 'white'},
-      headerLeft: <View/>,
+      headerLeft: <View style={{marginLeft:15}}/>,
       headerStyle:{
           backgroundColor: '#023e4eff',
       },
@@ -297,19 +298,18 @@ class RestaurantHome extends Component {
             visible={this.state.isModalVisible}
             onRequestClose={() => {this.setModalVisible(false)}}>
 
-            <View style={{flex: 1, backgroundColor:  HEXCOLOR.black}}>
+            <View style={{flex: 1, backgroundColor:  HEXCOLOR.pureWhite}}>
               <View style={CommonStyle.navBar}>
                 <View style={CommonStyle.leftContainer}>
-                  <Text
-                    onPress={() => this.setModalVisible(false)}
-                    style={[CommonStyle.text, {fontSize: 22, color: 'white', textAlign: 'left', marginLeft: 10}]}>{'<'}</Text>
+
                 </View>
-                <Text style={[CommonStyle.navtext, {fontSize: 20, color: 'white'}]}>{this.state.restaurant.name}</Text>
+                <Text style={[CommonStyle.navtext, {fontWeight:'bold',marginLeft:30,fontSize: 13,marginTop:(Platform.OS === 'ios') ? 5 : 0, color: 'white'}]}>{this.state.restaurant.name.toUpperCase()}</Text>
                 <View style={[CommonStyle.rightContainer, {paddingRight: 15}]}>
                   <TouchableHighlight
                     onPress={() => this.setModalVisible(false)}>
                     <View>
                       <Icon
+                        size={21}
                         name='close'
                         type='font-awesome'
                         color='white'/>
@@ -346,7 +346,7 @@ class RestaurantHome extends Component {
               enableEmptySections={true}
               renderRow={this.renderBookedTable.bind(this)}/>
           </View>
-          <View style={[CommonStyle.rowContainerLF,CommonStyle.bottomBorderBrown, {color:'#023e4eff',paddingTop: 10}]}>
+          <View style={[CommonStyle.rowContainerLF,CommonStyle.bottomBorderBrown, {paddingTop: 10}]}>
             <TouchableHighlight
               onPress={() => this.setModalVisible(true)}
               underlayColor={HEXCOLOR.pureWhite}>
