@@ -981,6 +981,7 @@ class UserHome extends Component {
               website_url: (ch.val().website_url ? ch.val().website_url : ''),
               booking_url: (ch.val().booking_url ? ch.val().booking_url : ''),
               instagram_url: (ch.val().instagram_url ? ch.val().instagram_url : ''),
+              price_label: (ch.val().price_label ? ch.val().price_label : ''),
               fully_booked: ch.val().fully_booked,
               images: images,
               _uid: child.key,

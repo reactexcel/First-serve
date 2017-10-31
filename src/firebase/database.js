@@ -255,6 +255,7 @@ class Database {
     }
 
     static editRestaurant(restaurant, callback){
+      console.log(restaurant,"database");
       let restaurantPath = "/restaurants/" + restaurant._uid + "/" + restaurant._key;
       let ref = firebase.database().ref(restaurantPath);
       var images = restaurant.images.slice();

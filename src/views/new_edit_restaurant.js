@@ -214,7 +214,16 @@ class NewEditRestaurant extends Component {
                         value={this.state.restaurant.booking_url}
                         keyboardType="url"
                         autoCapitalize="none"/>
-
+                    <Sae
+                        label={"Price Label"}
+                        iconClass={FontAwesomeIcon}
+                        iconName={"pencil"}
+                        iconColor={HEXCOLOR.lightBrown}
+                        inputStyle={{ color: HEXCOLOR.lightBrown }}
+                        onChangeText={(price_label) => this.setVal("price_label", price_label)}
+                        value={this.state.restaurant.price_label}
+                        keyboardType="url"
+                        autoCapitalize="none"/>
                     <Text style={CommonStyle.shortDescription}>Short Description</Text>
                     <TextInput
                         style={{color: HEXCOLOR.lightBrown, fontSize: 18}}

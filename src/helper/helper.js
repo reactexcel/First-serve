@@ -15,7 +15,6 @@ export function listenRestaurants(dataSnapshot) {
               });
             }
           }
-
           restaurants.splice((restaurants.length), 0, {
             name: (ch.val().name ? ch.val().name : ''),
             type: (ch.val().type ? ch.val().type : ''),
@@ -26,6 +25,7 @@ export function listenRestaurants(dataSnapshot) {
             address: (ch.val().address ? ch.val().address : ''),
             website_url: (ch.val().website_url ? ch.val().website_url : ''),
             booking_url: (ch.val().booking_url ? ch.val().booking_url : ''),
+            price_label: (ch.val().price_label ? ch.val().price_label : ''),
             instagram_url: (ch.val().instagram_url ? ch.val().instagram_url : ''),
             fully_booked: ch.val().fully_booked,
             images: images,
