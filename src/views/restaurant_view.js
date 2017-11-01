@@ -106,7 +106,7 @@ class RestaurantView extends Component {
             </View>
               <View style={{flexDirection:'row',justifyContent:'flex-end',marginTop:-60,marginBottom:25,marginRight:5}}>
                   <Switch
-                  active={this.props.isRestaurantNotiOn[this.props.restaurant._key] === true ? true : false}
+                  active={this.props.isRestaurantNotiOn[this.props.restaurant._key]}
                   onChangeState={(value)=>{this.props.setValue(this.props.restaurant._key, value)}}
                   buttonRadius={12}
                   switchHeight={16}
