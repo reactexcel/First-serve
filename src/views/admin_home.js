@@ -269,7 +269,6 @@ class AdminHome extends Component {
 
     _editRestaurant(restaurant){
       var editRestaurantVal = restaurant;
-      console.log(restaurant,"admin_home");
       if (!restaurant.price_label) {
         editRestaurantVal['price_label'] = '';
       }
