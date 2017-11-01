@@ -76,6 +76,7 @@ class Landing extends Component {
         routeName = 'AHome';
       }
       if(routeName){
+        console.log(value,"value");
         const resetAction = NavigationActions.reset({
           index: 0,
           actions: [NavigationActions.navigate({
@@ -97,7 +98,7 @@ class Landing extends Component {
           if (!evt.authenticated) {
             // console.error(evt.error)
           } else {
-            console.log('User details', evt.user);
+            console.log('User detailssdasdasdasdasdsadasdasdsadsadsadsa', evt.user);
             let userMobilePath = "/users/" + evt.user.uid;
             firebase.database().ref(userMobilePath).on('value', (snapshot) => {
               if (snapshot.exists() && snapshot.val().isUser) {

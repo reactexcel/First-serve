@@ -28,7 +28,7 @@ class RestaurantListItem extends Component {
   render() {
     // We are going to return a simple list item with just a title for now
     // this.props.setModalVisible(this.props.restaurant._key, true)
-    var notify = this.props.isRestaurantNotiOn[this.props.restaurant._key]
+    
     if(this.props.restaurant.isAddButton !== true){
       return (
         <View style={styles.listItem}>
@@ -110,7 +110,7 @@ class RestaurantListItem extends Component {
         ref={'tooltip' + this.props.restaurant._key}
         buttonComponent={
               <Switch
-              active={notify}
+              active={this.props.isRestaurantNotiOn[this.props.restaurant._key]}
               onChangeState={(value)=>{this.props.setValue(this.props.restaurant._key, value)}}
               buttonRadius={12}
               switchHeight={16}
