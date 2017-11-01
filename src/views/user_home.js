@@ -661,7 +661,6 @@ class UserHome extends Component {
         </View>
           :<View style={{flex:1,justifyContent:'center',flexDirection:'column',alignItems:'center'}}><Progress.Circle size={30} indeterminate={true} /></View>)}
           {this.state.restaurants.map((restaurant, key) => {
-            console.log("Model Key", key);
             return(
               <Modal
                 key={key}
