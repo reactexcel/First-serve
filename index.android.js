@@ -184,7 +184,7 @@ class Landing extends Component {
                 <Image style={{width:160,height:75}}  source={require('./src/images/firstlogo.png')} />
             </View>
             <View style={{paddingLeft:45,paddingRight:45,justifyContent:'center',alignItems:'center'}} >
-              <Text style={{fontSize:15.8,textAlign: 'center',color:'#122438'}}>
+              <Text style={{fontSize:14.4,textAlign: 'center',color:'#122438'}}>
                 The fastest and easiest way to get a table at a gourmet restaurant in Copenhagen today. FirstServed will send you notifications when tables become available at the restaurants of your choice – booking a table is first-come-first-served.
               </Text>
             </View>

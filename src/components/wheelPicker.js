@@ -18,7 +18,7 @@ export default class WheelPicker extends Component {
             <View style={styles.container}>
             <View style={{marginTop:30}}>
               <Text style={styles.welcome}>
-              Select Tables for Pepole
+                How many people are you ?
               </Text>
             </View>
               <View style={{marginBottom:10 }}>
