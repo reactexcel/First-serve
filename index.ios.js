@@ -98,7 +98,7 @@ class Landing extends Component {
                     params: {
                       title: title,
                       userId: evt.user.uid,
-                      photoUrl: evt.user.photoUrl,
+                      photoUrl: evt.user.photoURL,
                       name: evt.user.displayName
                     }
                   })]
@@ -157,12 +157,11 @@ class Landing extends Component {
                   } else {
                     AccessToken.getCurrentAccessToken().then((data) => {
                       firestack.auth.signInWithProvider('facebook', data.accessToken, '').then((user)=>{ // facebook will need only access token.
-                        console.log(user.user.photoUrl);
                         DefaultPreference.setMultiple({
                           userType: 'user',
                           uid: user.user.uid,
                           name: user.user.displayName,
-                          photoUrl: user.user.photoUrl
+                          photoUrl: user.user.photoURL
                         });
                         let userMobilePath = "/users/" + user.user.uid;
                         firebase.database().ref(userMobilePath).update({
