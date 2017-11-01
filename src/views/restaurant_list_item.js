@@ -7,7 +7,7 @@ import {
   TouchableHighlight,
   TouchableOpacity,
   Image,
-  Switch,
+  // Switch,
   Linking,
   Modal,
   Dimensions,
@@ -22,6 +22,7 @@ import FullWidthImage from "../components/full_width_image"
 import GallerySwiper from "../components/swiper"
 import RestaurantView from "./restaurant_view";
 import PopoverTooltip from 'react-native-popover-tooltip';
+import  Switch  from '../components/switch';
 
 class RestaurantListItem extends Component {
   render() {
@@ -103,12 +104,23 @@ class RestaurantListItem extends Component {
                     <Text style={{color:'#023e4eff',fontWeight:'bold',fontSize:13}}>TABLE NOTIFICATIONS</Text>
                 </View>
             </View>
-            <View style={{flexDirection:'row',justifyContent:'flex-end',marginTop:-22,marginBottom:24,marginRight:25}}>
+            <View style={{flexDirection:'row',justifyContent:'flex-end',marginTop:-24,marginBottom:24,marginRight:25}}>
             <PopoverTooltip
         ref={'tooltip' + this.props.restaurant._key}
         buttonComponent={
-              <Switch onValueChange={(value) => this.props.setValue(this.props.restaurant._key, value)}
-                value={this.props.isRestaurantNotiOn[this.props.restaurant._key] === true ? true : false}/>
+              <Switch
+              active={this.props.isRestaurantNotiOn[this.props.restaurant._key] === true ? true : false}
+              onChangeState={(value)=>{this.props.setValue(this.props.restaurant._key, value)}}
+              buttonRadius={12}
+              switchHeight={16}
+              switchWidth={47}
+              activeBackgroundColor='#056681'
+              inactiveBackgroundColor='#BDC3C7'
+              activeButtonColor='#023e4eff'
+              activeButtonPressedColor='#023e4eff'
+              inactiveButtonColor='white'
+              inactiveButtonPressedColor='white'
+              />
               }
         items={[
           {
