@@ -129,7 +129,7 @@ class RestaurantView extends Component {
                   underlayColor={HEXCOLOR.pureWhite}>
                   <View style={CommonStyle.centerContainer}>
                     <View style={CommonStyle.circle}>
-                      <Text style={{color:'#023e4eff',fontSize:17}}>3/4</Text>
+                      <Text style={{color:'#023e4eff',fontSize:17}}>{this.props.restaurant.price_label}</Text>
                     </View>
                     <Text style={{color:'#023e4eff'}}>Price Level</Text>
                   </View>

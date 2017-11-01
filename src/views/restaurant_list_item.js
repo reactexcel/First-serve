@@ -25,7 +25,6 @@ import PopoverTooltip from 'react-native-popover-tooltip';
 
 class RestaurantListItem extends Component {
   render() {
-    console.log(this.props,"log");
     // We are going to return a simple list item with just a title for now
     // this.props.setModalVisible(this.props.restaurant._key, true)
     if(this.props.restaurant.isAddButton !== true){

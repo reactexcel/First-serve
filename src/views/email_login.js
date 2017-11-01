@@ -10,7 +10,8 @@ import {
     StyleSheet,
     dismissKeyboard,
     TouchableWithoutFeedback,
-    TouchableOpacity
+    TouchableOpacity,
+    Image
 } from "react-native";
 import {NavigationActions,} from 'react-navigation';
 import React, {Component} from "react";
@@ -19,6 +20,7 @@ import Button from "apsl-react-native-button";
 import FontAwesomeIcon from "react-native-vector-icons/FontAwesome";
 import {Sae} from "react-native-textinput-effects";
 import DismissKeyboard from "dismissKeyboard";
+import * as Progress from 'react-native-progress';
 import DefaultPreference from 'react-native-default-preference';
 import { HEXCOLOR } from "../styles/hexcolor.js";
 import {Icon} from "react-native-elements";
@@ -27,7 +29,7 @@ import CommonStyle from "../styles/common.css";
 class EmailLogin extends Component {
     static navigationOptions = {
         title: 'LOGIN AS RESTAURANT',
-        headerTitleStyle: {marginLeft:-15,extAlign: 'center',fontSize:13,alignSelf: "center", color: 'white',fontWeight:'bold' },
+        headerTitleStyle: {marginLeft:-15,textAlign: 'center',fontSize:13,alignSelf: "center", color: 'white',fontWeight:'bold' },
         headerStyle: {
           marginBottom:-10,
           backgroundColor: '#023e4eff',
@@ -41,7 +43,8 @@ class EmailLogin extends Component {
             email: "",
             password: "",
             response: "",
-            isLoggedIn: false
+            isLoggedIn: false,
+            process:false,
         };
 
         this.signup = this.signup.bind(this);
@@ -61,6 +64,7 @@ class EmailLogin extends Component {
                 this.props.navigator.push({
                     name: "Home"
                 })
+                this.setState({process:false})
             }, 1500);
         } catch (error) {
             this.setState({
@@ -70,6 +74,7 @@ class EmailLogin extends Component {
     }
 
     async login() {
+        this.setState({process:true})
         DismissKeyboard();
         const th = this;
         try {
@@ -119,7 +124,7 @@ class EmailLogin extends Component {
           await firebase.auth().signInWithEmailAndPassword(this.state.email, this.state.password);
           this.setState({response: "Logged In!"});
         } catch (error) {
-            this.setState({response: error.toString()})
+            this.setState({process:false,response: error.toString()})
         }
     }
 
@@ -133,7 +138,7 @@ class EmailLogin extends Component {
         return (
             <TouchableWithoutFeedback onPress={() => {DismissKeyboard()}}>
                 <View style={CommonStyle.container}>
-                    <View style={styles.formGroup}>
+                    {!this.state.process ? <View style={styles.formGroup}>
                         <Sae
                             label={"Email Address"}
                             iconClass={FontAwesomeIcon}
@@ -145,7 +150,8 @@ class EmailLogin extends Component {
                             onChangeText={(email) => this.setState({email})}
                             keyboardType="email-address"
                             autoCapitalize="none"/>
-                            <View style={{margin:8}}/>
+                            <View style={{margin:8}}>
+                            </View>
                         <Sae
                             label={"Password"}
                             iconClass={FontAwesomeIcon}
@@ -164,10 +170,11 @@ class EmailLogin extends Component {
                                 Login
                             </Button>
                         </View>
-                    </View>
-                    <View>
-                        <Text style={styles.response}>{this.state.response}</Text>
-                    </View>
+                        </View>:
+                        <View style={{flex:1,flexDirection:'column',justifyContent:'center',alignItems:'center'}}>
+                          <Progress.Circle size={30} indeterminate={true}  />
+                        </View>
+                      }
                 </View>
             </TouchableWithoutFeedback>
         );

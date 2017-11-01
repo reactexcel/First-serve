@@ -261,16 +261,21 @@ class AdminHome extends Component {
         address: '',
         website_url: '',
         booking_url: '',
+        price_label:'',
         instagram_url: '',
         images: []
       }})
     }
 
     _editRestaurant(restaurant){
+      var editRestaurantVal = restaurant;
+      if (!restaurant.price_label) {
+        editRestaurantVal['price_label'] = '';
+      }
       const { navigate } = this.props.navigation;
       navigate('NERestaurant', { title: 'Edit Restaurant', userId: this.props.navigation.state.params.userId,
       isNew: false,
-      restaurant: restaurant});
+      restaurant: editRestaurantVal});
       this._setModalVisible(restaurant._key, false);
     }
 

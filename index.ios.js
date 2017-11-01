@@ -141,7 +141,7 @@ class Landing extends Component {
             </View>
             <View style={{paddingLeft:45,paddingRight:45,justifyContent:'center',alignItems:'center'}} >
               <Text style={{fontSize:16.4,textAlign: 'center',color:'#122438'}}>
-                The fastest and easiest way to get a table at a good restaurant today. FirstServed will give you an overview of the best restaurants in town.
+                The fastest and easiest way to get a table at a gourmet restaurant in Copenhagen today. FirstServed will send you notifications when tables become available at the restaurants of your choice – booking a table is first-come-first-served.
               </Text>
             </View>
           <View style={styles.fbButtonView}>
