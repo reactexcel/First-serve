@@ -194,6 +194,7 @@ class RestaurantView extends Component {
                   onPress={() => {
                     if(this.props.restaurant.instagram_url.length > 0){
                       Linking.openURL(this.props.restaurant.booking_url.startsWith('http') ? this.props.restaurant.booking_url : 'http://' + this.props.restaurant.booking_url)
+                      Database.logEvent(this.props.restaurant, true);
                     }else{
                       console.log('Instagram', "Url Not Present.")
                     }
