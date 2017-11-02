@@ -28,7 +28,7 @@ class RestaurantListItem extends Component {
   render() {
     // We are going to return a simple list item with just a title for now
     // this.props.setModalVisible(this.props.restaurant._key, true)
-    
+
     if(this.props.restaurant.isAddButton !== true){
       return (
         <View style={styles.listItem}>
@@ -125,7 +125,7 @@ class RestaurantListItem extends Component {
               }
         items={[
           {
-            label: 'Fet notified when tables become available and be the first to claim the table!',
+            label: 'Get notifications when tables become available. When notified - hurry up and book to be FireServed',
             onPress: () => {this.refs['tooltip' + this.props.restaurant._key].toggle();}
           }
         ]}

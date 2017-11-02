@@ -226,7 +226,7 @@ class RestaurantView extends Component {
                         type='font-awesome'
                         color={'#023e4eff'}/>
                     </View>
-                    <Text style={{color:'#023e4eff'}}>{this.props.restaurant.phone_number}</Text>
+                    <Text style={{color:'#023e4eff'}}>Phone</Text>
                   </View>
                 </TouchableHighlight>
 
