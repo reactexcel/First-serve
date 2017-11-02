@@ -6,7 +6,7 @@ import React, {Component} from "react";
 import {
     Text,
     TextInput,
-    Switch,
+    // Switch,
     View,
     StyleSheet,
     Image,
@@ -36,6 +36,7 @@ import DismissKeyboard from "dismissKeyboard";
 import * as firebase from "firebase";
 import Firebase from "../firebase/firebase";
 import call from 'react-native-phone-call'
+import  Switch  from '../components/switch';
 
 Firebase.initialise();
 
@@ -103,9 +104,20 @@ class RestaurantView extends Component {
                   </View>
               {/* </View> */}
             </View>
-              <View style={{flexDirection:'row',justifyContent:'flex-end',marginTop:-55,marginBottom:25,marginRight:25}}>
-                <Switch onValueChange={(value) => this.props.setValue(this.props.restaurant._key, value)}
-                  value={this.props.isRestaurantNotiOn[this.props.restaurant._key] === true ? true : false}/>
+              <View style={{flexDirection:'row',justifyContent:'flex-end',marginTop:-60,marginBottom:25,marginRight:5}}>
+                  <Switch
+                  active={this.props.isRestaurantNotiOn[this.props.restaurant._key]}
+                  onChangeState={(value)=>{this.props.setValue(this.props.restaurant._key, value)}}
+                  buttonRadius={12}
+                  switchHeight={16}
+                  switchWidth={47}
+                  activeBackgroundColor='#056681'
+                  inactiveBackgroundColor='#BDC3C7'
+                  activeButtonColor='#023e4eff'
+                  activeButtonPressedColor='#023e4eff'
+                  inactiveButtonColor='white'
+                  inactiveButtonPressedColor='white'
+                  />
               </View>
             <View style={{paddingBottom: 16}}>
               <View style={[CommonStyle.rowContainer, {paddingTop: 16}]}>

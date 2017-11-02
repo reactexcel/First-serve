@@ -6,7 +6,7 @@ import {
   Text,
   TouchableHighlight,
   Image,
-  Switch,
+  // Switch,
   Linking,
   Modal,
   TouchableOpacity
@@ -17,7 +17,7 @@ import GallerySwiper from "../components/swiper";
 import {Icon} from "react-native-elements";
 import FullWidthImage from "../components/full_width_image"
 import RestaurantView from "./restaurant_view";
-
+import  Switch  from '../components/switch';
 class FavouriteItem extends Component {
 
   render() {
@@ -83,9 +83,20 @@ class FavouriteItem extends Component {
                   <Text style={{color:'#023e4eff',fontWeight:'bold',fontSize:13}}>TABLE NOTIFICATIONS</Text>
               </View>
           </View>
-          <View style={{flexDirection:'row',justifyContent:'flex-end',marginTop:-22,marginBottom:24,marginRight:25}}>
-            <Switch onValueChange={(value) => this.props.setValue(this.props.restaurant._key, value)}
-              value={this.props.isRestaurantNotiOn[this.props.restaurant._key] === true ? true : false}/>
+          <View style={{flexDirection:'row',justifyContent:'flex-end',marginTop:-25,marginBottom:24,marginRight:25}}>
+            <Switch
+            active={this.props.isRestaurantNotiOn[this.props.restaurant._key]}
+            onChangeState={(value)=>{this.props.setValue(this.props.restaurant._key, value)}}
+            buttonRadius={12}
+            switchHeight={16}
+            switchWidth={47}
+            activeBackgroundColor='#056681'
+            inactiveBackgroundColor='#BDC3C7'
+            activeButtonColor='#023e4eff'
+            activeButtonPressedColor='#023e4eff'
+            inactiveButtonColor='white'
+            inactiveButtonPressedColor='white'
+            />
           </View>
         </View>
       </View>

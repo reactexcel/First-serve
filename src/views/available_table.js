@@ -56,13 +56,13 @@ class AvailableTable extends Component {
         <View style={CommonStyle.navBar}>
           <View style={CommonStyle.leftContainer}>
           </View>
-          <Text style={[CommonStyle.text, {paddingTop:0,fontSize:12,alignSelf: 'center', color: 'white',fontWeight:'bold',marginLeft:15 }]}>AVAIBLE TABLE</Text>
+          <Text style={[CommonStyle.text, {paddingTop:(Platform.OS ==='ios')?15:0,fontSize:12,alignSelf: 'center', color: 'white',fontWeight:'bold',marginLeft:15 }]}>AVAIBLE TABLE</Text>
           <View style={CommonStyle.rightContainer}>
             <TouchableHighlight
               onPress={() => this.props.setModalVisible(false)}>
               <View>
                 <Icon
-                  size={14}
+                  size={16}
                   name='close'
                   type='font-awesome'
                   color='white'/>
