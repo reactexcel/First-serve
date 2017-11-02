@@ -110,7 +110,7 @@ class RestaurantView extends Component {
                   onChangeState={(value)=>{this.props.setValue(this.props.restaurant._key, value)}}
                   buttonRadius={12}
                   switchHeight={16}
-                  switchWidth={47}
+                  switchWidth={37}
                   activeBackgroundColor='#056681'
                   inactiveBackgroundColor='#BDC3C7'
                   activeButtonColor='#023e4eff'
