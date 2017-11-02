@@ -189,9 +189,9 @@ const AdminCss = {
 			width,
 			flex:1
 	},
-	swiperConatiner:{
-		flex:1,
-	},
+	// swiperConatiner:{
+	// 	flex:1,
+	// },
 	swiperModal:{
 		flex:1,
 		marginTop:-8

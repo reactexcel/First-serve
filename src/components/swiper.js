@@ -11,18 +11,26 @@ import {
 import Swiper from 'react-native-swiper'
 import FullWidthImage from "./full_width_image"
 import styles from "../styles/admin.css";
+var {height, width} = Dimensions.get('window');
 
 export default class GallerySwiper extends Component {
     render() {
         return (
           <View style={styles.swiperConatiner}>
-            <Swiper  height={255} horizontal={true} removeClippedSubviews={false} dotStyle={{borderWidth:2,borderColor:'white'}} activeDotColor={"white"} >
+            <Swiper  height={260} horizontal={true}  dotStyle={{borderWidth:2,borderColor:'white'}} activeDotColor={"white"} >
               {this.props.restaurant.images.map((image, key) => {
                 return(
                     <View key={key} style={styles.swiperConatiner}>
                       <TouchableHighlight style={styles.swiperConatiner} onPress={()=>{this.props.openModel()}}>
-                        <FullWidthImage
-                          source={{uri: image.imageUrl ? image.imageUrl : 'https://firebasestorage.googleapis.com/v0/b/first-served-c9197.appspot.com/o/restaurant_images%2Frestaurant.jpg?alt=media&token=b0ca19be-6594-4bb1-bfdb-3c9474a0b234'}} />
+                        <Image
+                          Key={key}
+                          style={{flex:1,
+                            height: undefined,
+                            width: undefined
+                          }}
+                          resizeMode={'cover'}
+                          source={{uri: image.imageUrl }}
+                        />
                       </TouchableHighlight>
                     </View>
                 )
