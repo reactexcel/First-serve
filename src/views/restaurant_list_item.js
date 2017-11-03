@@ -123,7 +123,7 @@ class RestaurantListItem extends Component {
                 onChangeState={(value)=>{this.props.setValue(this.props.restaurant._key, value)}}
                 buttonRadius={12}
                 switchHeight={16}
-                switchWidth={47}
+                switchWidth={37}
                 activeBackgroundColor='#056681'
                 inactiveBackgroundColor='#BDC3C7'
                 activeButtonColor='#023e4eff'
@@ -139,7 +139,7 @@ class RestaurantListItem extends Component {
                       direction={'up'}/>
                   </View>
                   <View style={{flexDirection:'row', padding: 15, justifyContent:'center', alignItems:'center', backgroundColor: '#F04847'}}>
-                    <Text style={{flex: 1, color: '#FFF'}}>Get notified when tables become available and be the first to claim the table!</Text>
+                    <Text style={{flex: 1, color: '#FFF'}}>Get notified when tables become available. When notified - hurry up and book to be FirstServed</Text>
                     <TouchableHighlight
                       style={{flexDirection: 'row'}}
                       onPress={() => this.props.hideTooltip()}

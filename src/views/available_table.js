@@ -58,16 +58,14 @@ class AvailableTable extends Component {
           </View>
           <Text style={[CommonStyle.text, {paddingTop:(Platform.OS ==='ios')?15:0,fontSize:12,alignSelf: 'center', color: 'white',fontWeight:'bold',marginLeft:15 }]}>AVAIBLE TABLE</Text>
           <View style={CommonStyle.rightContainer}>
-            <TouchableHighlight
+            <TouchableOpacity
               onPress={() => this.props.setModalVisible(false)}>
-              <View>
                 <Icon
-                  size={16}
+                  size={20}
                   name='close'
                   type='font-awesome'
                   color='white'/>
-              </View>
-            </TouchableHighlight>
+            </TouchableOpacity>
           </View>
         </View>
         <ScrollView keyboardDismissMode={'none'}>

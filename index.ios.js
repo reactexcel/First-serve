@@ -37,7 +37,8 @@ class Landing extends Component {
     this.state = {
       loading: true,
       userLoaded: false,
-      firstServedView: null
+      firstServedView: null,
+      loginProgress:true
     };
     this._unlistenForAuth = this._unlistenForAuth.bind(this);
   }
@@ -104,6 +105,7 @@ class Landing extends Component {
                   })]
                 })
                 firestack.auth.unlistenForAuth();
+                th.setState({loginProgress:true})
                 th.props.navigation.dispatch(resetAction)
               }
             })
@@ -133,7 +135,7 @@ class Landing extends Component {
     }else{
       return (
         <View style={styles.container}>
-            <Image style={{ flex: 1, alignSelf: 'stretch',width: undefined,height: undefined}} source={require('./src/images/Background.jpg')} >
+            {this.state.loginProgress?<Image style={{ flex: 1, alignSelf: 'stretch',width: undefined,height: undefined}} source={require('./src/images/Background.jpg')} >
         <View style={{marginTop:60,marginBottom:60,marginLeft:20,marginRight:20,flex:1 ,backgroundColor:'white',opacity:0.8}}>
           <View style={{flex:1,justifyContent:'space-between',alignItems:'center'}}>
             <View style={{marginTop:55}}>
@@ -169,7 +171,7 @@ class Landing extends Component {
                             name: user.user.displayName
                         });
                       })
-                      console.log(data);
+                      this.setState({loginProgress:false})
                     })
                   }
                 }
@@ -185,7 +187,11 @@ class Landing extends Component {
           </View>
         </View>
       </View>
-        </Image>
+    </Image>:
+    <View style={{flex:1,flexDirection:'column',justifyContent:'center',alignItems:'center'}}>
+      <Progress.Circle size={30} indeterminate={true}  />
+    </View>
+  }
         </View>
       );
     }

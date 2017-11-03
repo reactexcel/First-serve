@@ -110,7 +110,7 @@ class RestaurantView extends Component {
                   onChangeState={(value)=>{this.props.setValue(this.props.restaurant._key, value)}}
                   buttonRadius={12}
                   switchHeight={16}
-                  switchWidth={47}
+                  switchWidth={37}
                   activeBackgroundColor='#056681'
                   inactiveBackgroundColor='#BDC3C7'
                   activeButtonColor='#023e4eff'
@@ -227,7 +227,7 @@ class RestaurantView extends Component {
                         type='font-awesome'
                         color={'#023e4eff'}/>
                     </View>
-                    <Text style={{color:'#023e4eff'}}>{this.props.restaurant.phone_number}</Text>
+                    <Text style={{color:'#023e4eff'}}>Phone</Text>
                   </View>
                 </TouchableHighlight>
 
