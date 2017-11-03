@@ -57,7 +57,7 @@ class Database {
       callback("Published");
     }
 
-    static bookTable(userId, tableKey, callback){
+    static bookTable(restaurant, userId, tableKey, callback){
       let userMobilePath = "/tables/" + tableKey;
       firebase.database().ref(userMobilePath).transaction((table) => {
         if(table){
@@ -86,7 +86,40 @@ class Database {
           callback(false);
         } else {
           console.log('Table booked');
+          Database.logEvent(restaurant, false);
           callback(true);
+        }
+
+        console.log('User table now: ', snapshot.val());
+      });
+    }
+
+    static logEvent(restaurant, isClicked){
+      let dt = new Date();
+      let logKey = dt.getFullYear() + "-" + dt.getMonth() + "-" + dt.getDate();
+      let userlogPath = "/logs/" + logKey;
+      firebase.database().ref(userlogPath).transaction((log) => {
+        if(log){
+          if(isClicked){
+            log.clickedCount += 1;
+          }else{
+            log.bookingCount += 1;
+          }
+          return log;
+        }else{
+          if(isClicked)
+            return {date: logKey, restaurantName: restaurant.name, clickedCount: 1, bookingCount: 0};
+          else {
+            return {date: logKey, restaurantName: restaurant.name, clickedCount: 0, bookingCount: 1};
+          }
+        }
+      }, (error, committed, snapshot) => {
+        if (error) {
+          console.log('Something went wrong', error);
+        } else if (!committed) {
+          console.log('Aborted'); // Returning undefined will trigger this
+        } else {
+          console.log('Table booked');
         }
 
         console.log('User table now: ', snapshot.val());

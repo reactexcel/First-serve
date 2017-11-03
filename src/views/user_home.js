@@ -122,7 +122,8 @@ class UserHome extends Component {
       selectedMember:2,
       isOnline: false,
       hasToOpenBookingModal: false,
-      isDisabled:false
+      isDisabled: false,
+      isFirstTime: this.props.navigation.state.params.isFirstTime
     };
 
     this._setUserNoti = this._setUserNoti.bind(this);
@@ -138,6 +139,7 @@ class UserHome extends Component {
     this.book = this.book.bind(this);
     this.handleFirstConnectivityChange = this.handleFirstConnectivityChange.bind(this);
     this.unmountNetworkListner = this.unmountNetworkListner.bind(this);
+    this._hideToolTip = this._hideToolTip.bind(this);
 
     const th = this;
     const os = Platform.OS;
@@ -373,12 +375,9 @@ class UserHome extends Component {
         Database.setNotiId(th.state.userId, token);
     });
 
-    this.notificationListener = FCM.on(FCMEvent.Notification, async (notif) => {
-    });
-
     // initial notification contains the notification that launchs the app. If user launchs app by clicking banner, the banner notification info will be here rather than through FCM.on event
     // sometimes Android kills activity when app goes to background, and when resume it broadcasts notification before JS is run. You can use FCM.getInitialNotification() to capture those missed events.
-    FCM.getInitialNotification().then(notif=>console.log(notif));
+    FCM.getInitialNotification().then(notif => console.log(notif));
   }
 
   componentWillUnmount(){
@@ -387,7 +386,6 @@ class UserHome extends Component {
     Database.listenUserStop();
     this.ref.off();
     this.unmountNetworkListner();
-    this.notificationListener.remove();
   }
 
   unmountNetworkListner(){
@@ -723,7 +721,15 @@ class UserHome extends Component {
 
     _handleDatePicked = (date) => {
       if(this.state.timePickerFor == 1 ){
-        this.setState({UserNotifStartTime: date.getTime() });
+        if(this.state.UserNotifEndTime !== 'SET END TIME'){
+          var eDate = new Date(this.state.UserNotifEndTime);
+          eDate.setDate(date.getDate());
+          eDate.setMonth(date.getMonth());
+          eDate.setFullYear(date.getFullYear());
+          this.setState({UserNotifStartTime: date.getTime(), UserNotifEndTime:  eDate.getTime()});
+        }else{
+          this.setState({UserNotifStartTime: date.getTime() });
+        }
       }else if(this.state.timePickerFor == 2 && ( this.state.UserNotifStartTime && date.getTime() > this.state.UserNotifStartTime ) ){
         this.setState({UserNotifEndTime: date.getTime()});
       }else{
@@ -794,9 +800,11 @@ class UserHome extends Component {
             isRestaurantNotiOn={this.state.isRestaurantNotiOn}
             favourites={this.state.favourites}
             isAdmin={false}
+            isFirstTime={this.state.isFirstTime}
             openMap={this._openMapview}
             setValue={this._setValue}
             setFavourite={this._setFavourite}
+            hideTooltip={this._hideToolTip}
             isModelVisible={this.state.isModalVisible}
             setModalVisible={this._setModalVisible} />
         );
@@ -853,6 +861,10 @@ class UserHome extends Component {
           dataSource: source.cloneWithRows(this.state.restaurants),
           favoriteDataSource: sourceF.cloneWithRows(favourites)
         });
+    }
+
+    _hideToolTip(){
+      this.setState({isFirstTime: false});
     }
 
     _setFavourite(id, value){
@@ -933,7 +945,7 @@ class UserHome extends Component {
     }
     book(){
       const th = this;
-      Database.bookTable(this.state.userId, this.state.bookingTable.key, function(isBooked){
+      Database.bookTable(this.state.bookingRestaurant, this.state.userId, this.state.bookingTable.key, function(isBooked){
         if(isBooked){
           th.refs.modal3.open()
           th.setBookingModalVisible(false)

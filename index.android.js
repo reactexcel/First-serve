@@ -43,7 +43,6 @@ class Landing extends Component {
       isLoggedIn: false,
       loginProgress:true
     };
-    this.unsubscribe = null;
     this._unlistenForAuth = this._unlistenForAuth.bind(this);
     this.handleFirstConnectivityChange = this.handleFirstConnectivityChange.bind(this);
     this.unmountNetworkListner = this.unmountNetworkListner.bind(this);
@@ -64,7 +63,6 @@ class Landing extends Component {
     const th = this;
 
     DefaultPreference.getMultiple(['userType', 'uid', 'name', 'photoUrl']).then(function(value) {
-      console.log("========================**********************=====================", th.state.isLoggedIn);
       let restaurantPath = "/restaurants/" + value[1];
       var routeName = null;
       var title = "Restaurants";
@@ -77,7 +75,6 @@ class Landing extends Component {
         routeName = 'AHome';
       }
       if(routeName){
-        console.log(value,"value");
         const resetAction = NavigationActions.reset({
           index: 0,
           actions: [NavigationActions.navigate({
@@ -86,12 +83,12 @@ class Landing extends Component {
               title: title,
               userId: value[1],
               name: value[2],
-              photoUrl: value[3]
+              photoUrl: value[3],
+              isFirstTime: false
             }
           })]
         });
         firestack.auth.unlistenForAuth();
-        if (th.unsubscribe) {th.unsubscribe(); th.unsubscribe = null;}
         th.props.navigation.dispatch(resetAction);
       }else{
         console.log("componentWillMount not routeName called.");
@@ -101,31 +98,39 @@ class Landing extends Component {
           } else {
             console.log('User detailssdasdasdasdasdsadasdasdsadsadsadsa', evt.user);
             let userMobilePath = "/users/" + evt.user.uid;
-            firebase.database().ref(userMobilePath).on('value', (snapshot) => {
-              if (snapshot.exists() && snapshot.val().isUser) {
-                routeName = 'UHome';
-                title = "Restaurants";
-                const resetAction = NavigationActions.reset({
-                  index: 0,
-                  actions: [NavigationActions.navigate({
-                    routeName: routeName,
-                    params: {
-                      title: title,
-                      userId: evt.user.uid,
-                      photoUrl: evt.user.photoUrl,
-                      name: evt.user.displayName
-                    }
-                  })]
-                })
-                firestack.auth.unlistenForAuth();
-                if (th.unsubscribe) {
-                  th.unsubscribe();
-                  th.unsubscribe = null;
-                }
-                th.setState({loginProgress:true})
-                th.props.navigation.dispatch(resetAction)
-              }
-            })
+            DefaultPreference.getMultiple(['userType', 'uid', 'name', 'photoUrl']).then(function(value) {
+              if(value[0] === 'user') return;
+              DefaultPreference.setMultiple({
+                userType: 'user',
+                uid: evt.user.uid,
+                name: evt.user.displayName,
+                photoUrl: evt.user.photoUrl
+              });
+              let userMobilePath = "/users/" + evt.user.uid;
+              firebase.database().ref(userMobilePath).update({
+                  isUser: true,
+                  name: evt.user.displayName
+              });
+
+              routeName = 'UHome';
+              title = "Restaurants";
+              const resetAction = NavigationActions.reset({
+                index: 0,
+                actions: [NavigationActions.navigate({
+                  routeName: routeName,
+                  params: {
+                    title: title,
+                    userId: evt.user.uid,
+                    photoUrl: evt.user.photoUrl,
+                    name: evt.user.displayName,
+                    isFirstTime: true
+                  }
+                })]
+              })
+              firestack.auth.unlistenForAuth();
+              th.setState({loginProgress:true})
+              th.props.navigation.dispatch(resetAction)
+            });
           }
         }).then(() => {
           console.log('Listening for authentication changes')
@@ -143,9 +148,6 @@ class Landing extends Component {
   componentWillUnmount(){
     console.log('componentWillUnmount index');
     firestack.auth.unlistenForAuth();
-    if (this.unsubscribe) {
-      this.unsubscribe();
-    }
     this.unmountNetworkListner();
   }
 
@@ -203,17 +205,6 @@ class Landing extends Component {
                   } else {
                     AccessToken.getCurrentAccessToken().then((data) => {
                       firestack.auth.signInWithProvider('facebook', data.accessToken, '').then((user)=>{ // facebook will need only access token.
-                        DefaultPreference.setMultiple({
-                          userType: 'user',
-                          uid: user.user.uid,
-                          name: user.user.displayName,
-                          photoUrl: user.user.photoUrl
-                        });
-                        let userMobilePath = "/users/" + user.user.uid;
-                        firebase.database().ref(userMobilePath).update({
-                            isUser: true,
-                            name: user.user.displayName
-                        });
                       })
                       this.setState({loginProgress:false})
                     })

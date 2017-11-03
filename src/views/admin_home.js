@@ -11,7 +11,8 @@ import {
     TouchableHighlight,
     ListView,
     Alert,
-    NetInfo
+    NetInfo,
+    Platform
 } from "react-native";
 
 import Button from "apsl-react-native-button";
@@ -19,6 +20,7 @@ import {Icon} from "react-native-elements";
 import BottomNavigation, { Tab } from 'react-native-material-bottom-navigation'
 import MIcon from 'react-native-vector-icons/MaterialIcons'
 import {StackNavigator, NavigationActions,} from 'react-navigation';
+import RNFetchBlob from 'react-native-fetch-blob';
 
 import styles from "../styles/admin.css";
 import { HEXCOLOR } from "../styles/hexcolor.js";
@@ -61,6 +63,7 @@ class AdminHome extends Component {
         this.logout = this.logout.bind(this);
         this.handleFirstConnectivityChange = this.handleFirstConnectivityChange.bind(this);
         this.unmountNetworkListner = this.unmountNetworkListner.bind(this);
+        this.downloadLogs = this.downloadLogs.bind(this);
     }
 
     componentWillMount() {
@@ -178,6 +181,19 @@ class AdminHome extends Component {
                     </View>
                   </TouchableHighlight>
                 </View>
+                <View>
+                  <TouchableHighlight
+                    onPress={() => this.downloadLogs()}
+                    underlayColor='#fff'>
+                    <View style={[{flexDirection: 'row', paddingTop: 100, justifyContent: 'center'}]}>
+                      <Text style={{color: '#000', fontSize: 16, paddingRight: 10}}>Download Statistics</Text>
+                      <Icon
+                        name='download'
+                        type='font-awesome'
+                        color='#000'/>
+                    </View>
+                  </TouchableHighlight>
+                </View>
               </View>}
               <BottomNavigation
                 labelColor={HEXCOLOR.pureWhite}
@@ -223,6 +239,30 @@ class AdminHome extends Component {
       // UserHome.navigationOptions.title = "favorites";
       this.setState({currentTab: idx});
       setParams({ title: title });
+    }
+
+    downloadLogs(){
+      const dirs = RNFetchBlob.fs.dirs;
+      const fs = RNFetchBlob.fs;
+      console.log("dirs.DownloadDir", dirs.DownloadDir);
+
+      var filePath = dirs.DocumentDir + "/AdriabnbStatistics.csv";
+
+      if (Platform.OS === 'android') {
+        filePath = dirs.DownloadDir + "/AdriabnbStatistics.csv";
+      }
+      var str = "\"restaurant name\", date, bookings, number of clicks\n";
+
+      this.ref = firebase.database().ref("logs");
+      this.ref.orderByChild("date").once("value", function(snapshot) {
+        snapshot.forEach((ch) => {
+          str = str + "\"" + ch.val().restaurantName + "\"," + ch.val().date + "," + ch.val().bookingCount + "," + ch.val().clickedCount + "\n";
+        });
+
+        RNFetchBlob.fs.writeFile(filePath, str, 'utf8')
+          .then(()=>{ console.log("file created"); })
+          .catch((err) => { console.log("file not created", err); });
+      });
     }
 
     _setUserNoti(val){

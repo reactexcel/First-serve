@@ -23,11 +23,11 @@
     "react-native-modal-datetime-picker": "^4.11.0",
     "react-native-modalbox": "^1.4.2",
     "react-native-phone-call": "^1.0.4",
-    "react-native-popover-tooltip": "^1.1.1",
     "react-native-progress": "^3.4.0",
     "react-native-splash-screen": "^3.0.1",
     "react-native-swiper": "^1.5.13",
     "react-native-textinput-effects": "^0.4.0",
+    "react-native-triangle": "0.0.9",
     "react-native-vector-icons": "^4.3.0",
     "react-native-wheel-picker": "^1.1.1",
     "react-navigation": "^1.0.0-beta.11"

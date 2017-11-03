@@ -21,10 +21,22 @@ import {Icon} from "react-native-elements";
 import FullWidthImage from "../components/full_width_image"
 import GallerySwiper from "../components/swiper"
 import RestaurantView from "./restaurant_view";
-import PopoverTooltip from 'react-native-popover-tooltip';
 import  Switch  from '../components/switch';
+import Triangle from 'react-native-triangle';
 
 class RestaurantListItem extends Component {
+  constructor(props) {
+      super(props);
+      this.state = {
+      };
+  }
+
+  componentDidMount(){
+    if(this.props.isFirstTime){
+      // this.refs['tooltip' + this.props.restaurant._key].toggle();
+    }
+  }
+
   render() {
     // We are going to return a simple list item with just a title for now
     // this.props.setModalVisible(this.props.restaurant._key, true)
@@ -105,33 +117,44 @@ class RestaurantListItem extends Component {
                     <Text style={{color:'#023e4eff',fontWeight:'bold',fontSize:13}}>TABLE NOTIFICATIONS</Text>
                 </View>
             </View>
-            <View style={{flexDirection:'row',justifyContent:'flex-end',marginTop:-24,marginBottom:24,marginRight:25}}>
-            <PopoverTooltip
-        ref={'tooltip' + this.props.restaurant._key}
-        buttonComponent={
+            <View style={{flexDirection:'row', justifyContent:'flex-end',marginTop:-24,marginBottom: this.props.isFirstTime ? 100 : 24,marginRight:25}}>
               <Switch
-              active={this.props.isRestaurantNotiOn[this.props.restaurant._key]}
-              onChangeState={(value)=>{this.props.setValue(this.props.restaurant._key, value)}}
-              buttonRadius={12}
-              switchHeight={16}
-              switchWidth={37}
-              activeBackgroundColor='#056681'
-              inactiveBackgroundColor='#BDC3C7'
-              activeButtonColor='#023e4eff'
-              activeButtonPressedColor='#023e4eff'
-              inactiveButtonColor='white'
-              inactiveButtonPressedColor='white'
-              />
-              }
-        items={[
-          {
-            label: 'Get notifications when tables become available. When notified - hurry up and book to be FireServed',
-            onPress: () => {this.refs['tooltip' + this.props.restaurant._key].toggle();}
-          }
-        ]}
-        // animationType='timming'
-        // using the default timming animation
-        />
+                active={this.props.isRestaurantNotiOn[this.props.restaurant._key]}
+                onChangeState={(value)=>{this.props.setValue(this.props.restaurant._key, value)}}
+                buttonRadius={12}
+                switchHeight={16}
+                switchWidth={37}
+                activeBackgroundColor='#056681'
+                inactiveBackgroundColor='#BDC3C7'
+                activeButtonColor='#023e4eff'
+                activeButtonPressedColor='#023e4eff'
+                inactiveButtonColor='white'
+                inactiveButtonPressedColor='white'/>
+                {this.props.isFirstTime && <View style={{width: 320, justifyContent:'center', position: 'absolute', top: 30, right: 0}}>
+                  <View style={{flexDirection:'row', paddingRight: 20, justifyContent:'flex-end', alignItems:'center'}}>
+                    <Triangle
+                      width={25}
+                      height={25}
+                      color={'#F04847'}
+                      direction={'up'}/>
+                  </View>
+                  <View style={{flexDirection:'row', padding: 15, justifyContent:'center', alignItems:'center', backgroundColor: '#F04847'}}>
+                    <Text style={{flex: 1, color: '#FFF'}}>Get notified when tables become available. When notified - hurry up and book to be FirstServed </Text>
+                    <TouchableHighlight
+                      style={{flexDirection: 'row'}}
+                      onPress={() => this.props.hideTooltip()}
+                      underlayColor='#F04847'>
+                        <View style={[styles.notiIconView, {marginLeft: 5}]}>
+                            <Icon
+                                size={15}
+                                name={'times'}
+                                type='font-awesome'
+                                color={'#FFF'}/>
+                        </View>
+                      </TouchableHighlight>
+                  </View>
+                </View>}
+>>>>>>> 0c07b558f06e45a90ac23fc2ddef88b893527fac
             </View>
             {this.props.isAdmin && <View style={[styles.rowContainer, {paddingBottom: 58}]}>
               <TouchableHighlight
