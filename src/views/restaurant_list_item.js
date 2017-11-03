@@ -154,7 +154,6 @@ class RestaurantListItem extends Component {
                       </TouchableHighlight>
                   </View>
                 </View>}
->>>>>>> 0c07b558f06e45a90ac23fc2ddef88b893527fac
             </View>
             {this.props.isAdmin && <View style={[styles.rowContainer, {paddingBottom: 58}]}>
               <TouchableHighlight
