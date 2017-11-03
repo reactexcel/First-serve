@@ -186,7 +186,10 @@ class RestaurantHome extends Component {
           var aTables = [];
           var bTables = [];
           var curTime = new Date().getTime();
+          console.log("curTime", new Date());
           snapshot.forEach((ch) => {
+            console.log("startTime", new Date(ch.val().startTime));
+            console.log("endTime", new Date(ch.val().endTime));
             if(curTime < ch.val().endTime) {
               if(ch.val().isBooked){
                 bTables.push({
