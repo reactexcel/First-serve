@@ -2,7 +2,7 @@ import React, {Component, } from "react";
 
 import {AppRegistry, Text, Image, View, StyleSheet, ActivityIndicator} from "react-native";
 import {StackNavigator, NavigationActions,} from 'react-navigation';
-
+import * as Progress from 'react-native-progress';
 import * as firebase from "firebase";
 
 import EmailLogin from "./src/views/email_login";
@@ -38,27 +38,12 @@ class Landing extends Component {
       loading: true,
       userLoaded: false,
       firstServedView: null,
-      isOnline: false,
-      isLoggedIn: false,
       loginProgress:true
     };
     this._unlistenForAuth = this._unlistenForAuth.bind(this);
-    this.unsubscribe = null;
-    this.handleFirstConnectivityChange = this.handleFirstConnectivityChange.bind(this);
-    this.unmountNetworkListner = this.unmountNetworkListner.bind(this);
   }
 
   componentWillMount(){
-    NetInfo.isConnected.fetch().then(isConnected => {
-      console.log('First, is ' + (isConnected ? 'online' : 'offline'));
-      this.setState({isOnline: isConnected});
-    });
-
-    NetInfo.isConnected.addEventListener(
-      'connectionChange',
-      this.handleFirstConnectivityChange
-    );
-
     console.log('componentWillMount index');
     const th = this;
 
@@ -94,7 +79,6 @@ class Landing extends Component {
           })]
         })
         firestack.auth.unlistenForAuth();
-        if (th.unsubscribe) {th.unsubscribe(); th.unsubscribe = null;}
         th.props.navigation.dispatch(resetAction);
       }else{
         console.log("componentWillMount not routeName called.");
@@ -121,10 +105,6 @@ class Landing extends Component {
                   })]
                 })
                 firestack.auth.unlistenForAuth();
-                if (th.unsubscribe) {
-                  th.unsubscribe();
-                  th.unsubscribe = null;
-                }
                 th.setState({loginProgress:true})
                 th.props.navigation.dispatch(resetAction)
               }
@@ -146,21 +126,6 @@ class Landing extends Component {
   componentWillUnmount(){
     console.log('componentWillUnmount index');
     firestack.auth.unlistenForAuth();
-    if (this.unsubscribe) {
-      this.unsubscribe();
-    }
-    this.unmountNetworkListner();
-  }
-  unmountNetworkListner(){
-    NetInfo.isConnected.removeEventListener(
-      'connectionChange',
-      this.handleFirstConnectivityChange
-    );
-  }
-
-  handleFirstConnectivityChange(isConnected) {
-    console.log('Then, from listener is ' + (isConnected ? 'online' : 'offline'));
-    this.setState({isOnline: isConnected});
   }
 
   render() {
@@ -170,7 +135,7 @@ class Landing extends Component {
     }else{
       return (
         <View style={styles.container}>
-            {this.stat.loginProgress?<Image style={{ flex: 1, alignSelf: 'stretch',width: undefined,height: undefined}} source={require('./src/images/Background.jpg')} >
+            {this.state.loginProgress?<Image style={{ flex: 1, alignSelf: 'stretch',width: undefined,height: undefined}} source={require('./src/images/Background.jpg')} >
         <View style={{marginTop:60,marginBottom:60,marginLeft:20,marginRight:20,flex:1 ,backgroundColor:'white',opacity:0.8}}>
           <View style={{flex:1,justifyContent:'space-between',alignItems:'center'}}>
             <View style={{marginTop:55}}>
@@ -223,10 +188,10 @@ class Landing extends Component {
         </View>
       </View>
     </Image>:
-        <View style={{flex:1,flexDirection:'column',justifyContent:'center',alignItems:'center'}}>
-          <Progress.Circle size={30} indeterminate={true}  />
-        </View>
-      }
+    <View style={{flex:1,flexDirection:'column',justifyContent:'center',alignItems:'center'}}>
+      <Progress.Circle size={30} indeterminate={true}  />
+    </View>
+  }
         </View>
       );
     }
