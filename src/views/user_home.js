@@ -400,17 +400,33 @@ class UserHome extends Component {
     this.setState({isOnline: isConnected});
   }
     onPikcerSelect(index) {
-      this.setState({
-        selectedindex: index,
-      })
+      if (Platform.OS === 'ios') {
+        this.setState({
+          selectedMember: index,
+        })
+      }else {
+        this.setState({
+          selectedindex: index,
+        })
+      }
     }
 
     onItemSelect() {
-      this.setState({selectedMember: this.state.selectedindex})
-      this.setState({isOpenWheelPicker: false});
+      if (Platform.OS === 'ios') {
+        this.setState({selectedMember:this.state.selectedMember})
+        this.setState({isOpenWheelPicker: false});
+      }else {
+        this.setState({selectedMember: this.state.selectedindex})
+        this.setState({isOpenWheelPicker: false});
+      }
     }
     onCancel() {
-      this.setState({isOpenWheelPicker: false});
+      if (Platform.OS === 'ios') {
+        this.setState({selectedMember: this.state.selectedindex})
+        this.setState({isOpenWheelPicker: false});
+      }else {
+        this.setState({isOpenWheelPicker: false});
+      }
     }
     onSelectWheeler(value){
       this.setState({isOpenWheelPicker: value});

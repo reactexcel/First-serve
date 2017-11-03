@@ -2,7 +2,7 @@ import React, {Component, } from "react";
 
 import {AppRegistry, Text, Image, View, StyleSheet, ActivityIndicator} from "react-native";
 import {StackNavigator, NavigationActions,} from 'react-navigation';
-
+import * as Progress from 'react-native-progress';
 import * as firebase from "firebase";
 
 import EmailLogin from "./src/views/email_login";
