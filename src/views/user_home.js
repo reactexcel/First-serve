@@ -432,7 +432,6 @@ class UserHome extends Component {
       this.setState({isOpenWheelPicker: value});
     }
   render() {
-    // console.log(this.state.isBookingModelVisible);
     const buttonName = (this.state.saved  ? "Saved" : "Save Changes" )
     return (
       <View style={styles.container}>

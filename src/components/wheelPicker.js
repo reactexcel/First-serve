@@ -14,7 +14,6 @@ var PickerItem = Picker.Item;
 
 export default class WheelPicker extends Component {
     render() {
-      console.log(this.props.selectedMember,"selectedMember");
         return (
             <View style={styles.container}>
             <View style={{marginTop:30}}>
