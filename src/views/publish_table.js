@@ -9,7 +9,9 @@ import {
     StyleSheet,
     TouchableHighlight,
     Switch,
-    NetInfo
+    NetInfo,
+    Dimensions,
+    Platform
 } from "react-native";
 
 import Button from "apsl-react-native-button";
@@ -25,6 +27,7 @@ import Database from "../firebase/database";
 import DismissKeyboard from "dismissKeyboard";
 import {Icon} from "react-native-elements";
 import * as firebase from "firebase";
+const { width, height } = Dimensions.get('window');
 
 class PublishTable extends Component {
   static navigationOptions = ({ navigation }) => {
@@ -160,7 +163,7 @@ class PublishTable extends Component {
             <Text style={{fontSize:13,color: '#023e4eff'}}>Table available for :</Text>
           </View>
           <View style={[CommonStyle.rowContainerHCenter, {marginTop: 20}]}>
-            <View style={[CommonStyle.rectangle, {width: 210, height: 38, flexDirection:'row'}]}>
+            <View style={[CommonStyle.rectangle, {width: (Platform.OS === 'ios'?null:210), height: (Platform.OS === 'ios'?null:38), flexDirection:'row'}]}>
               <TouchableHighlight
                 onPress={() => this.minus()}
                 underlayColor={HEXCOLOR.lightBrown}>
