@@ -18,7 +18,7 @@ import {
 
 import Button from "apsl-react-native-button";
 import FontAwesomeIcon from "react-native-vector-icons/FontAwesome";
-
+// import Moment from 'moment';
 import { HEXCOLOR } from "../styles/hexcolor.js";
 import CommonStyle from "../styles/restaurant.css";
 import TableListItem from "./table_list_item";
@@ -186,11 +186,8 @@ class RestaurantHome extends Component {
           var aTables = [];
           var bTables = [];
           var curTime = new Date().getTime();
-          console.log("curTime", new Date());
           snapshot.forEach((ch) => {
-            console.log("startTime", new Date(ch.val().startTime));
-            console.log("endTime", new Date(ch.val().endTime));
-            if(curTime < ch.val().endTime) {
+            if(new Date(curTime).toDateString() === new Date(ch.val().endTime).toDateString()) {
               if(ch.val().isBooked){
                 bTables.push({
                   restaurantKey: ch.val().restaurantKey,
@@ -436,6 +433,7 @@ class RestaurantHome extends Component {
   }
 
   renderTable(table) {
+    console.log(table,'available');
     return (
       <TableListItem
         table={table}
@@ -445,6 +443,7 @@ class RestaurantHome extends Component {
     )
   }
   renderBookedTable(table) {
+    console.log(table,'booked');
     return (
       <TableListItem
         table={table}
