@@ -121,7 +121,7 @@ class RestaurantView extends Component {
               </View>
             <View style={{paddingBottom: 16}}>
               <View style={[CommonStyle.rowContainer, {paddingTop: 16}]}>
-                <TouchableHighlight
+                <TouchableOpacity
                   style={CommonStyle.centerContainer}
                   onPress={() => this.props.setFavourite(this.props.restaurant._key, (this.props.favourites[this.props.restaurant._key] === true ? false : true))}
                   underlayColor={HEXCOLOR.pureWhite}>
@@ -134,8 +134,8 @@ class RestaurantView extends Component {
                     </View>
                     <Text style={{color:'#023e4eff'}}>Favourite</Text>
                   </View>
-                </TouchableHighlight>
-                <TouchableHighlight
+                </TouchableOpacity>
+                <TouchableOpacity
                   style={CommonStyle.centerContainer}
                   onPress={() =>{}}
                   underlayColor={HEXCOLOR.pureWhite}>
@@ -145,8 +145,8 @@ class RestaurantView extends Component {
                     </View>
                     <Text style={{color:'#023e4eff'}}>Price Level</Text>
                   </View>
-                </TouchableHighlight>
-                <TouchableHighlight
+                </TouchableOpacity>
+                <TouchableOpacity
                   style={CommonStyle.centerContainer}
                   onPress={() => {
                     if(this.props.restaurant.website_url.length > 0){
@@ -166,10 +166,10 @@ class RestaurantView extends Component {
                     </View>
                     <Text style={{color:'#023e4eff'}}>Website</Text>
                   </View>
-                </TouchableHighlight>
+                </TouchableOpacity>
               </View>
               <View style={[CommonStyle.rowContainer, {paddingTop: 16}]}>
-                <TouchableHighlight
+                <TouchableOpacity
                   style={CommonStyle.centerContainer}
                   onPress={() => {
                     if(this.props.restaurant.instagram_url.length > 0){
@@ -188,8 +188,8 @@ class RestaurantView extends Component {
                     </View>
                     <Text style={{color:'#023e4eff'}}>Instagram</Text>
                   </View>
-                </TouchableHighlight>
-                <TouchableHighlight
+                </TouchableOpacity>
+                <TouchableOpacity
                   style={CommonStyle.centerContainer}
                   onPress={() => {
                     if(this.props.restaurant.instagram_url.length > 0){
@@ -209,8 +209,8 @@ class RestaurantView extends Component {
                     </View>
                     <Text style={{color:'#023e4eff'}}>Online booking</Text>
                   </View>
-                </TouchableHighlight>
-                <TouchableHighlight
+                </TouchableOpacity>
+                <TouchableOpacity
                   style={CommonStyle.centerContainer}
                   onPress={() => {
                     if(this.props.restaurant.phone_number.length > 0){
@@ -229,7 +229,7 @@ class RestaurantView extends Component {
                     </View>
                     <Text style={{color:'#023e4eff'}}>Phone</Text>
                   </View>
-                </TouchableHighlight>
+                </TouchableOpacity>
 
               </View>
             </View>

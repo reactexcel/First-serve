@@ -499,7 +499,6 @@ class UserHome extends Component {
             transparent={false}
             visible={this.state.isBookingModelVisible}
             onRequestClose={() => {this.setBookingModalVisible(false)}}>
-
             <AvailableTable
               restaurant={this.state.bookingRestaurant}
               table={this.state.bookingTable}
@@ -513,7 +512,6 @@ class UserHome extends Component {
                     <View style={{paddingLeft: 5}}><Text>Notifications</Text></View>
                 </View>
 >>>>>>> a0c2c5a229f95918719b5984a28ef5602c6c4122
-
                 <Switch
                     onValueChange={(value) => this._setUserNoti(value)}
                     value={this.state.notificationOn}/>
@@ -713,7 +711,7 @@ class UserHome extends Component {
               icon={<Icon size={24} color="white" name="query-builder" />}/>
             <Tab
               barBackgroundColor="#023e4eff"
-              label="Account"
+              label="Profile"
               icon={<Icon size={24} color="white" name="account-circle" />}/>
           </BottomNavigation>
         </View>
