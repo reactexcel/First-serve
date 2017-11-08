@@ -261,12 +261,13 @@ class Database {
       firestack.auth.createUserWithEmail(email, password)
       .then((user) => {
         console.log('user created', user)
-        let userMobilePath = "/users/" + user.user.uid;
+        var userID = (Platform.OS === 'ios')? user.uid : user.user.uid;
+        let userMobilePath = "/users/" + userID;
         firebase.database().ref(userMobilePath).update({
             isRestaurantAdmin: true
         });
 
-        let restaurantPath = "/restaurants/" + user.user.uid;
+        let restaurantPath = "/restaurants/" + userID;
         let ref = firebase.database().ref(restaurantPath).push();
         var images = restaurant.images.slice();
         delete restaurant.images;

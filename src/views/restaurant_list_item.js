@@ -11,7 +11,8 @@ import {
   Linking,
   Modal,
   Dimensions,
-  ScrollView
+  ScrollView,
+  Platform,
 } from 'react-native';
 
 import Swiper from 'react-native-swiper'
@@ -130,7 +131,7 @@ class RestaurantListItem extends Component {
                 activeButtonPressedColor='#023e4eff'
                 inactiveButtonColor='white'
                 inactiveButtonPressedColor='white'/>
-                {this.props.isFirstTime && <View style={{width: 320, justifyContent:'center', position: 'absolute', top: 30, right: 0}}>
+                {this.props.isFirstTime && <View style={{width:(Platform.OS === 'ios'? width - 45:320), justifyContent:'center', position: 'absolute', top: 30, right: 0}}>
                   <View style={{flexDirection:'row', paddingRight: 20, justifyContent:'flex-end', alignItems:'center'}}>
                     <Triangle
                       width={25}
@@ -139,7 +140,7 @@ class RestaurantListItem extends Component {
                       direction={'up'}/>
                   </View>
                   <View style={{flexDirection:'row', padding: 15, justifyContent:'center', alignItems:'center', backgroundColor: '#F04847'}}>
-                    <Text style={{flex: 1, color: '#FFF'}}>Get notified when tables become available. When notified - hurry up and book to be FirstServed</Text>
+                    <Text style={{flex: 1, color: '#FFF',fontSize:(Platform.OS === 'ios'?14:16)}}>Get notified when tables become available. When notified - hurry up and book to be FirstServed</Text>
                     <TouchableHighlight
                       style={{flexDirection: 'row'}}
                       onPress={() => this.props.hideTooltip()}

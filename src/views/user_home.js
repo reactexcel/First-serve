@@ -400,23 +400,38 @@ class UserHome extends Component {
     this.setState({isOnline: isConnected});
   }
     onPikcerSelect(index) {
-      this.setState({
-        selectedindex: index,
-      })
+      if (Platform.OS === 'ios') {
+        this.setState({
+          selectedMember: index,
+        })
+      }else {
+        this.setState({
+          selectedindex: index,
+        })
+      }
     }
 
     onItemSelect() {
-      this.setState({selectedMember: this.state.selectedindex})
-      this.setState({isOpenWheelPicker: false});
+      if (Platform.OS === 'ios') {
+        this.setState({selectedMember:this.state.selectedMember})
+        this.setState({isOpenWheelPicker: false});
+      }else {
+        this.setState({selectedMember: this.state.selectedindex})
+        this.setState({isOpenWheelPicker: false});
+      }
     }
     onCancel() {
-      this.setState({isOpenWheelPicker: false});
+      if (Platform.OS === 'ios') {
+        this.setState({selectedMember: this.state.selectedindex})
+        this.setState({isOpenWheelPicker: false});
+      }else {
+        this.setState({isOpenWheelPicker: false});
+      }
     }
     onSelectWheeler(value){
       this.setState({isOpenWheelPicker: value});
     }
   render() {
-    // console.log(this.state.isBookingModelVisible);
     const buttonName = (this.state.saved  ? "Saved" : "Save Changes" )
     return (
       <View style={styles.container}>
@@ -484,7 +499,6 @@ class UserHome extends Component {
             transparent={false}
             visible={this.state.isBookingModelVisible}
             onRequestClose={() => {this.setBookingModalVisible(false)}}>
-
             <AvailableTable
               restaurant={this.state.bookingRestaurant}
               table={this.state.bookingTable}
@@ -498,7 +512,6 @@ class UserHome extends Component {
                     <View style={{paddingLeft: 5}}><Text>Notifications</Text></View>
                 </View>
 >>>>>>> a0c2c5a229f95918719b5984a28ef5602c6c4122
-
                 <Switch
                     onValueChange={(value) => this._setUserNoti(value)}
                     value={this.state.notificationOn}/>
@@ -698,7 +711,7 @@ class UserHome extends Component {
               icon={<Icon size={24} color="white" name="query-builder" />}/>
             <Tab
               barBackgroundColor="#023e4eff"
-              label="Account"
+              label="Profile"
               icon={<Icon size={24} color="white" name="account-circle" />}/>
           </BottomNavigation>
         </View>

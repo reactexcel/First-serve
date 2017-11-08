@@ -207,7 +207,7 @@ class AdminHome extends Component {
                   icon={<Icon size={24} color={HEXCOLOR.pureWhite} name="restaurant" />}/>
                 <Tab
                   barBackgroundColor={HEXCOLOR.endeavour}
-                  label="Account"
+                  label="Profile"
                   icon={<Icon size={24} color={HEXCOLOR.pureWhite} name="account-circle" />}/>
               </BottomNavigation>
           </View>
