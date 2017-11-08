@@ -222,6 +222,7 @@ class PublishTable extends Component {
           <DateTimePicker
             isVisible={this.state.isDateTimePickerVisible}
             onConfirm={this._handleDatePicked}
+            titleIOS='Time'
             onCancel={this._hideDateTimePicker}
             is24Hour={true}
             mode='time'/>
