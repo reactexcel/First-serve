@@ -52,6 +52,7 @@ class PublishTable extends Component {
       timePickerFor: 0,
       startTime: 'Set start time',
       endTime: 'Set end time',
+      isError:false,
       isOnline: false
     };
 
@@ -106,8 +107,11 @@ class PublishTable extends Component {
   }
 
   publishTable(){
-    if(this.state.startTime >= this.state.endTime){
+    if(this.state.startTime >= this.state.endTime && !this.state.isError){
       alert("Start time should be less than end time.");
+      return;
+    }else if (this.state.isError) {
+      alert("Please select the time.");
       return;
     }
     var table = {
@@ -135,18 +139,20 @@ class PublishTable extends Component {
   _hideDateTimePicker = () => this.setState({timePickerFor: 0, isDateTimePickerVisible: false });
 
   _handleDatePicked = (date) => {
-    console.log('A date has been picked: ', date);
-    if(this.state.timePickerFor == 1){
+    var curTime = new Date();
+    if(this.state.timePickerFor == 1 && (date).toTimeString().split(' ')[0] > (curTime).toTimeString().split(' ')[0]){
       var idealEndTime = Moment(date).add(2,'hours')
-      this.setState({startTime: date.getTime(), endTime: idealEndTime._d.getTime() });
+      this.setState({startTime: date.getTime(), endTime: idealEndTime._d.getTime(),isError:false });
     }else if(this.state.timePickerFor == 2){
       this.setState({endTime: date.getTime()});
+    }else{
+      this.setState({isError: true, startTime: 'Set start time',
+      endTime: 'Set end time',})
     }
     this._hideDateTimePicker();
   };
 
   render() {
-    console.log(this.props);
     if(!this.state.isOnline){
       return (
         <View style={[CommonStyle.container, {padding: 10}]}>
@@ -197,7 +203,13 @@ class PublishTable extends Component {
               </View>
             </TouchableHighlight>
           </View>
-          <View style={[{flex:0.3,flexDirection:'row',justifyContent:'center', alignItems:'center', marginTop: 52}]}>
+          {this.state.isError ?
+          <View style={[{flex:0.3,flexDirection:'row',justifyContent:'center', alignItems:'center', marginTop: 5}]}>
+            <Text style={{width:230,fontSize:13,color: 'red',textAlign:'center'}}>Start Time is Invalid. Please check it.</Text>
+          </View>
+          :
+          null}
+          <View style={[{flex:0.3,flexDirection:'row',justifyContent:'center', alignItems:'center', marginTop: 50}]}>
             <Text style={{width:230,fontSize:13,color: '#023e4eff',textAlign:'center'}}>The latest the guest should leave the table:</Text>
           </View>
           <View style={[CommonStyle.rowContainerHCenter, {marginTop: 20}]}>
