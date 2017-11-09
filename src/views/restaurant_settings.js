@@ -161,7 +161,7 @@ class RestaurantSettings extends Component {
             </View>
           </TouchableHighlight>
 
-          <View style={[CommonStyle.rowContainerLF, {paddingTop: 25,backgroundColor:HEXCOLOR.pureWhite}]}>
+          {/* <View style={[CommonStyle.rowContainerLF, {paddingTop: 25,backgroundColor:HEXCOLOR.pureWhite}]}>
             <View style={[CommonStyle.headingLeft]}>
               <Text style={{color: '#023e4eff', fontSize: 14, paddingLeft: 10}}>Fully booked</Text>
             </View>
@@ -173,7 +173,7 @@ class RestaurantSettings extends Component {
                 tintColor={HEXCOLOR.lightBrown}
                 value={this.state.isFullyBooked}/>
             </View>
-          </View>
+          </View> */}
         </View>
       );
     }
