@@ -104,7 +104,7 @@ class Landing extends Component {
                 userType: 'user',
                 uid: evt.user.uid,
                 name: evt.user.displayName,
-                photoUrl: evt.user.photoUrl
+                photoUrl: evt.user.photoURL
               });
               let userMobilePath = "/users/" + evt.user.uid;
               firebase.database().ref(userMobilePath).update({
@@ -121,7 +121,7 @@ class Landing extends Component {
                   params: {
                     title: title,
                     userId: evt.user.uid,
-                    photoUrl: evt.user.photoUrl,
+                    photoUrl: evt.user.photoURL,
                     name: evt.user.displayName,
                     isFirstTime: true
                   }

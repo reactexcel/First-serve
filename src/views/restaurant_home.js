@@ -149,9 +149,10 @@ class RestaurantHome extends Component {
       const th = this;
 
       if(!this.state.watchOnWaitingList){
-        this.userRef.orderByChild("restaurants_noti" + "/" + this.state.restaurantKey + "/notiOn").equalTo(true).on("value", function(snapshot) {
+        this.userRef.orderByChild("restaurants_noti/" + this.state.restaurantKey + "/notiOn").equalTo(true).on("value", function(snapshot) {
           var waitingListCount = 0;
           var users = snapshot.val();
+          if(users !== null){
           var keys = Object.keys(users);
           var tableTypes = {};
           for(i = 0; i < keys.length; i++){
@@ -175,8 +176,10 @@ class RestaurantHome extends Component {
           th.setState({
             users: users,
             dataSource: th.state.dataSource.cloneWithRows(tableTypes1),
-            waitingListCount: waitingListCount
+            // waitingListCount: waitingListCount
           });
+        }
+        th.setState({waitingListCount: waitingListCount});
         });
         this.setState({watchOnWaitingList: true});
       }
@@ -433,7 +436,6 @@ class RestaurantHome extends Component {
   }
 
   renderTable(table) {
-    console.log(table,'available');
     return (
       <TableListItem
         table={table}
@@ -443,7 +445,6 @@ class RestaurantHome extends Component {
     )
   }
   renderBookedTable(table) {
-    console.log(table,'booked');
     return (
       <TableListItem
         table={table}
