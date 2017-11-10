@@ -25,7 +25,7 @@ class FavouriteItem extends Component {
     // this.props.setModalVisible(this.props.restaurant._key, true)
     return (
       <View style={styles.listItem}>
-        <View style={{flex: 1, borderBottomWidth: 2,borderColor:'#023e4eff'}}>
+        <View style={{flex: 1, borderBottomWidth: 0.5,borderColor:'#023e4eff'}}>
           <View style={styles.rowContainer}>
             <TouchableHighlight
               onPress={() => this.props.setModalVisible(this.props.restaurant._key, true)}>
