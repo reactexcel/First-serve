@@ -56,7 +56,7 @@ class AvailableTable extends Component {
         <View style={CommonStyle.navBar}>
           <View style={CommonStyle.leftContainer}>
           </View>
-          <Text style={[CommonStyle.text, {paddingTop:(Platform.OS ==='ios')?15:0,fontSize:12,alignSelf: 'center', color: 'white',fontWeight:'bold',marginLeft:15 }]}>AVAIBLE TABLE</Text>
+          <Text style={[CommonStyle.text, {paddingTop:(Platform.OS ==='ios')?15:0,fontSize:12,alignSelf: 'center', color: 'white',fontWeight:'bold',marginLeft:15 }]}>AVAILABLE TABLE</Text>
           <View style={CommonStyle.rightContainer}>
             <TouchableOpacity
               onPress={() => this.props.setModalVisible(false)}>
@@ -104,7 +104,7 @@ class AvailableTable extends Component {
         <View style={[ CommonStyle.bottomBorder,CommonStyle.topBorder,{margin:15,marginTop:17}]}>
 
             <View style={[{paddingTop: 20,paddingBottom:20}]}>
-              <Text style={{fontWeight:'500',color:'#023e4eff', fontSize: 13,textAlign:'center'}}>TABLE FOR {this.props.table.pax} PEPOLE</Text>
+              <Text style={{fontWeight:'500',color:'#023e4eff', fontSize: 13,textAlign:'center'}}>TABLE FOR {this.props.table.pax} PEOPLE</Text>
               <Text style={{fontWeight:'500',color:'#023e4eff',fontSize: 13,textAlign:'center'}}>{Moment(parseInt(this.props.table.startTime)).format('HH:mm')} - {Moment(parseInt(this.props.table.endTime)).format('HH:mm')} </Text>
             </View>
 
