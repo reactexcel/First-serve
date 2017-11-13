@@ -201,11 +201,28 @@ class UserHome extends Component {
 
         if(uEndTime && uStartTime && (notif.endTime < uStartTime || notif.startTime > uEndTime)) chk = false;
 
-        if(chk){
+        var bookedRestaurant = [];
+        for(i = 0; i < this.state.tables.length; i++){
+          var table = this.state.tables[i];
+          for(j = 0; j < this.state.restaurants.length; j++){
+            var restaurant = this.state.restaurants[j];
+            if(table.restaurantKey == restaurant._key){
+              bookedRestaurant.push({
+               restaurant: restaurant,
+               table: table
+             });
+            }
+          }
+        }
+        var isActiveBooking = bookedRestaurant.length > 0 ? true : false;
+        console.log(isActiveBooking,'jgasfd');
+        if(chk && !isActiveBooking){
           th.setState({bookingTable: table, bookingRestaurant: rest, bookingRestaurantKey: bookingRestaurantKey, tableId: notif.tableId});
           if(notif.restaurantKey !== undefined && this.state.notif){
             th.setBookingModalVisible(true);
           }
+        }else if(isActiveBooking){
+          Alert.alert('You Already an Active Booking','please call the restaurant if you want to cancel your existing booking');
         }
 
         if(os ==='ios'){
@@ -752,7 +769,7 @@ class UserHome extends Component {
     };
 
     tabChanged(idx){
-      if(this.state.pax == '0' || this.state.mobile == '' || this.state.UserNotifStartTime == 'SET START TIME' || this.state.UserNotifEndTime == 'SET END TIME'){
+      if(this.state.pax == '0' || this.state.mobile == '' ){
         idx = 3;
         if (Platform.OS === 'android') {
           ToastAndroid.showWithGravity('Please complete your profile.', ToastAndroid.SHORT, ToastAndroid.BOTTOM);
@@ -958,8 +975,13 @@ class UserHome extends Component {
     }
     book(){
       const th = this;
+      var UserId = this.state.userId;
       Database.bookTable(this.state.bookingRestaurant, this.state.userId, this.state.bookingTable.key, function(isBooked){
         if(isBooked){
+          console.log(UserId,'booked');
+          Database.resetUserData(UserId).then((val)=>{
+            console.log(val);
+          });
           th.refs.modal3.open()
           th.setBookingModalVisible(false)
           th.setState({currentTab: 2});

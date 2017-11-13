@@ -132,6 +132,13 @@ class Database {
       callback('deleted');
     }
 
+    static fetchTable(userId,callback){
+      let userMobilePath = '/tables';
+      firebase.database().ref(userMobilePath).on('value',(snapshot)=>{
+        callback(snapshot);
+      });
+    }
+
     static setUserNotiSetting(userId, notiOn){
       let userMobilePath = "/users/" + userId;
 
@@ -148,6 +155,19 @@ class Database {
             phone_number: mobile,
             UserNotifStartTime:startTime,
             UserNotifEndTime:endTime
+        }).then((val)=>{
+          resolve(val)
+        });
+      });
+    }
+
+    static resetUserData(userId){
+      console.log(userId);
+      return new Promise((resolve) => {
+        let userMobilePath = "/users/" + userId;
+        return firebase.database().ref(userMobilePath).update({
+            UserNotifStartTime:0,
+            UserNotifEndTime:0
         }).then((val)=>{
           resolve(val)
         });
