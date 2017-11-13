@@ -93,14 +93,14 @@ const Common = {
 
 	bottomBorder: {
 		borderBottomColor:'#023e4eff',
-		borderBottomWidth: 2
+		borderBottomWidth: 0.5
 	},
 
 	bottomTopBorder: {
 		borderTopColor:'#023e4eff',
 		borderBottomColor:'#023e4eff',
-		borderTopWidth: 2,
-		borderBottomWidth: 2
+		borderTopWidth: 0.5,
+		borderBottomWidth: 0.5
 	},
 
 	edtText: {
