@@ -627,7 +627,7 @@ class UserHome extends Component {
                     color='#023e4eff'/>
                     <TextInput
                       style={{color: '#023e4eff', flex: 1, marginLeft: 22, marginRight: 150}}
-
+                      placeholder="Insert phone number"
                       keyboardType={'phone-pad'}
                       onChangeText={(mobile) => this._setMobile(mobile)}
                       value={this.state.mobile}/>
@@ -643,6 +643,9 @@ class UserHome extends Component {
                       <View style={{marginTop:7, marginLeft:19,flexDirection:'column'}}>
                         <Text style={{marginTop:5,fontSize:16,color:'#023e4eff'}} >Notifiy me of tables between:</Text>
                         <View style={{flexDirection:'row', paddingTop:10,paddingBottom:20}} >
+                            <Text style={{color:'#023e4eff',fontSize:16}} >
+                              From:
+                            </Text>
                             <TouchableHighlight
                               onPress={() => this._showDateTimePicker(1)}
                               underlayColor={HEXCOLOR.lightBrown}>
@@ -652,7 +655,9 @@ class UserHome extends Component {
                                 </Text>
                               </View>
                             </TouchableHighlight>
-                            <Text style={{color:'#023e4eff',marginLeft:5,marginRight:5,fontSize:16}} >and</Text>
+                          </View>
+                          <View style={{flexDirection:'row',marginBottom:15}}>
+                            <Text style={{color:'#023e4eff',marginLeft:5,marginRight:5,fontSize:16}} >To:</Text>
                             <TouchableHighlight
                               onPress={() => this._showDateTimePicker(2)}
                               underlayColor={HEXCOLOR.lightBrown}>
@@ -674,11 +679,7 @@ class UserHome extends Component {
 
               </View>
             </View>
-              <View style={{marginTop:20,marginBottom:10}}>
-                <Text style={{color: '#023e4eff',textAlign:'center',fontWeight:'bold' }}>
-                  Save changes to view restaurants
-                </Text>
-              </View>
+
               <View style={[{marginTop:10,marginBottom:20, alignItems:'center'}]}>
                 <View style={{marginLeft: 60, marginRight: 60}}>
                   <Button onPress={()=>{this.save()}} style={{width:165,backgroundColor: '#023e4eff',borderRadius:0}} textStyle={{color: '#FFF', fontSize: 15}}>
@@ -718,19 +719,27 @@ class UserHome extends Component {
             <Tab
               barBackgroundColor="#023e4eff"
               label="Restaurants"
-              icon={<Icon size={24} color="white" name="restaurant" />}/>
+              icon={<Image resizeMode="contain" source={require('../images/restaurant-01.png')} style={{width:14,height:24}} />}
+              // icon={<Icon size={24} color="white" name="restaurant" />}
+            />
             <Tab
               barBackgroundColor="#023e4eff"
               label="Favourites"
-              icon={<Icon size={24} color="white" name="favorite-border" />}/>
+              icon={<Image resizeMode="contain" source={require('../images/favourite-01.png')} style={{width:18,height:24}} />}
+              // icon={<Icon size={24} color="white" name="favorite-border" />}
+            />
             <Tab
               barBackgroundColor="#023e4eff"
               label="Bookings"
-              icon={<Icon size={24} color="white" name="query-builder" />}/>
+              icon={<Image resizeMode="contain" source={require('../images/bookings-01.png')} style={{width:18,height:24}} />}
+              // icon={<Icon size={24} color="white" name="query-builder" />}
+            />
             <Tab
               barBackgroundColor="#023e4eff"
-              label="Profile"
-              icon={<Icon size={24} color="white" name="account-circle" />}/>
+              label="Start"
+              icon={<Image resizeMode="contain" source={require('../images/account-01.png')} style={{width:14,height:20,marginLeft:5}} />}
+              // icon={<Icon size={24} color="white" name="account-circle" />}
+            />
           </BottomNavigation>
         </View>
       );
@@ -786,7 +795,7 @@ class UserHome extends Component {
       }else if (idx == 2) {
         title = "Bookings";
       }else if (idx == 3) {
-        title = "Profile";
+        title = "START";
         this.setState({saved:false});
       }
       // UserHome.navigationOptions.title = "favorites";
