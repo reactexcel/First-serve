@@ -59,7 +59,9 @@ class Database {
 
     static bookTable(restaurant, userId, tableKey, callback){
       let userMobilePath = "/tables/" + tableKey;
+      console.log(tableKey,'dasd');
       firebase.database().ref(userMobilePath).transaction((table) => {
+        console.log(table);
         if(table){
           var curTime = new Date().getTime();
           // debugger
@@ -161,19 +163,6 @@ class Database {
       });
     }
 
-    static resetUserData(userId){
-      console.log(userId);
-      return new Promise((resolve) => {
-        let userMobilePath = "/users/" + userId;
-        return firebase.database().ref(userMobilePath).update({
-            UserNotifStartTime:0,
-            UserNotifEndTime:0
-        }).then((val)=>{
-          resolve(val)
-        });
-      });
-    }
-
     static setNotiId(userId, token){
       let userMobilePath = "/users/" + userId;
 
@@ -205,6 +194,13 @@ class Database {
 
       firebase.database().ref(userMobilePath).set({
           notiOn: notiOn
+      });
+    }
+    static resetUserRestaurantNotiSetting(restaurantId, userId){
+      let userMobilePath = "/users/" + userId + "/restaurants_noti/" + restaurantId;
+
+      firebase.database().ref(userMobilePath).update({
+          notiOn: false
       });
     }
 

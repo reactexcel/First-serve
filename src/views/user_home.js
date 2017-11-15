@@ -123,6 +123,7 @@ class UserHome extends Component {
       isOnline: false,
       hasToOpenBookingModal: false,
       isDisabled: false,
+      mobileError:false,
       isFirstTime: this.props.navigation.state.params.isFirstTime
     };
 
@@ -215,15 +216,24 @@ class UserHome extends Component {
           }
         }
         var isActiveBooking = bookedRestaurant.length > 0 ? true : false;
-        console.log(isActiveBooking,'jgasfd');
-        if(chk && !isActiveBooking){
+        if(chk){
           th.setState({bookingTable: table, bookingRestaurant: rest, bookingRestaurantKey: bookingRestaurantKey, tableId: notif.tableId});
           if(notif.restaurantKey !== undefined && this.state.notif){
-            th.setBookingModalVisible(true);
+            if(isActiveBooking){
+              Alert.alert('You Already an Active Booking','please call the restaurant if you want to cancel your existing booking',[
+                {text:'OK',onPress:()=>{
+                  th.setState({bookingTable: table, bookingRestaurant: rest, bookingRestaurantKey: bookingRestaurantKey, tableId: notif.tableId});
+
+                th.setBookingModalVisible(true)}}
+              ]);
+
+            }else{
+              th.setBookingModalVisible(true);
+            }
           }
-        }else if(isActiveBooking){
-          Alert.alert('You Already an Active Booking','please call the restaurant if you want to cancel your existing booking');
+
         }
+
 
         if(os ==='ios'){
           //optional
@@ -618,7 +628,8 @@ class UserHome extends Component {
                       <Text style={{fontSize: 16, color:'#023e4eff'}}> people</Text>
                     </View>
                 </View>
-                <View style={[styles.rowContainer, styles.bottomBorder, {paddingTop: 9,paddingBottom:9, justifyContent: 'flex-start'}]}>
+                <View style={styles.bottomBorder} >
+                <View style={[styles.rowContainer, {paddingTop: 9,paddingBottom:9, justifyContent: 'flex-start'}]}>
                   <Icon
                     size={50}
                     style={{marginLeft:4}}
@@ -626,12 +637,20 @@ class UserHome extends Component {
                     type='font-awesome'
                     color='#023e4eff'/>
                     <TextInput
-                      style={{color: '#023e4eff', flex: 1, marginLeft: 22, marginRight: 150}}
+                      style={{color: '#023e4eff', flex: 1, marginLeft: 22, marginRight: 100}}
                       placeholder="Insert phone number"
                       keyboardType={'phone-pad'}
                       onChangeText={(mobile) => this._setMobile(mobile)}
                       value={this.state.mobile}/>
+
+
                 </View>
+                {this.state.mobileError?
+                  <Text style={{color:'red',fontSize:14,marginLeft:10,paddingBottom:5}}>Enter Mobile Number</Text>
+                  :
+                  null
+                }
+              </View>
                 <View style={[styles.bottomBorder,{marginTop:8,marginBottom:8}]} >
                   <View style={{flexDirection:'row'}} >
                     <Icon
@@ -780,7 +799,7 @@ class UserHome extends Component {
 
     tabChanged(idx){
       if(this.state.pax == '0' || this.state.mobile == '' ){
-        idx = 3;
+        // idx = 3;
         if (Platform.OS === 'android') {
           ToastAndroid.showWithGravity('Please complete your profile.', ToastAndroid.SHORT, ToastAndroid.BOTTOM);
         } else if (Platform.OS === 'ios') {
@@ -821,7 +840,7 @@ class UserHome extends Component {
       this.setState({isLoading: false, saved: true});
       if (this.state.mobile && this.state.selectedMember) {
         if(this.state.UserNotifStartTime >= this.state.UserNotifEndTime){
-          this.setState({isLoading: true})
+          this.setState({isLoading: true,mobileError:false})
           if (Platform.OS === 'android') {
             ToastAndroid.showWithGravity('Notification Start time should be less than End time.', ToastAndroid.SHORT, ToastAndroid.BOTTOM);
           } else if (Platform.OS === 'ios') {
@@ -829,9 +848,11 @@ class UserHome extends Component {
           }
         }else{
           Database.setUserData(this.props.navigation.state.params.userId, this.state.selectedMember, this.state.mobile, this.state.UserNotifStartTime, this.state.UserNotifEndTime).then(()=>{
-            this.setState({isLoading:true})
+            this.setState({isLoading:true,mobileError:false})
           });
         }
+    }else if(this.state.mobile === ''){
+        this.setState({mobileError:true,isLoading:true});
     }
 }
     _renderItem(restaurant) {
@@ -986,12 +1007,34 @@ class UserHome extends Component {
     book(){
       const th = this;
       var UserId = this.state.userId;
-      Database.bookTable(this.state.bookingRestaurant, this.state.userId, this.state.bookingTable.key, function(isBooked){
+      var restaurantId = this.state.bookingRestaurant._key;
+      Database.bookTable(this.state.bookingRestaurant, this.state.userId, this.state.tableId, function(isBooked){
         if(isBooked){
-          console.log(UserId,'booked');
-          Database.resetUserData(UserId).then((val)=>{
-            console.log(val);
+          var isRestaurantNotiOn = this.state;
+          Database.resetUserRestaurantNotiSetting(restaurantId,UserId);
+          // isRestaurantNotiOn[restaurantId] = false;
+          var source = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
+          var sourceF = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
+          var favourites = th.state.favourites;
+          if(favourites !== undefined){
+
+          var keys = Object.keys(favourites);
+          var favourites = [];
+          for(i = 0; i < th.state.restaurants.length; i++){
+            if(keys.indexOf(th.state.restaurants[i]._key) > -1 && th.state.favourites[th.state.restaurants[i]._key]) favourites.push(th.state.restaurants[i]);
+          }
+
+          var isNoFavourite = true;
+          if(favourites.length > 0) isNoFavourite = false;
+
+          th.setState({
+            isNoFavourite: isNoFavourite,
+            favourites: th.state.favourites,
+            isRestaurantNotiOn: th.state.isRestaurantNotiOn,
+            dataSource: source.cloneWithRows(th.state.restaurants),
+            favoriteDataSource: sourceF.cloneWithRows(favourites)
           });
+        }
           th.refs.modal3.open()
           th.setBookingModalVisible(false)
           th.setState({currentTab: 2});
