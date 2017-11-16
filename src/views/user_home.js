@@ -1011,7 +1011,6 @@ class UserHome extends Component {
       var restaurantId = this.state.bookingRestaurant._key;
       Database.bookTable(this.state.bookingRestaurant, this.state.userId, this.state.tableId, function(isBooked){
         if(isBooked){
-          console.log('asd');
           var isRestaurantNotiOn = this.state;
           Database.resetUserRestaurantNotiSetting(UserId);
           // isRestaurantNotiOn[restaurantId] = false;
@@ -1041,14 +1040,17 @@ class UserHome extends Component {
           th.setBookingModalVisible(false)
           th.setState({currentTab: 2});
         }else{
+          console.log(isBooked,'fail');
           if (Platform.OS === 'android') {
             alert("Sorry, Table already booked or not available.");
+            th.setState({isBookingModelVisible: false});
           } else if (Platform.OS === 'ios') {
             AlertIOS.alert(
-             'Sorry, Table already booked or not available.',
-            );
+             'Sorry, Table already booked or not available.','',[{text:'OK',onPress:()=>{
+               th.setState({isBookingModelVisible: false});
+           }}
+           ]);
           }
-          th.setState({isBookingModelVisible: false});
         }
         FCM.removeAllDeliveredNotifications();
       });
