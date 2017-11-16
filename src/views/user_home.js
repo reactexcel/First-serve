@@ -660,8 +660,8 @@ class UserHome extends Component {
                       type='ionicon'
                       color='#023e4eff'/>
                       <View style={{marginTop:7, marginLeft:19,flexDirection:'column'}}>
-                        <Text style={{marginTop:5,fontSize:16,color:'#023e4eff'}} >Notifiy me of tables between:</Text>
-                        <View style={{flexDirection:'row', paddingTop:10,paddingBottom:20}} >
+                        <Text style={{marginTop:5,marginLeft:1,fontSize:16,color:'#023e4eff'}} >Notifiy me of tables between:</Text>
+                        <View style={{flexDirection:'row', paddingTop:10,marginTop:5}} >
                             <Text style={{color:'#023e4eff',fontSize:16}} >
                               From:
                             </Text>
@@ -675,12 +675,12 @@ class UserHome extends Component {
                               </View>
                             </TouchableHighlight>
                           </View>
-                          <View style={{flexDirection:'row',marginBottom:15}}>
+                          <View style={{flexDirection:'row',marginTop:15,marginBottom:15}}>
                             <Text style={{color:'#023e4eff',marginRight:5,fontSize:16}} >To:</Text>
                             <TouchableHighlight
                               onPress={() => this._showDateTimePicker(2)}
                               underlayColor={HEXCOLOR.lightBrown}>
-                              <View>
+                              <View style={{marginLeft:17}}>
                                 <Text style={{color:'#023e4eff', fontSize: 16,fontWeight:'bold'}}>
                                   {this.state.UserNotifEndTime === 'SET END TIME' ? this.state.UserNotifEndTime : Moment(this.state.UserNotifEndTime).format('HH:mm')}*
                                 </Text>
@@ -738,7 +738,7 @@ class UserHome extends Component {
             <Tab
               barBackgroundColor="#023e4eff"
               label="Restaurants"
-              icon={<Image resizeMode="contain" source={require('../images/restaurant-01.png')} style={{width:14,height:20}} />}
+              icon={<Image resizeMode="contain" source={require('../images/restaurant-01.png')} style={{width:14,height:17,marginTop:2}} />}
               // icon={<Icon size={24} color="white" name="restaurant" />}
             />
             <Tab
@@ -756,7 +756,7 @@ class UserHome extends Component {
             <Tab
               barBackgroundColor="#023e4eff"
               label="Start"
-              icon={<Image resizeMode="contain" source={require('../images/account-01.png')} style={{width:18,height:24,marginLeft:5}} />}
+              icon={<Image resizeMode="contain" source={require('../images/account-01.png')} style={{width:18,height:26,marginLeft:5}} />}
               // icon={<Icon size={24} color="white" name="account-circle" />}
             />
           </BottomNavigation>
@@ -902,6 +902,7 @@ class UserHome extends Component {
     }
 
     _setValue(id, value){
+      console.log(value);
         Database.setUserRestaurantNotiSetting(id, this.state.userId, value);
         this.state.isRestaurantNotiOn[id] = value;
         var source = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
@@ -1010,8 +1011,9 @@ class UserHome extends Component {
       var restaurantId = this.state.bookingRestaurant._key;
       Database.bookTable(this.state.bookingRestaurant, this.state.userId, this.state.tableId, function(isBooked){
         if(isBooked){
+          console.log('asd');
           var isRestaurantNotiOn = this.state;
-          Database.resetUserRestaurantNotiSetting(restaurantId,UserId);
+          Database.resetUserRestaurantNotiSetting(UserId);
           // isRestaurantNotiOn[restaurantId] = false;
           var source = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
           var sourceF = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});

@@ -196,11 +196,21 @@ class Database {
           notiOn: notiOn
       });
     }
-    static resetUserRestaurantNotiSetting(restaurantId, userId){
-      let userMobilePath = "/users/" + userId + "/restaurants_noti/" + restaurantId;
+    static resetUserRestaurantNotiSetting( userId){
+      let resetUserMobilePath = "/users/" + userId + "/restaurants_noti";
 
-      firebase.database().ref(userMobilePath).update({
-          notiOn: false
+      firebase.database().ref(resetUserMobilePath).once('value', (snapshot) => {
+        console.log(snapshot,'reset');
+          snapshot.forEach((val)=>{
+            var restaurantId = val.key;
+            var isNotif = val.val().notiOn;
+            if(isNotif){
+              let userPath = "/users/" + userId + "/restaurants_noti/" + restaurantId;
+              firebase.database().ref(userPath).update({
+                  notiOn: false
+              });
+            }
+          })
       });
     }
 
