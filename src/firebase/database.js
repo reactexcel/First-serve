@@ -337,6 +337,7 @@ class Database {
     }
 
     static deleteRestaurant(restaurant, callback){
+      firestack.auth.deleteUser(restaurant._uid).then((val)=>{console.log(val);})
       let restaurantPath = "/restaurants/" + restaurant._uid;
 
       let ref = firebase.database().ref(restaurantPath);
