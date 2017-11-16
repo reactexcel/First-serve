@@ -676,7 +676,7 @@ class UserHome extends Component {
                             </TouchableHighlight>
                           </View>
                           <View style={{flexDirection:'row',marginBottom:15}}>
-                            <Text style={{color:'#023e4eff',marginLeft:5,marginRight:5,fontSize:16}} >To:</Text>
+                            <Text style={{color:'#023e4eff',marginRight:5,fontSize:16}} >To:</Text>
                             <TouchableHighlight
                               onPress={() => this._showDateTimePicker(2)}
                               underlayColor={HEXCOLOR.lightBrown}>
@@ -738,7 +738,7 @@ class UserHome extends Component {
             <Tab
               barBackgroundColor="#023e4eff"
               label="Restaurants"
-              icon={<Image resizeMode="contain" source={require('../images/restaurant-01.png')} style={{width:14,height:24}} />}
+              icon={<Image resizeMode="contain" source={require('../images/restaurant-01.png')} style={{width:14,height:20}} />}
               // icon={<Icon size={24} color="white" name="restaurant" />}
             />
             <Tab
@@ -756,7 +756,7 @@ class UserHome extends Component {
             <Tab
               barBackgroundColor="#023e4eff"
               label="Start"
-              icon={<Image resizeMode="contain" source={require('../images/account-01.png')} style={{width:14,height:20,marginLeft:5}} />}
+              icon={<Image resizeMode="contain" source={require('../images/account-01.png')} style={{width:18,height:24,marginLeft:5}} />}
               // icon={<Icon size={24} color="white" name="account-circle" />}
             />
           </BottomNavigation>

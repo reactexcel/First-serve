@@ -198,6 +198,7 @@ class Landing extends Component {
               readPermissions={["public_profile", "email"]}
               onLoginFinished={
                 (error, result) => {
+                  console.log(result,error);
                   if (error) {
                     console.log("login has error: " + result.error);
                   } else if (result.isCancelled) {
