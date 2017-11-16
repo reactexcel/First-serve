@@ -123,6 +123,7 @@ class UserHome extends Component {
       isOnline: false,
       hasToOpenBookingModal: false,
       isDisabled: false,
+      mobileError:false,
       isFirstTime: this.props.navigation.state.params.isFirstTime
     };
 
@@ -201,12 +202,38 @@ class UserHome extends Component {
 
         if(uEndTime && uStartTime && (notif.endTime < uStartTime || notif.startTime > uEndTime)) chk = false;
 
+        var bookedRestaurant = [];
+        for(i = 0; i < this.state.tables.length; i++){
+          var table = this.state.tables[i];
+          for(j = 0; j < this.state.restaurants.length; j++){
+            var restaurant = this.state.restaurants[j];
+            if(table.restaurantKey == restaurant._key){
+              bookedRestaurant.push({
+               restaurant: restaurant,
+               table: table
+             });
+            }
+          }
+        }
+        var isActiveBooking = bookedRestaurant.length > 0 ? true : false;
         if(chk){
           th.setState({bookingTable: table, bookingRestaurant: rest, bookingRestaurantKey: bookingRestaurantKey, tableId: notif.tableId});
           if(notif.restaurantKey !== undefined && this.state.notif){
-            th.setBookingModalVisible(true);
+            if(isActiveBooking){
+              Alert.alert('You Already an Active Booking','please call the restaurant if you want to cancel your existing booking',[
+                {text:'OK',onPress:()=>{
+                  th.setState({bookingTable: table, bookingRestaurant: rest, bookingRestaurantKey: bookingRestaurantKey, tableId: notif.tableId});
+
+                th.setBookingModalVisible(true)}}
+              ]);
+
+            }else{
+              th.setBookingModalVisible(true);
+            }
           }
+
         }
+
 
         if(os ==='ios'){
           //optional
@@ -601,7 +628,8 @@ class UserHome extends Component {
                       <Text style={{fontSize: 16, color:'#023e4eff'}}> people</Text>
                     </View>
                 </View>
-                <View style={[styles.rowContainer, styles.bottomBorder, {paddingTop: 9,paddingBottom:9, justifyContent: 'flex-start'}]}>
+                <View style={styles.bottomBorder} >
+                <View style={[styles.rowContainer, {paddingTop: 9,paddingBottom:9, justifyContent: 'flex-start'}]}>
                   <Icon
                     size={50}
                     style={{marginLeft:4}}
@@ -609,12 +637,20 @@ class UserHome extends Component {
                     type='font-awesome'
                     color='#023e4eff'/>
                     <TextInput
-                      style={{color: '#023e4eff', flex: 1, marginLeft: 22, marginRight: 150}}
-
+                      style={{color: '#023e4eff', flex: 1, marginLeft: 22, marginRight: 100}}
+                      placeholder="Insert phone number"
                       keyboardType={'phone-pad'}
                       onChangeText={(mobile) => this._setMobile(mobile)}
                       value={this.state.mobile}/>
+
+
                 </View>
+                {this.state.mobileError?
+                  <Text style={{color:'red',fontSize:14,marginLeft:10,paddingBottom:5}}>Enter Mobile Number</Text>
+                  :
+                  null
+                }
+              </View>
                 <View style={[styles.bottomBorder,{marginTop:8,marginBottom:8}]} >
                   <View style={{flexDirection:'row'}} >
                     <Icon
@@ -624,8 +660,11 @@ class UserHome extends Component {
                       type='ionicon'
                       color='#023e4eff'/>
                       <View style={{marginTop:7, marginLeft:19,flexDirection:'column'}}>
-                        <Text style={{marginTop:5,fontSize:16,color:'#023e4eff'}} >Notifiy me of tables between:</Text>
-                        <View style={{flexDirection:'row', paddingTop:10,paddingBottom:20}} >
+                        <Text style={{marginTop:5,marginLeft:1,fontSize:16,color:'#023e4eff'}} >Notifiy me of tables between:</Text>
+                        <View style={{flexDirection:'row', paddingTop:10,marginTop:5}} >
+                            <Text style={{color:'#023e4eff',fontSize:16}} >
+                              From:
+                            </Text>
                             <TouchableHighlight
                               onPress={() => this._showDateTimePicker(1)}
                               underlayColor={HEXCOLOR.lightBrown}>
@@ -635,17 +674,20 @@ class UserHome extends Component {
                                 </Text>
                               </View>
                             </TouchableHighlight>
-                            <Text style={{color:'#023e4eff',marginLeft:5,marginRight:5,fontSize:16}} >and</Text>
+                          </View>
+                          <View style={{flexDirection:'row',marginTop:15,marginBottom:15}}>
+                            <Text style={{color:'#023e4eff',marginRight:5,fontSize:16}} >To:</Text>
                             <TouchableHighlight
                               onPress={() => this._showDateTimePicker(2)}
                               underlayColor={HEXCOLOR.lightBrown}>
-                              <View>
+                              <View style={{marginLeft:17}}>
                                 <Text style={{color:'#023e4eff', fontSize: 16,fontWeight:'bold'}}>
                                   {this.state.UserNotifEndTime === 'SET END TIME' ? this.state.UserNotifEndTime : Moment(this.state.UserNotifEndTime).format('HH:mm')}*
                                 </Text>
                               </View>
                             </TouchableHighlight>
                             <DateTimePicker
+                              titleIOS='Time'
                               isVisible={this.state.isDateTimePickerVisible}
                               onConfirm={this._handleDatePicked}
                               onCancel={this._hideDateTimePicker}
@@ -656,11 +698,7 @@ class UserHome extends Component {
 
               </View>
             </View>
-              <View style={{marginTop:20,marginBottom:10}}>
-                <Text style={{color: '#023e4eff',textAlign:'center',fontWeight:'bold' }}>
-                  Save changes to view restaurants
-                </Text>
-              </View>
+
               <View style={[{marginTop:10,marginBottom:20, alignItems:'center'}]}>
                 <View style={{marginLeft: 60, marginRight: 60}}>
                   <Button onPress={()=>{this.save()}} style={{width:165,backgroundColor: '#023e4eff',borderRadius:0}} textStyle={{color: '#FFF', fontSize: 15}}>
@@ -700,19 +738,27 @@ class UserHome extends Component {
             <Tab
               barBackgroundColor="#023e4eff"
               label="Restaurants"
-              icon={<Icon size={24} color="white" name="restaurant" />}/>
+              icon={<Image resizeMode="contain" source={require('../images/restaurant-01.png')} style={{width:14,height:17,marginTop:2}} />}
+              // icon={<Icon size={24} color="white" name="restaurant" />}
+            />
             <Tab
               barBackgroundColor="#023e4eff"
               label="Favourites"
-              icon={<Icon size={24} color="white" name="favorite-border" />}/>
+              icon={<Image resizeMode="contain" source={require('../images/favourite-01.png')} style={{width:18,height:24}} />}
+              // icon={<Icon size={24} color="white" name="favorite-border" />}
+            />
             <Tab
               barBackgroundColor="#023e4eff"
               label="Bookings"
-              icon={<Icon size={24} color="white" name="query-builder" />}/>
+              icon={<Image resizeMode="contain" source={require('../images/bookings-01.png')} style={{width:18,height:24}} />}
+              // icon={<Icon size={24} color="white" name="query-builder" />}
+            />
             <Tab
               barBackgroundColor="#023e4eff"
-              label="Profile"
-              icon={<Icon size={24} color="white" name="account-circle" />}/>
+              label="Start"
+              icon={<Image resizeMode="contain" source={require('../images/account-01.png')} style={{width:18,height:26,marginLeft:5}} />}
+              // icon={<Icon size={24} color="white" name="account-circle" />}
+            />
           </BottomNavigation>
         </View>
       );
@@ -752,8 +798,8 @@ class UserHome extends Component {
     };
 
     tabChanged(idx){
-      if(this.state.pax == '0' || this.state.mobile == '' || this.state.UserNotifStartTime == 'SET START TIME' || this.state.UserNotifEndTime == 'SET END TIME'){
-        idx = 3;
+      if(this.state.pax == '0' || this.state.mobile == '' ){
+        // idx = 3;
         if (Platform.OS === 'android') {
           ToastAndroid.showWithGravity('Please complete your profile.', ToastAndroid.SHORT, ToastAndroid.BOTTOM);
         } else if (Platform.OS === 'ios') {
@@ -768,7 +814,7 @@ class UserHome extends Component {
       }else if (idx == 2) {
         title = "Bookings";
       }else if (idx == 3) {
-        title = "Profile";
+        title = "START";
         this.setState({saved:false});
       }
       // UserHome.navigationOptions.title = "favorites";
@@ -794,7 +840,7 @@ class UserHome extends Component {
       this.setState({isLoading: false, saved: true});
       if (this.state.mobile && this.state.selectedMember) {
         if(this.state.UserNotifStartTime >= this.state.UserNotifEndTime){
-          this.setState({isLoading: true})
+          this.setState({isLoading: true,mobileError:false})
           if (Platform.OS === 'android') {
             ToastAndroid.showWithGravity('Notification Start time should be less than End time.', ToastAndroid.SHORT, ToastAndroid.BOTTOM);
           } else if (Platform.OS === 'ios') {
@@ -802,9 +848,11 @@ class UserHome extends Component {
           }
         }else{
           Database.setUserData(this.props.navigation.state.params.userId, this.state.selectedMember, this.state.mobile, this.state.UserNotifStartTime, this.state.UserNotifEndTime).then(()=>{
-            this.setState({isLoading:true})
+            this.setState({isLoading:true,mobileError:false})
           });
         }
+    }else if(this.state.mobile === ''){
+        this.setState({mobileError:true,isLoading:true});
     }
 }
     _renderItem(restaurant) {
@@ -854,6 +902,7 @@ class UserHome extends Component {
     }
 
     _setValue(id, value){
+      console.log(value);
         Database.setUserRestaurantNotiSetting(id, this.state.userId, value);
         this.state.isRestaurantNotiOn[id] = value;
         var source = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
@@ -958,20 +1007,50 @@ class UserHome extends Component {
     }
     book(){
       const th = this;
-      Database.bookTable(this.state.bookingRestaurant, this.state.userId, this.state.bookingTable.key, function(isBooked){
+      var UserId = this.state.userId;
+      var restaurantId = this.state.bookingRestaurant._key;
+      Database.bookTable(this.state.bookingRestaurant, this.state.userId, this.state.tableId, function(isBooked){
         if(isBooked){
+          var isRestaurantNotiOn = this.state;
+          Database.resetUserRestaurantNotiSetting(UserId);
+          // isRestaurantNotiOn[restaurantId] = false;
+          var source = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
+          var sourceF = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
+          var favourites = th.state.favourites;
+          if(favourites !== undefined){
+
+          var keys = Object.keys(favourites);
+          var favourites = [];
+          for(i = 0; i < th.state.restaurants.length; i++){
+            if(keys.indexOf(th.state.restaurants[i]._key) > -1 && th.state.favourites[th.state.restaurants[i]._key]) favourites.push(th.state.restaurants[i]);
+          }
+
+          var isNoFavourite = true;
+          if(favourites.length > 0) isNoFavourite = false;
+
+          th.setState({
+            isNoFavourite: isNoFavourite,
+            favourites: th.state.favourites,
+            isRestaurantNotiOn: th.state.isRestaurantNotiOn,
+            dataSource: source.cloneWithRows(th.state.restaurants),
+            favoriteDataSource: sourceF.cloneWithRows(favourites)
+          });
+        }
           th.refs.modal3.open()
           th.setBookingModalVisible(false)
           th.setState({currentTab: 2});
         }else{
+          console.log(isBooked,'fail');
           if (Platform.OS === 'android') {
             alert("Sorry, Table already booked or not available.");
+            th.setState({isBookingModelVisible: false});
           } else if (Platform.OS === 'ios') {
             AlertIOS.alert(
-             'Sorry, Table already booked or not available.',
-            );
+             'Sorry, Table already booked or not available.','',[{text:'OK',onPress:()=>{
+               th.setState({isBookingModelVisible: false});
+           }}
+           ]);
           }
-          th.setState({isBookingModelVisible: false});
         }
         FCM.removeAllDeliveredNotifications();
       });

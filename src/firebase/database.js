@@ -59,7 +59,9 @@ class Database {
 
     static bookTable(restaurant, userId, tableKey, callback){
       let userMobilePath = "/tables/" + tableKey;
+      console.log(tableKey,'dasd');
       firebase.database().ref(userMobilePath).transaction((table) => {
+        console.log(table);
         if(table){
           var curTime = new Date().getTime();
           // debugger
@@ -132,6 +134,13 @@ class Database {
       callback('deleted');
     }
 
+    static fetchTable(userId,callback){
+      let userMobilePath = '/tables';
+      firebase.database().ref(userMobilePath).on('value',(snapshot)=>{
+        callback(snapshot);
+      });
+    }
+
     static setUserNotiSetting(userId, notiOn){
       let userMobilePath = "/users/" + userId;
 
@@ -185,6 +194,23 @@ class Database {
 
       firebase.database().ref(userMobilePath).set({
           notiOn: notiOn
+      });
+    }
+    static resetUserRestaurantNotiSetting( userId){
+      let resetUserMobilePath = "/users/" + userId + "/restaurants_noti";
+
+      firebase.database().ref(resetUserMobilePath).once('value', (snapshot) => {
+        console.log(snapshot,'reset');
+          snapshot.forEach((val)=>{
+            var restaurantId = val.key;
+            var isNotif = val.val().notiOn;
+            if(isNotif){
+              let userPath = "/users/" + userId + "/restaurants_noti/" + restaurantId;
+              firebase.database().ref(userPath).update({
+                  notiOn: false
+              });
+            }
+          })
       });
     }
 
@@ -311,6 +337,7 @@ class Database {
     }
 
     static deleteRestaurant(restaurant, callback){
+      firestack.auth.deleteUser(restaurant._uid).then((val)=>{console.log(val);})
       let restaurantPath = "/restaurants/" + restaurant._uid;
 
       let ref = firebase.database().ref(restaurantPath);

@@ -77,7 +77,7 @@ class BookedItem extends Component {
           <View style={[ styles.bottomBorder,styles.topBorder,{margin:15,marginTop:17}]}>
 
               <View style={[{paddingTop: 20,paddingBottom:20}]}>
-                <Text style={{fontWeight:'500',color:'#023e4eff', fontSize: 13,textAlign:'center'}}>TABLE FOR {this.props.table.pax} PEPOLE</Text>
+                <Text style={{fontWeight:'500',color:'#023e4eff', fontSize: 13,textAlign:'center'}}>TABLE FOR {this.props.table.pax} PEOPLE</Text>
                 <Text style={{fontWeight:'500',color:'#023e4eff',fontSize: 13,textAlign:'center'}}>{Moment(parseInt(this.props.table.startTime)).format('HH:mm')} - {Moment(parseInt(this.props.table.endTime)).format('HH:mm')} </Text>
                 <Text style={{fontWeight:'500',color:'#023e4eff',fontSize: 13,textAlign:'center'}}>{Moment(parseInt(this.props.table.startTime)).format('DD-MM-YYYY')}</Text>
               </View>
