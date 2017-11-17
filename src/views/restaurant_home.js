@@ -122,10 +122,11 @@ class RestaurantHome extends Component {
     this.restaurantRef = firebase.database().ref("/restaurants/" + this.state.userId);
     this.userRef = firebase.database().ref("/users");
     this.ref = firebase.database().ref("/tables");
-
-    this.restaurantRef.on('value', (dataSnapshot) => {
+    try{
+    Database.fetchRestaurant(this.state.userId, (dataSnapshot) => {
       restaurant = {};
       dataSnapshot.forEach((ch) => {
+        console.log(ch,'sad');
         restaurant = {
           name: (ch.val().name ? ch.val().name : ''),
           type: (ch.val().type ? ch.val().type : ''),
@@ -225,6 +226,9 @@ class RestaurantHome extends Component {
         this.setState({watchOnTables: true});
       }
     });
+  }catch (error) {
+    console.log(error);
+  }
   }
 
   componentDidMount() {

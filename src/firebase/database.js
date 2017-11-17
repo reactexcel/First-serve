@@ -358,6 +358,12 @@ class Database {
         let restaurantImagesPath = "/restaurant_images/" + restaurantId;
         firebase.database().ref(restaurantImagesPath).push(imageData);
     }
+
+  static fetchRestaurant(userId,callback){
+      firebase.database().ref("/restaurants/" + userId).on('value',(snapshot)=>{
+      callback(snapshot);
+    });
+  }
 }
 
 module.exports = Database;
