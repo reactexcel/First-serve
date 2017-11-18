@@ -405,6 +405,7 @@ class UserHome extends Component {
     // initial notification contains the notification that launchs the app. If user launchs app by clicking banner, the banner notification info will be here rather than through FCM.on event
     // sometimes Android kills activity when app goes to background, and when resume it broadcasts notification before JS is run. You can use FCM.getInitialNotification() to capture those missed events.
     FCM.getInitialNotification().then(notif => console.log(notif));
+    DefaultPreference.setMultiple({justSignIn: 'false'});
   }
 
   componentWillUnmount(){

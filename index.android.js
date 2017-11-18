@@ -62,13 +62,13 @@ class Landing extends Component {
     console.log('componentWillMount index');
     const th = this;
 
-    DefaultPreference.getMultiple(['userType', 'uid', 'name', 'photoUrl']).then(function(value) {
+    DefaultPreference.getMultiple(['userType', 'uid', 'name', 'photoUrl', 'justSignIn']).then(function(value) {
       let restaurantPath = "/restaurants/" + value[1];
       var routeName = null;
       var title = "Restaurants";
       if(value[0] === 'user'){
         routeName = 'UHome';
-      }else if (value[0] === 'restaurant') {
+      }else if (value[0] === 'restaurant' && !(value[3] === 'true')) {
         routeName = 'RHome';
         title = "Loading...";
       }else if (value[0] === 'admin') {
@@ -89,6 +89,7 @@ class Landing extends Component {
           })]
         });
         firestack.auth.unlistenForAuth();
+        console.log('=================== from index.android first not listener.');
         th.props.navigation.dispatch(resetAction);
       }else{
         console.log("componentWillMount not routeName called.");
@@ -129,6 +130,8 @@ class Landing extends Component {
               })
               firestack.auth.unlistenForAuth();
               th.setState({loginProgress:true})
+
+              console.log('=================== from index.android');
               th.props.navigation.dispatch(resetAction)
             });
           }

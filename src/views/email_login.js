@@ -99,10 +99,10 @@ class EmailLogin extends Component {
                 }
 
                 if (usr && usr.isAdmin) {
-                  DefaultPreference.setMultiple({userType: 'admin', uid: user.uid});
+                  DefaultPreference.setMultiple({userType: 'admin', uid: user.uid, justSignIn: 'true'});
                   routeName = 'AHome';
                 }else if (usr && usr.isRestaurantAdmin) {
-                  DefaultPreference.setMultiple({userType: 'restaurant', uid: user.uid});
+                  DefaultPreference.setMultiple({userType: 'restaurant', uid: user.uid, justSignIn: 'true'});
                   routeName = 'RHome';
                   title = "Loading...";
                 }
@@ -116,6 +116,7 @@ class EmailLogin extends Component {
                   if (th.unsubscribe && th.unsubscribe()) {
                     th.unsubscribe = undefined;
                   }
+                  console.log('=================== from email login');
                   th.props.navigation.dispatch(resetAction)
                 }
               });

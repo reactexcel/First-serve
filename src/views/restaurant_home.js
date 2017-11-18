@@ -25,6 +25,7 @@ import TableListItem from "./table_list_item";
 import Database from "../firebase/database";
 import DismissKeyboard from "dismissKeyboard";
 import * as Progress from 'react-native-progress';
+import DefaultPreference from 'react-native-default-preference';
 import {Icon} from "react-native-elements";
 import Moment from 'moment';
 import * as firebase from "firebase";
@@ -150,37 +151,54 @@ class RestaurantHome extends Component {
       const th = this;
 
       if(!this.state.watchOnWaitingList){
+        this.userRef.on("value", function(snapshot) {
+          var waitingListCount = 0;
+          var users = snapshot.val();
+          th.setState({users: users});
+        });
+
         this.userRef.orderByChild("restaurants_noti/" + this.state.restaurantKey + "/notiOn").equalTo(true).on("value", function(snapshot) {
           var waitingListCount = 0;
           var users = snapshot.val();
-          if(users !== null){
-          var keys = Object.keys(users);
           var tableTypes = {};
-          for(i = 0; i < keys.length; i++){
-            var u = users[keys[i]];
-            waitingListCount++;
-            if(!u.pax) u.pax = '0';
-            if(tableTypes[u.pax]){
-              tableTypes[u.pax] += 1;
-            }else{
-              tableTypes[u.pax] = 1;
-            }
-            if(u.notificationId){
-              // waitingListCount++;
-            }
-          }
           var tableTypes1 = [];
-          keys = Object.keys(tableTypes);
-          for(i = 0; i < keys.length; i++){
-            tableTypes1.push({tableType: keys[i], noOfUsers: tableTypes[keys[i]]})
+          if(users){
+            var keys = Object.keys(users);
+            for(i = 0; i < keys.length; i++){
+              var u = users[keys[i]];
+              if(u.restaurants_noti){
+                var notiKeys = Object.keys(u.restaurants_noti);
+                var chk = false;
+                for(j = 0; j < notiKeys.length; j++){
+                  if(u.restaurants_noti[notiKeys[j]].notiOn){
+                    chk = true;
+                    break;
+                  }
+                }
+                if(chk){
+                  waitingListCount++;
+                  if(!u.pax) u.pax = '0';
+                  if(tableTypes[u.pax]){
+                    tableTypes[u.pax] += 1;
+                  }else{
+                    tableTypes[u.pax] = 1;
+                  }
+                  if(u.notificationId){
+                    // waitingListCount++;
+                  }
+                }
+              }
+            }
+            keys = Object.keys(tableTypes);
+            for(i = 0; i < keys.length; i++){
+              tableTypes1.push({tableType: keys[i], noOfUsers: tableTypes[keys[i]]})
+            }
           }
+          console.log("waitingListCount", waitingListCount);
           th.setState({
-            users: users,
             dataSource: th.state.dataSource.cloneWithRows(tableTypes1),
-            // waitingListCount: waitingListCount
+            waitingListCount: waitingListCount
           });
-        }
-        th.setState({waitingListCount: waitingListCount});
         });
         this.setState({watchOnWaitingList: true});
       }
@@ -191,7 +209,7 @@ class RestaurantHome extends Component {
           var bTables = [];
           var curTime = new Date().getTime();
           snapshot.forEach((ch) => {
-            if(new Date(curTime).toDateString() === new Date(ch.val().endTime).toDateString()) {
+            if(curTime < ch.val().endTime) {
               if(ch.val().isBooked){
                 bTables.push({
                   restaurantKey: ch.val().restaurantKey,
@@ -236,6 +254,7 @@ class RestaurantHome extends Component {
     this.timeoutHandle = setTimeout(()=>{
           this.setState({ curTime: Moment(new Date()).format('MMM DD YYYY, HH:mm') })
      }, 60000);
+    DefaultPreference.setMultiple({justSignIn: 'false'});
   }
 
   componentWillUnmount(){
