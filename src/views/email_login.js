@@ -11,7 +11,8 @@ import {
     dismissKeyboard,
     TouchableWithoutFeedback,
     TouchableOpacity,
-    Image
+    Image,
+    BackHandler
 } from "react-native";
 import {NavigationActions,} from 'react-navigation';
 import React, {Component} from "react";
@@ -27,14 +28,24 @@ import {Icon} from "react-native-elements";
 import CommonStyle from "../styles/common.css";
 
 class EmailLogin extends Component {
-    static navigationOptions = {
-        title: 'LOGIN AS RESTAURANT',
-        headerTitleStyle: {marginLeft:-15,textAlign: 'center',fontSize:13,alignSelf: "center", color: 'white',fontWeight:'bold' },
-        headerStyle: {
-          marginBottom:-10,
-          backgroundColor: '#023e4eff',
-        },
-        headerTintColor: 'white',
+    static navigationOptions = ({navigation}) => {
+        const {params = {}} = navigation.state;
+        return{
+            title: 'LOGIN AS RESTAURANT',
+            headerTitleStyle: {marginLeft:-15,textAlign: 'center',fontSize:13,alignSelf: "center", color: 'white',fontWeight:'bold' },
+            headerLeft: <Icon style={{marginLeft: 10}} size={19}  name='chevron-left' onPress={() => {
+                const resetAction = NavigationActions.reset({
+                  index: 0,
+                  actions: [NavigationActions.navigate({routeName: "Home", params: {}})]
+                });
+                navigation.dispatch(resetAction)
+            }} type='font-awesome' color='white'/>,
+            headerStyle: {
+              marginBottom:-10,
+              backgroundColor: '#023e4eff',
+            },
+            headerTintColor: 'white',
+        }
     };
     constructor(props) {
         super(props);
@@ -49,6 +60,16 @@ class EmailLogin extends Component {
 
         this.signup = this.signup.bind(this);
         this.login = this.login.bind(this);
+        this.goBack = this.goBack.bind(this);
+    }
+
+    goBack(){
+        const resetAction = NavigationActions.reset({
+          index: 0,
+          actions: [NavigationActions.navigate({routeName: "Home", params: {}})]
+        });
+        this.props.navigation.dispatch(resetAction)
+        return true;
     }
 
     async signup() {
@@ -99,10 +120,10 @@ class EmailLogin extends Component {
                 }
 
                 if (usr && usr.isAdmin) {
-                  DefaultPreference.setMultiple({userType: 'admin', uid: user.uid, justSignIn: 'true'});
+                  DefaultPreference.setMultiple({userType: 'admin', uid: user.uid});
                   routeName = 'AHome';
                 }else if (usr && usr.isRestaurantAdmin) {
-                  DefaultPreference.setMultiple({userType: 'restaurant', uid: user.uid, justSignIn: 'true'});
+                  DefaultPreference.setMultiple({userType: 'restaurant', uid: user.uid});
                   routeName = 'RHome';
                   title = "Loading...";
                 }
@@ -129,10 +150,15 @@ class EmailLogin extends Component {
         }
     }
 
+    componentWillMount(){
+        BackHandler.addEventListener('hardwareBackPress', this.goBack);
+    }
+
     componentWillUnmount(){
-      if(this.unsubscribe && this.unsubscribe()){
-        this.unsubscribe = undefined;
-      }
+        BackHandler.removeEventListener('hardwareBackPress', this.goBack);
+        if(this.unsubscribe && this.unsubscribe()){
+            this.unsubscribe = undefined;
+        }
     }
 
     render() {

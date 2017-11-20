@@ -68,7 +68,7 @@ class Landing extends Component {
       var title = "Restaurants";
       if(value[0] === 'user'){
         routeName = 'UHome';
-      }else if (value[0] === 'restaurant' && !(value[3] === 'true')) {
+      }else if (value[0] === 'restaurant') {
         routeName = 'RHome';
         title = "Loading...";
       }else if (value[0] === 'admin') {
@@ -220,7 +220,12 @@ class Landing extends Component {
           </View>
           <View style={styles.btnEmailLogin}>
             <Text style={{color:'#122438',fontWeight:'bold'}} onPress={() => {
-              navigate('ELogin', { title: 'Login as restaurant', unlistenForAuth: this._unlistenForAuth })}
+                const resetAction = NavigationActions.reset({
+                  index: 0,
+                  actions: [NavigationActions.navigate({routeName: 'ELogin', params: {title: 'Login as restaurant'}})]
+                })
+                this.props.navigation.dispatch(resetAction)
+              }
             }>Login as restaurant</Text>
           </View>
         </View>

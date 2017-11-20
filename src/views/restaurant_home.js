@@ -254,7 +254,6 @@ class RestaurantHome extends Component {
     this.timeoutHandle = setTimeout(()=>{
           this.setState({ curTime: Moment(new Date()).format('MMM DD YYYY, HH:mm') })
      }, 60000);
-    DefaultPreference.setMultiple({justSignIn: 'false'});
   }
 
   componentWillUnmount(){
