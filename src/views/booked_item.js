@@ -72,7 +72,7 @@ class BookedItem extends Component {
             </View>
           </View>
           <View style={[{flex: 1,flexDirection:'row',alignItems:'center',justifyContent: 'center'}, {paddingTop: 8,paddingBottom:10}]}>
-            <Text numberOfLines={2} style={{fontSize: 12,textAlign:'center',paddingLeft:30,paddingRight:30,color:'#a79a95ff',fontWeight:'bold'}}>{this.props.restaurant.short_description}</Text>
+            <Text numberOfLines={2} style={{fontSize: 12,textAlign:'center',paddingLeft:30,paddingRight:30,color:'#a79a95ff',fontWeight:'bold'}}>{this.props.restaurant.booking_message}</Text>
           </View>
           <View style={[ styles.bottomBorder,styles.topBorder,{margin:15,marginTop:17}]}>
 
@@ -84,7 +84,7 @@ class BookedItem extends Component {
 
           </View>
           <View style={[{flex: 1,flexDirection:'row',alignItems:'center',justifyContent: 'center'}, {paddingTop: 8,paddingBottom:10}]}>
-            <Text numberOfLines={2} style={{fontSize: 12,textAlign:'center',paddingLeft:30,paddingRight:30,color:'#a79a95ff',fontWeight:'bold'}}>{this.props.restaurant.booking_message}</Text>
+            <Text numberOfLines={2} style={{fontSize: 12,textAlign:'center',paddingLeft:30,paddingRight:30,color:'#a79a95ff',fontWeight:'bold'}}>Please call the restaurant if you are late or need to cancel your booking</Text>
           </View>
           <TouchableHighlight
             onPress={()=>{

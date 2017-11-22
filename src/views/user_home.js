@@ -202,6 +202,18 @@ class UserHome extends Component {
 
         if(uEndTime && uStartTime && (notif.endTime < uStartTime || notif.startTime > uEndTime)) chk = false;
 
+        var isAlert = false;
+        if(th.state.bookings.length > 0 ){
+          for(i=0;i<th.state.bookings.length;i++){
+            var currentBookingStartTime = parseInt(th.state.bookings[i].startTime);
+            var currentBookingEndTime = parseInt(th.state.bookings[i].endTime);
+            if( Moment(notif.startTime) >= Moment(currentBookingEndTime)){
+              isAlert = true;
+              break;
+            }
+          }
+        }
+        if(isAlert){
         var bookedRestaurant = [];
         for(i = 0; i < this.state.tables.length; i++){
           var table = this.state.tables[i];
@@ -233,7 +245,7 @@ class UserHome extends Component {
           }
 
         }
-
+      }
 
         if(os ==='ios'){
           //optional
