@@ -202,18 +202,17 @@ class UserHome extends Component {
 
         if(uEndTime && uStartTime && (notif.endTime < uStartTime || notif.startTime > uEndTime)) chk = false;
 
-        var isAlert = true;
+        var isAlert = false;
         if(th.state.bookings.length > 0 ){
           for(i=0;i<th.state.bookings.length;i++){
             var currentBookingStartTime = parseInt(th.state.bookings[i].startTime);
             var currentBookingEndTime = parseInt(th.state.bookings[i].endTime);
             if( Moment(notif.startTime) <= Moment(currentBookingEndTime)){
-              isAlert = false;
+              isAlert = true;
               break;
             }
           }
         }
-        if(isAlert){
         var bookedRestaurant = [];
         for(i = 0; i < this.state.tables.length; i++){
           var table = this.state.tables[i];
@@ -231,7 +230,7 @@ class UserHome extends Component {
         if(chk){
           th.setState({bookingTable: table, bookingRestaurant: rest, bookingRestaurantKey: bookingRestaurantKey, tableId: notif.tableId});
           if(notif.restaurantKey !== undefined && this.state.notif){
-            if(isActiveBooking){
+            if(isActiveBooking && isAlert){
               Alert.alert('You Already an Active Booking','please call the restaurant if you want to cancel your existing booking',[
                 {text:'OK',onPress:()=>{
                   th.setState({bookingTable: table, bookingRestaurant: rest, bookingRestaurantKey: bookingRestaurantKey, tableId: notif.tableId});
@@ -243,8 +242,6 @@ class UserHome extends Component {
               th.setBookingModalVisible(true);
             }
           }
-
-        }
       }
 
         if(os ==='ios'){
