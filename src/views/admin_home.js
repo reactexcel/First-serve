@@ -242,27 +242,28 @@ class AdminHome extends Component {
     }
 
     downloadLogs(){
-      const dirs = RNFetchBlob.fs.dirs;
-      const fs = RNFetchBlob.fs;
-      console.log("dirs.DownloadDir", dirs.DownloadDir);
+      // const dirs = RNFetchBlob.fs.dirs;
+      // const fs = RNFetchBlob.fs;
+      // console.log("dirs.DownloadDir", dirs.DownloadDir);
 
-      var filePath = dirs.DocumentDir + "/AdriabnbStatistics.csv";
+      // var filePath = dirs.DocumentDir + "/AdriabnbStatistics.csv";
 
-      if (Platform.OS === 'android') {
-        filePath = dirs.DownloadDir + "/AdriabnbStatistics.csv";
-      }
-      var str = "\"restaurant name\", date, bookings, number of clicks\n";
+      // if (Platform.OS === 'android') {
+      //   filePath = dirs.DownloadDir + "/AdriabnbStatistics.csv";
+      // }
+      // var str = "\"restaurant name\", date, bookings, number of clicks\n";
 
-      this.ref = firebase.database().ref("logs");
-      this.ref.orderByChild("date").once("value", function(snapshot) {
-        snapshot.forEach((ch) => {
-          str = str + "\"" + ch.val().restaurantName + "\"," + ch.val().date + "," + ch.val().bookingCount + "," + ch.val().clickedCount + "\n";
-        });
+      // this.ref = firebase.database().ref("logs");
+      // this.ref.orderByChild("date").once("value", function(snapshot) {
+      //   snapshot.forEach((ch) => {
+      //     str = str + "\"" + ch.val().restaurantName + "\"," + ch.val().date + "," + ch.val().bookingCount + "," + ch.val().clickedCount + "\n";
+      //   });
 
-        RNFetchBlob.fs.writeFile(filePath, str, 'utf8')
-          .then(()=>{ console.log("file created"); })
-          .catch((err) => { console.log("file not created", err); });
-      });
+      //   RNFetchBlob.fs.writeFile(filePath, str, 'utf8')
+      //     .then(()=>{ console.log("file created"); })
+      //     .catch((err) => { console.log("file not created", err); });
+      // });
+      firebase.database().ref("/admin_email").set({uid: this.props.navigation.state.params.userId});
     }
 
     _setUserNoti(val){
