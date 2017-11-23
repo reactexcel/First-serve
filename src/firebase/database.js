@@ -5,6 +5,7 @@
 import * as firebase from "firebase";
 import Firebase from "./firebase";
 import Firestack from 'react-native-firestack';
+import Moment from 'moment';
 const firestack = new Firestack();
 import { Platform, StyleSheet } from 'react-native';
 
@@ -97,8 +98,7 @@ class Database {
     }
 
     static logEvent(restaurant, isClicked){
-      let dt = new Date();
-      let logKey = dt.getFullYear() + "-" + dt.getMonth() + "-" + dt.getDate();
+      let logKey = Moment(new Date()).format('YYYY-MM-DD');
       let userlogPath = "/logs/" + logKey;
       firebase.database().ref(userlogPath).transaction((log) => {
         if(log){

@@ -127,7 +127,6 @@ class RestaurantHome extends Component {
     Database.fetchRestaurant(this.state.userId, (dataSnapshot) => {
       restaurant = {};
       dataSnapshot.forEach((ch) => {
-        console.log(ch,'sad');
         restaurant = {
           name: (ch.val().name ? ch.val().name : ''),
           type: (ch.val().type ? ch.val().type : ''),
