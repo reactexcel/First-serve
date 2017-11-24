@@ -215,30 +215,36 @@ class UserHome extends Component {
         }
         var bookedRestaurant = [];
         for(i = 0; i < this.state.tables.length; i++){
-          var table = this.state.tables[i];
+          var tables = this.state.tables[i];
           for(j = 0; j < this.state.restaurants.length; j++){
             var restaurant = this.state.restaurants[j];
-            if(table.restaurantKey == restaurant._key){
+            if(tables.restaurantKey == restaurant._key){
               bookedRestaurant.push({
                restaurant: restaurant,
-               table: table
+               table: tables
              });
             }
           }
         }
         var isActiveBooking = bookedRestaurant.length > 0 ? true : false;
         if(chk){
-          th.setState({bookingTable: table, bookingRestaurant: rest, bookingRestaurantKey: bookingRestaurantKey, tableId: notif.tableId});
           if(notif.restaurantKey !== undefined && this.state.notif){
+          th.setState({bookingTable: table, bookingRestaurant: rest, bookingRestaurantKey: bookingRestaurantKey, tableId: notif.tableId});
             if(isActiveBooking && isAlert){
-              Alert.alert('You Already an Active Booking','please call the restaurant if you want to cancel your existing booking',[
-                {text:'OK',onPress:()=>{
-                  th.setState({bookingTable: table, bookingRestaurant: rest, bookingRestaurantKey: bookingRestaurantKey, tableId: notif.tableId});
+              if(Platform.OS === 'ios'){
+                Alert.alert('You Already an Active Booking','please call the restaurant if you want to cancel your existing booking',[
+                  {text:'OK',onPress:()=>{
+                    th.setState({bookingTable: table, bookingRestaurant: rest, bookingRestaurantKey: bookingRestaurantKey, tableId: notif.tableId});
 
-                th.setBookingModalVisible(true)}}
-              ]);
-
+                  th.setBookingModalVisible(true)}}
+                ]);
+              }else if(Platform.OS === 'android'){
+                Alert.alert('You Already an Active Booking','please call the restaurant if you want to cancel your existing booking');
+                th.setState({bookingTable: table, bookingRestaurant: rest, bookingRestaurantKey: bookingRestaurantKey, tableId: notif.tableId});
+                th.setBookingModalVisible(true);
+              }
             }else{
+              th.setState({bookingTable: table, bookingRestaurant: rest, bookingRestaurantKey: bookingRestaurantKey, tableId: notif.tableId});
               th.setBookingModalVisible(true);
             }
           }
@@ -468,6 +474,7 @@ class UserHome extends Component {
       this.setState({isOpenWheelPicker: value});
     }
   render() {
+    console.log(this.state);
     const buttonName = (this.state.saved  ? "Saved" : "Save Changes" )
     return (
       <View style={styles.container}>
@@ -1012,6 +1019,9 @@ class UserHome extends Component {
       Linking.openURL('https://www.google.com/maps/search/?api=1&query='+ `${address}` );
     }
     setBookingModalVisible(value){
+      if(value === 'false'){
+        FCM.removeAllDeliveredNotifications();
+      }
       this.setState({isBookingModelVisible: value});
     }
     book(){
