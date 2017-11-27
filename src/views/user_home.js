@@ -232,14 +232,14 @@ class UserHome extends Component {
           th.setState({bookingTable: table, bookingRestaurant: rest, bookingRestaurantKey: bookingRestaurantKey, tableId: notif.tableId});
             if(isActiveBooking && isAlert){
               if(Platform.OS === 'ios'){
-                Alert.alert('You Already an Active Booking','please call the restaurant if you want to cancel your existing booking',[
+                Alert.alert('You already have an active booking','Please call the restaurant if you want to cancel your existing booking',[
                   {text:'OK',onPress:()=>{
                     th.setState({bookingTable: table, bookingRestaurant: rest, bookingRestaurantKey: bookingRestaurantKey, tableId: notif.tableId});
 
                   th.setBookingModalVisible(true)}}
                 ]);
               }else if(Platform.OS === 'android'){
-                Alert.alert('You Already an Active Booking','please call the restaurant if you want to cancel your existing booking');
+                Alert.alert('You already have an active booking','Please call the restaurant if you want to cancel your existing booking');
                 th.setState({bookingTable: table, bookingRestaurant: rest, bookingRestaurantKey: bookingRestaurantKey, tableId: notif.tableId});
                 th.setBookingModalVisible(true);
               }
