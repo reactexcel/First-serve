@@ -223,8 +223,8 @@ class UserHome extends Component {
         for(i=0; i < this.state.tables.length; i++){
           var currentBookingStartTime = parseInt(this.state.tables[i].startTime);
           var currentBookingEndTime = parseInt(this.state.tables[i].endTime);
-          if((Moment(notif.startTime) <= Moment(currentBookingEndTime) && Moment(notif.endTime) >= Moment(currentBookingEndTime)) ||
-              Moment(notif.startTime) <= Moment(currentBookingStartTime) && Moment(notif.endTime) >= Moment(currentBookingStartTime)){
+          if((Moment(notif.startTime) <= Moment(currentBookingEndTime) && Moment(notif.startTime) >= Moment(currentBookingStartTime)) ||
+              Moment(notif.endTime) <= Moment(currentBookingEndTime) && Moment(notif.endTime) >= Moment(currentBookingStartTime)){
             isAlert = true;
             break;
           }
