@@ -228,6 +228,10 @@ class UserHome extends Component {
             isAlert = true;
             break;
           }
+          if(Moment(notif.endTime) <= Moment(currentBookingStartTime)){
+            isAlert = true;
+            break;
+          }
         }
       }
       var bookedRestaurant = [];
