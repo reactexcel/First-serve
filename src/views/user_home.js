@@ -264,6 +264,29 @@ class UserHome extends Component {
             this.setBookingModalVisible(true);
           }
         }
+        var isActiveBooking = bookedRestaurant.length > 0 ? true : false;
+        if(chk){
+          if(notif.restaurantKey !== undefined && this.state.notif){
+          th.setState({bookingTable: table, bookingRestaurant: rest, bookingRestaurantKey: bookingRestaurantKey, tableId: notif.tableId});
+            if(isActiveBooking && isAlert){
+              if(Platform.OS === 'ios'){
+                Alert.alert('You already have an active booking','Please call the restaurant if you want to cancel your existing booking',[
+                  {text:'OK',onPress:()=>{
+                    th.setState({bookingTable: table, bookingRestaurant: rest, bookingRestaurantKey: bookingRestaurantKey, tableId: notif.tableId});
+
+                  th.setBookingModalVisible(true)}}
+                ]);
+              }else if(Platform.OS === 'android'){
+                Alert.alert('You already have an active booking','Please call the restaurant if you want to cancel your existing booking');
+                th.setState({bookingTable: table, bookingRestaurant: rest, bookingRestaurantKey: bookingRestaurantKey, tableId: notif.tableId});
+                th.setBookingModalVisible(true);
+              }
+            }else{
+              th.setState({bookingTable: table, bookingRestaurant: rest, bookingRestaurantKey: bookingRestaurantKey, tableId: notif.tableId});
+              th.setBookingModalVisible(true);
+            }
+          }
+        }
       }
 
       if(os ==='ios'){
