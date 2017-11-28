@@ -228,10 +228,6 @@ class UserHome extends Component {
             isAlert = true;
             break;
           }
-          if(Moment(notif.endTime) <= Moment(currentBookingStartTime)){
-            isAlert = true;
-            break;
-          }
         }
       }
       var bookedRestaurant = [];
@@ -250,40 +246,16 @@ class UserHome extends Component {
       var isActiveBooking = bookedRestaurant.length > 0 ? true : false;
       if(chk){
         if(notif.restaurantKey !== undefined && this.state.notif){
-        this.setState({bookingTable: table, bookingRestaurant: rest, bookingRestaurantKey: bookingRestaurantKey, tableId: notif.tableId});
           if(isActiveBooking && isAlert){
-            if(Platform.OS === 'ios'){
-              Alert.alert('You Already an Active Booking','please call the restaurant if you want to cancel your existing booking',[
-                {text:'OK',onPress:()=>{
-                  this.setState({bookingTable: table, bookingRestaurant: rest, bookingRestaurantKey: bookingRestaurantKey, tableId: notif.tableId});
-
-                this.setBookingModalVisible(true)}}
-              ]);
-            }else if(Platform.OS === 'android'){
-              Alert.alert('You Already an Active Booking','please call the restaurant if you want to cancel your existing booking');
-              this.setState({bookingTable: table, bookingRestaurant: rest, bookingRestaurantKey: bookingRestaurantKey, tableId: notif.tableId});
-              this.setBookingModalVisible(true);
-            }
+            Alert.alert('You already have an active booking','Please call the restaurant if you want to cancel your existing booking',[
+              {text:'OK',onPress:()=>{
+                this.setState({bookingTable: table, bookingRestaurant: rest, bookingRestaurantKey: bookingRestaurantKey, tableId: notif.tableId});
+                this.setBookingModalVisible(true)}
+              }
+            ]);
           }else{
             this.setState({bookingTable: table, bookingRestaurant: rest, bookingRestaurantKey: bookingRestaurantKey, tableId: notif.tableId});
             this.setBookingModalVisible(true);
-          }
-        }
-        var isActiveBooking = bookedRestaurant.length > 0 ? true : false;
-        if(chk){
-          if(notif.restaurantKey !== undefined && this.state.notif){
-          this.setState({bookingTable: table, bookingRestaurant: rest, bookingRestaurantKey: bookingRestaurantKey, tableId: notif.tableId});
-            if(isActiveBooking && isAlert){
-              Alert.alert('You already have an active booking','Please call the restaurant if you want to cancel your existing booking',[
-                {text:'OK',onPress:()=>{
-                  this.setState({bookingTable: table, bookingRestaurant: rest, bookingRestaurantKey: bookingRestaurantKey, tableId: notif.tableId});
-                  this.setBookingModalVisible(true)}
-                }
-              ]);
-            }else{
-              this.setState({bookingTable: table, bookingRestaurant: rest, bookingRestaurantKey: bookingRestaurantKey, tableId: notif.tableId});
-              this.setBookingModalVisible(true);
-            }
           }
         }
       }
