@@ -272,17 +272,17 @@ class UserHome extends Component {
         var isActiveBooking = bookedRestaurant.length > 0 ? true : false;
         if(chk){
           if(notif.restaurantKey !== undefined && this.state.notif){
-          th.setState({bookingTable: table, bookingRestaurant: rest, bookingRestaurantKey: bookingRestaurantKey, tableId: notif.tableId});
+          this.setState({bookingTable: table, bookingRestaurant: rest, bookingRestaurantKey: bookingRestaurantKey, tableId: notif.tableId});
             if(isActiveBooking && isAlert){
               Alert.alert('You already have an active booking','Please call the restaurant if you want to cancel your existing booking',[
                 {text:'OK',onPress:()=>{
-                  th.setState({bookingTable: table, bookingRestaurant: rest, bookingRestaurantKey: bookingRestaurantKey, tableId: notif.tableId});
-                  th.setBookingModalVisible(true)}
+                  this.setState({bookingTable: table, bookingRestaurant: rest, bookingRestaurantKey: bookingRestaurantKey, tableId: notif.tableId});
+                  this.setBookingModalVisible(true)}
                 }
               ]);
             }else{
-              th.setState({bookingTable: table, bookingRestaurant: rest, bookingRestaurantKey: bookingRestaurantKey, tableId: notif.tableId});
-              th.setBookingModalVisible(true);
+              this.setState({bookingTable: table, bookingRestaurant: rest, bookingRestaurantKey: bookingRestaurantKey, tableId: notif.tableId});
+              this.setBookingModalVisible(true);
             }
           }
         }
