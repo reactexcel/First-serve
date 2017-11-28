@@ -223,7 +223,8 @@ class UserHome extends Component {
         for(i=0; i < this.state.tables.length; i++){
           var currentBookingStartTime = parseInt(this.state.tables[i].startTime);
           var currentBookingEndTime = parseInt(this.state.tables[i].endTime);
-          if(Moment(notif.startTime) <= Moment(currentBookingEndTime)){
+          if((Moment(notif.startTime) <= Moment(currentBookingEndTime) && Moment(notif.endTime) >= Moment(currentBookingEndTime)) ||
+              Moment(notif.startTime) <= Moment(currentBookingStartTime) && Moment(notif.endTime) >= Moment(currentBookingStartTime)){
             isAlert = true;
             break;
           }
@@ -269,18 +270,12 @@ class UserHome extends Component {
           if(notif.restaurantKey !== undefined && this.state.notif){
           th.setState({bookingTable: table, bookingRestaurant: rest, bookingRestaurantKey: bookingRestaurantKey, tableId: notif.tableId});
             if(isActiveBooking && isAlert){
-              if(Platform.OS === 'ios'){
-                Alert.alert('You already have an active booking','Please call the restaurant if you want to cancel your existing booking',[
-                  {text:'OK',onPress:()=>{
-                    th.setState({bookingTable: table, bookingRestaurant: rest, bookingRestaurantKey: bookingRestaurantKey, tableId: notif.tableId});
-
-                  th.setBookingModalVisible(true)}}
-                ]);
-              }else if(Platform.OS === 'android'){
-                Alert.alert('You already have an active booking','Please call the restaurant if you want to cancel your existing booking');
-                th.setState({bookingTable: table, bookingRestaurant: rest, bookingRestaurantKey: bookingRestaurantKey, tableId: notif.tableId});
-                th.setBookingModalVisible(true);
-              }
+              Alert.alert('You already have an active booking','Please call the restaurant if you want to cancel your existing booking',[
+                {text:'OK',onPress:()=>{
+                  th.setState({bookingTable: table, bookingRestaurant: rest, bookingRestaurantKey: bookingRestaurantKey, tableId: notif.tableId});
+                  th.setBookingModalVisible(true)}
+                }
+              ]);
             }else{
               th.setState({bookingTable: table, bookingRestaurant: rest, bookingRestaurantKey: bookingRestaurantKey, tableId: notif.tableId});
               th.setBookingModalVisible(true);
