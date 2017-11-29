@@ -157,7 +157,7 @@ class UserHome extends Component {
   }
 
   handleNoti(notif){
-    if(notif.tableId){
+    if(notif.tableId && this.state.restaurants !== undefined){
       // there are two parts of notif. notif.notification contains the notification payload, notif.data contains data payload
       console.log(notif,'notification');
       if(notif.local_notification){
@@ -251,6 +251,8 @@ class UserHome extends Component {
               {text:'OK',onPress:()=>{
                 this.setState({bookingTable: table, bookingRestaurant: rest, bookingRestaurantKey: bookingRestaurantKey, tableId: notif.tableId});
                 this.setBookingModalVisible(true)}
+              },
+              {text:'Close',onPress:()=>{console.log('cancel')}
               }
             ]);
           }else{
@@ -277,6 +279,8 @@ class UserHome extends Component {
             break;
         }
       }
+    } else {
+      this.handleNoti(notif);
     }
   }
 
@@ -408,7 +412,7 @@ class UserHome extends Component {
         // initial notification contains the notification that launchs the app. If user launchs app by clicking banner, the banner notification info will be here rather than through FCM.on event
         // sometimes Android kills activity when app goes to background, and when resume it broadcasts notification before JS is run. You can use FCM.getInitialNotification() to capture those missed events.
         if(th.state.isFirstTimeNoti){
-          setTimeout(() => {FCM.getInitialNotification().then(notif => th.handleNoti(notif))}, 1000);
+          setTimeout(() => {FCM.getInitialNotification().then(notif => th.handleNoti(notif))}, 4000);
           th.setState({isFirstTimeNoti: false});
         }
       });
@@ -1078,6 +1082,7 @@ class UserHome extends Component {
            ]);
           }
         }
+        FCM.cancelAllLocalNotifications();
         FCM.removeAllDeliveredNotifications();
       });
     }
