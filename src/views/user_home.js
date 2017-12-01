@@ -21,7 +21,8 @@ import {
     Linking,
     Modal,
     NetInfo,
-    Alert
+    Alert,
+    AsyncStorage
 } from "react-native";
 
 import Button from "apsl-react-native-button";
@@ -127,6 +128,7 @@ class UserHome extends Component {
       mobileError:false,
       isFirstTime: this.props.navigation.state.params.isFirstTime,
       isFirstTimeNoti: true,
+      checkID:'',
     };
 
     this._setUserNoti = this._setUserNoti.bind(this);
@@ -144,10 +146,17 @@ class UserHome extends Component {
     this.unmountNetworkListner = this.unmountNetworkListner.bind(this);
     this._hideToolTip = this._hideToolTip.bind(this);
     this.handleNoti = this.handleNoti.bind(this);
+    this.testfunction = this.testfunction.bind(this);
 
     const th = this;
     FCM.on(FCMEvent.Notification, async (notif) => {
-      th.handleNoti(notif);
+      if (os ==='ios') {
+        if (th.state.checkID !== notif.tableId) {
+          th.handleNoti(notif);
+        }
+      }else {
+        th.handleNoti(notif);
+      }
     });
     FCM.on(FCMEvent.RefreshToken, (token) => {
         console.log("RefreshToken", token)
@@ -158,8 +167,10 @@ class UserHome extends Component {
 
   handleNoti(notif){
     if(notif.tableId && this.state.restaurants !== undefined){
+        // firebase.database().ref("/checkingtables").push(notif)
+
       // there are two parts of notif. notif.notification contains the notification payload, notif.data contains data payload
-      console.log(notif,'notification');
+      console.log(notif.tableId,'handleNotification ke ander');
       if(notif.local_notification){
         //this is a local notification
         console.log("notif.local_notification", notif.local_notification);
@@ -168,7 +179,6 @@ class UserHome extends Component {
         //app is open/resumed because user clicked banner
         console.log("notif.opened_from_tray", notif.opened_from_tray);
       }
-      // await someAsyncCall();
       if(this.state.tableId !== ''  && this.state.tableId === notif.tableId){
         if(notif.byNotiChange){
           this.setState({notif: true});
@@ -207,13 +217,13 @@ class UserHome extends Component {
         uEndTime = uEndTime.getTime();
       }
       uStartTime = uEndTime - tDiff;
-      // if(uStartTime && uStartTime !== 'SET START TIME'){
-      //   uStartTime = new Date(uStartTime);
-      //   uStartTime.setDate(curDate.getDate());
-      //   uStartTime.setMonth(curDate.getMonth());
-      //   uStartTime.setFullYear(curDate.getFullYear());
-      //   uStartTime = uStartTime.getTime();
-      // }
+      if(uStartTime && uStartTime !== 'SET START TIME'){
+        uStartTime = new Date(uStartTime);
+        uStartTime.setDate(curDate.getDate());
+        uStartTime.setMonth(curDate.getMonth());
+        uStartTime.setFullYear(curDate.getFullYear());
+        uStartTime = uStartTime.getTime();
+      }
 
       var chk = true;
       if(uEndTime && uStartTime && (notif.endTime < uStartTime || notif.startTime > uEndTime)) chk = false;
@@ -249,7 +259,7 @@ class UserHome extends Component {
           if(isActiveBooking && isAlert){
             Alert.alert('You already have an active booking','Please call the restaurant if you want to cancel your existing booking',[
               {text:'OK',onPress:()=>{
-                this.setState({bookingTable: table, bookingRestaurant: rest, bookingRestaurantKey: bookingRestaurantKey, tableId: notif.tableId});
+                this.setState({checkID:notif.tableId, bookingTable: table, bookingRestaurant: rest, bookingRestaurantKey: bookingRestaurantKey, tableId: notif.tableId});
                 this.setBookingModalVisible(true)}
               },
               {text:'Close',onPress:()=>{console.log('cancel')}
@@ -279,12 +289,12 @@ class UserHome extends Component {
             break;
         }
       }
-    } else {
-      this.handleNoti(notif);
     }
   }
 
   componentWillMount() {
+    // firebase.database().ref("/userMobileTESSPath").push("componentWillMount");
+
     NetInfo.isConnected.fetch().then(isConnected => {
       console.log('First, is ' + (isConnected ? 'online' : 'offline'));
       this.setState({isOnline: isConnected});
@@ -300,6 +310,8 @@ class UserHome extends Component {
 
     try {
       Database.listenUser(this.state.userId, (userSnap) => {
+        // firebase.database().ref("/userMobileTESSPath").push("Inside the userSnap");
+        if (userSnap.val() !== undefined) {
         let isRestaurantNotiOn = {};
         if(userSnap.val().restaurants_noti){
           var keys = Object.keys(userSnap.val().restaurants_noti);
@@ -352,6 +364,10 @@ class UserHome extends Component {
         }else if(!userSnap.val().pax || !userSnap.val().phone_number){
           selectedTab = 3;
         }
+        // firebase.database().ref("/userMobileTESSPath").push({favourites:this.state.favourites});
+        // firebase.database().ref("/userMobileTESSPath").push({state:this.state.toString()});
+        // firebase.database().ref("/userMobileTESSPath").push("Before State set function is called");
+        // firebase.database().ref("/userMobileTESSPath").push({pax:userSnap.val()});
 
         this.setState({
           currentTab: selectedTab,
@@ -368,6 +384,8 @@ class UserHome extends Component {
           favoriteDataSource: this.state.favoriteDataSource.cloneWithRows(favourites),
           bookedDataSource: sourceB.cloneWithRows(bookedRestaurant)
         });
+        // firebase.database().ref("/userMobileTESSPath").push("after setstate function called");
+      }
       });
       const th = this;
       this.ref = firebase.database().ref("tables");
@@ -402,7 +420,7 @@ class UserHome extends Component {
 
         var isNoBooked = true;
         if(bookedRestaurant.length > 0) isNoBooked = false;
-
+        // firebase.database().ref("/userMobileTESSPath").push("tables");
         th.setState({
           isNoBooked: isNoBooked,
           tables: tables,
@@ -411,16 +429,28 @@ class UserHome extends Component {
 
         // initial notification contains the notification that launchs the app. If user launchs app by clicking banner, the banner notification info will be here rather than through FCM.on event
         // sometimes Android kills activity when app goes to background, and when resume it broadcasts notification before JS is run. You can use FCM.getInitialNotification() to capture those missed events.
+
         if(th.state.isFirstTimeNoti){
-          setTimeout(() => {FCM.getInitialNotification().then(notif => th.handleNoti(notif))}, 4000);
-          th.setState({isFirstTimeNoti: false});
+          // firebase.database().ref("/userMobileTESSPath").push("before the timeout");
+          setTimeout(() => {FCM.getInitialNotification().then(notif => th.testfunction(notif))}, 22000);
         }
       });
     } catch (error) {
       console.log(error);
     }
   }
+  testfunction(notif){
+    if (notif) {
+      if (this.state.isFirstTimeNoti) {
+       this.handleNoti(notif);
+       this.setState({checkID:notif.tableId, isFirstTimeNoti: false });
+     }
 
+    }
+    // else {
+    //   firebase.database().ref("/userMobileTESSPath").push("Notify is not available");
+    // }
+  }
   componentDidMount(){
     const th = this;
     FCM.requestPermissions()
@@ -485,7 +515,6 @@ class UserHome extends Component {
       this.setState({isOpenWheelPicker: value});
     }
   render() {
-    console.log(this.state);
     const buttonName = (this.state.saved  ? "Saved" : "Save Changes" )
     return (
       <View style={styles.container}>
