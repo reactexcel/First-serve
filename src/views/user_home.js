@@ -157,126 +157,130 @@ class UserHome extends Component {
   }
 
   handleNoti(notif){
-    if(notif.tableId){
-      // there are two parts of notif. notif.notification contains the notification payload, notif.data contains data payload
-      console.log(notif,'notification');
-      if(notif.local_notification){
-        //this is a local notification
-        console.log("notif.local_notification", notif.local_notification);
-      }
-      if(notif.opened_from_tray){
-        //app is open/resumed because user clicked banner
-        console.log("notif.opened_from_tray", notif.opened_from_tray);
-      }
-      // await someAsyncCall();
-      if(this.state.tableId !== ''  && this.state.tableId === notif.tableId){
-        if(notif.byNotiChange){
-          this.setState({notif: true});
-        }else{
-          this.setState({notif: false});
+    try{
+      if(notif.tableId){
+        // there are two parts of notif. notif.notification contains the notification payload, notif.data contains data payload
+        console.log(notif,'notification');
+        if(notif.local_notification){
+          //this is a local notification
+          console.log("notif.local_notification", notif.local_notification);
         }
-      }else{
-        this.setState({notif: true});
-      }
-      notif.startTime = parseInt(notif.startTime);
-      notif.endTime = parseInt(notif.endTime);
-      var table = {
-        restaurantKey: notif.restaurantKey,
-        startTime: notif.startTime,
-        endTime: notif.endTime,
-        key: notif.tableId,
-        pax: notif.pax
-      };
-      var bookingRestaurantKey = notif.restaurantKey;
-      var rest = {images: [], name: '', booking_message: '', address: ''};
-      for(i = 0; i < this.state.restaurants.length; i++){
-        if(this.state.restaurants[i]._key == notif.restaurantKey){
-          rest = this.state.restaurants[i];
-          break;
+        if(notif.opened_from_tray){
+          //app is open/resumed because user clicked banner
+          console.log("notif.opened_from_tray", notif.opened_from_tray);
         }
-      }
-      var uEndTime = this.state.UserNotifEndTime;
-      var uStartTime = this.state.UserNotifStartTime;
-      var tDiff = uEndTime - uStartTime;
-      var curDate = new Date();
-      if(uEndTime && uEndTime !== 'SET END TIME'){
-        uEndTime = new Date(uEndTime);
-        uEndTime.setDate(curDate.getDate());
-        uEndTime.setMonth(curDate.getMonth());
-        uEndTime.setFullYear(curDate.getFullYear());
-        uEndTime = uEndTime.getTime();
-      }
-      uStartTime = uEndTime - tDiff;
-      // if(uStartTime && uStartTime !== 'SET START TIME'){
-      //   uStartTime = new Date(uStartTime);
-      //   uStartTime.setDate(curDate.getDate());
-      //   uStartTime.setMonth(curDate.getMonth());
-      //   uStartTime.setFullYear(curDate.getFullYear());
-      //   uStartTime = uStartTime.getTime();
-      // }
-
-      var chk = true;
-      if(uEndTime && uStartTime && (notif.endTime < uStartTime || notif.startTime > uEndTime)) chk = false;
-
-      var isAlert = false;
-      if(this.state.tables.length > 0 ){
-        for(i=0; i < this.state.tables.length; i++){
-          var currentBookingStartTime = parseInt(this.state.tables[i].startTime);
-          var currentBookingEndTime = parseInt(this.state.tables[i].endTime);
-          if((Moment(notif.startTime) <= Moment(currentBookingEndTime) && Moment(notif.startTime) >= Moment(currentBookingStartTime)) ||
-              Moment(notif.endTime) <= Moment(currentBookingEndTime) && Moment(notif.endTime) >= Moment(currentBookingStartTime)){
-            isAlert = true;
-            break;
-          }
-        }
-      }
-      var bookedRestaurant = [];
-      for(i = 0; i < this.state.tables.length; i++){
-        var tables = this.state.tables[i];
-        for(j = 0; j < this.state.restaurants.length; j++){
-          var restaurant = this.state.restaurants[j];
-          if(tables.restaurantKey == restaurant._key){
-            bookedRestaurant.push({
-             restaurant: restaurant,
-             table: tables
-           });
-          }
-        }
-      }
-      var isActiveBooking = bookedRestaurant.length > 0 ? true : false;
-      if(chk){
-        if(notif.restaurantKey !== undefined && this.state.notif){
-          if(isActiveBooking && isAlert){
-            Alert.alert('You already have an active booking','Please call the restaurant if you want to cancel your existing booking',[
-              {text:'OK',onPress:()=>{
-                this.setState({bookingTable: table, bookingRestaurant: rest, bookingRestaurantKey: bookingRestaurantKey, tableId: notif.tableId});
-                this.setBookingModalVisible(true)}
-              }
-            ]);
+        // await someAsyncCall();
+        if(this.state.tableId !== ''  && this.state.tableId === notif.tableId){
+          if(notif.byNotiChange){
+            this.setState({notif: true});
           }else{
-            this.setState({bookingTable: table, bookingRestaurant: rest, bookingRestaurantKey: bookingRestaurantKey, tableId: notif.tableId});
-            this.setBookingModalVisible(true);
+            this.setState({notif: false});
+          }
+        }else{
+          this.setState({notif: true});
+        }
+        notif.startTime = parseInt(notif.startTime);
+        notif.endTime = parseInt(notif.endTime);
+        var table = {
+          restaurantKey: notif.restaurantKey,
+          startTime: notif.startTime,
+          endTime: notif.endTime,
+          key: notif.tableId,
+          pax: notif.pax
+        };
+        var bookingRestaurantKey = notif.restaurantKey;
+        var rest = {images: [], name: '', booking_message: '', address: ''};
+        for(i = 0; i < this.state.restaurants.length; i++){
+          if(this.state.restaurants[i]._key == notif.restaurantKey){
+            rest = this.state.restaurants[i];
+            break;
+          }
+        }
+        var uEndTime = this.state.UserNotifEndTime;
+        var uStartTime = this.state.UserNotifStartTime;
+        var tDiff = uEndTime - uStartTime;
+        var curDate = new Date();
+        if(uEndTime && uEndTime !== 'SET END TIME'){
+          uEndTime = new Date(uEndTime);
+          uEndTime.setDate(curDate.getDate());
+          uEndTime.setMonth(curDate.getMonth());
+          uEndTime.setFullYear(curDate.getFullYear());
+          uEndTime = uEndTime.getTime();
+        }
+        uStartTime = uEndTime - tDiff;
+        // if(uStartTime && uStartTime !== 'SET START TIME'){
+        //   uStartTime = new Date(uStartTime);
+        //   uStartTime.setDate(curDate.getDate());
+        //   uStartTime.setMonth(curDate.getMonth());
+        //   uStartTime.setFullYear(curDate.getFullYear());
+        //   uStartTime = uStartTime.getTime();
+        // }
+
+        var chk = true;
+        if(uEndTime && uStartTime && (notif.endTime < uStartTime || notif.startTime > uEndTime)) chk = false;
+
+        var isAlert = false;
+        if(this.state.tables.length > 0 ){
+          for(i=0; i < this.state.tables.length; i++){
+            var currentBookingStartTime = parseInt(this.state.tables[i].startTime);
+            var currentBookingEndTime = parseInt(this.state.tables[i].endTime);
+            if((Moment(notif.startTime) <= Moment(currentBookingEndTime) && Moment(notif.startTime) >= Moment(currentBookingStartTime)) ||
+                Moment(notif.endTime) <= Moment(currentBookingEndTime) && Moment(notif.endTime) >= Moment(currentBookingStartTime)){
+              isAlert = true;
+              break;
+            }
+          }
+        }
+        var bookedRestaurant = [];
+        for(i = 0; i < this.state.tables.length; i++){
+          var tables = this.state.tables[i];
+          for(j = 0; j < this.state.restaurants.length; j++){
+            var restaurant = this.state.restaurants[j];
+            if(tables.restaurantKey == restaurant._key){
+              bookedRestaurant.push({
+               restaurant: restaurant,
+               table: tables
+             });
+            }
+          }
+        }
+        var isActiveBooking = bookedRestaurant.length > 0 ? true : false;
+        if(chk){
+          if(notif.restaurantKey !== undefined && this.state.notif){
+            if(isActiveBooking && isAlert){
+              Alert.alert('You already have an active booking','Please call the restaurant if you want to cancel your existing booking',[
+                {text:'OK',onPress:()=>{
+                  this.setState({bookingTable: table, bookingRestaurant: rest, bookingRestaurantKey: bookingRestaurantKey, tableId: notif.tableId});
+                  this.setBookingModalVisible(true)}
+                }
+              ]);
+            }else{
+              this.setState({bookingTable: table, bookingRestaurant: rest, bookingRestaurantKey: bookingRestaurantKey, tableId: notif.tableId});
+              this.setBookingModalVisible(true);
+            }
+          }
+        }
+
+        if(os ==='ios'){
+          //optional
+          //iOS requires developers to call completionHandler to end notification process. If you do not call it your background remote notifications could be throttled, to read more about it see the above documentation link.
+          //This library handles it for you automatically with default behavior (for remote notification, finish with NoData; for WillPresent, finish depend on "show_in_foreground"). However if you want to return different result, follow the following code to override
+          //notif._notificationType is available for iOS platfrom
+          switch(notif._notificationType){
+            case NotificationType.Remote:
+              notif.finish(RemoteNotificationResult.NewData) //other types available: RemoteNotificationResult.NewData, RemoteNotificationResult.ResultFailed
+              break;
+            case NotificationType.NotificationResponse:
+              notif.finish();
+              break;
+            case NotificationType.WillPresent:
+              notif.finish(WillPresentNotificationResult.All) //other types available: WillPresentNotificationResult.None
+              break;
           }
         }
       }
-
-      if(os ==='ios'){
-        //optional
-        //iOS requires developers to call completionHandler to end notification process. If you do not call it your background remote notifications could be throttled, to read more about it see the above documentation link.
-        //This library handles it for you automatically with default behavior (for remote notification, finish with NoData; for WillPresent, finish depend on "show_in_foreground"). However if you want to return different result, follow the following code to override
-        //notif._notificationType is available for iOS platfrom
-        switch(notif._notificationType){
-          case NotificationType.Remote:
-            notif.finish(RemoteNotificationResult.NewData) //other types available: RemoteNotificationResult.NewData, RemoteNotificationResult.ResultFailed
-            break;
-          case NotificationType.NotificationResponse:
-            notif.finish();
-            break;
-          case NotificationType.WillPresent:
-            notif.finish(WillPresentNotificationResult.All) //other types available: WillPresentNotificationResult.None
-            break;
-        }
-      }
+    }catch(error){
+      console.log("do not know");
     }
   }
 

@@ -36,7 +36,7 @@ class FavouriteItem extends Component {
             <GallerySwiper {...this.props} openModel={() => this.props.setModalVisible(this.props.restaurant._key, true)} />
           </View>
           <View style={[styles.notiView, {alignItems:'center',marginTop:13}]}>
-            <View style={{justifyContent:'center',alignItems:'center'}}><Text style={{textAlign:'center',fontSize:12,color:'#a79a95ff',fontWeight:'bold'}}>{this.props.restaurant.type.toUpperCase()}</Text></View>
+            <View style={{justifyContent:'center',alignItems:'center'}}><Text style={{textAlign:'center',fontSize:12,color:'#a79a95ff',fontWeight:'bold'}}>{this.props.restaurant.type ? this.props.restaurant.type.toUpperCase() : ""}</Text></View>
 
           </View>
           <View style={{flexDirection:'row',justifyContent:'flex-end',marginTop:-30,marginRight:25}}>
