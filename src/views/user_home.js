@@ -150,13 +150,7 @@ class UserHome extends Component {
 
     const th = this;
     FCM.on(FCMEvent.Notification, async (notif) => {
-      if (os ==='ios') {
-        if (th.state.checkID !== notif.tableId) {
-          th.handleNoti(notif);
-        }
-      }else {
         th.handleNoti(notif);
-      }
     });
     FCM.on(FCMEvent.RefreshToken, (token) => {
         console.log("RefreshToken", token)
@@ -170,7 +164,6 @@ class UserHome extends Component {
         // firebase.database().ref("/checkingtables").push(notif)
 
       // there are two parts of notif. notif.notification contains the notification payload, notif.data contains data payload
-      console.log(notif.tableId,'handleNotification ke ander');
       if(notif.local_notification){
         //this is a local notification
         console.log("notif.local_notification", notif.local_notification);
@@ -259,7 +252,7 @@ class UserHome extends Component {
           if(isActiveBooking && isAlert){
             Alert.alert('You already have an active booking','Please call the restaurant if you want to cancel your existing booking',[
               {text:'OK',onPress:()=>{
-                this.setState({checkID:notif.tableId, bookingTable: table, bookingRestaurant: rest, bookingRestaurantKey: bookingRestaurantKey, tableId: notif.tableId});
+                this.setState({bookingTable: table, bookingRestaurant: rest, bookingRestaurantKey: bookingRestaurantKey, tableId: notif.tableId});
                 this.setBookingModalVisible(true)}
               },
               {text:'Close',onPress:()=>{console.log('cancel')}
@@ -425,8 +418,9 @@ class UserHome extends Component {
           isNoBooked: isNoBooked,
           tables: tables,
           bookedDataSource: th.state.bookedDataSource.cloneWithRows(bookedRestaurant)
-        });
-
+        }, function stateUpdateComplete() {
+          FCM.getInitialNotification().then(notif => th.testfunction(notif));
+        }.bind(th));
         // initial notification contains the notification that launchs the app. If user launchs app by clicking banner, the banner notification info will be here rather than through FCM.on event
         // sometimes Android kills activity when app goes to background, and when resume it broadcasts notification before JS is run. You can use FCM.getInitialNotification() to capture those missed events.
 
@@ -443,9 +437,8 @@ class UserHome extends Component {
     if (notif) {
       if (this.state.isFirstTimeNoti) {
        this.handleNoti(notif);
-       this.setState({checkID:notif.tableId, isFirstTimeNoti: false });
+       this.setState({isFirstTimeNoti: false });
      }
-
     }
     // else {
     //   firebase.database().ref("/userMobileTESSPath").push("Notify is not available");
