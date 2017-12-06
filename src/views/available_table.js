@@ -75,7 +75,7 @@ class AvailableTable extends Component {
             <Text style={CommonStyle.listItemTitle}>{this.props.restaurant.name.toUpperCase()}</Text></View>
           <FullWidthImage source={{uri: this.props.restaurant.images.length > 0 ? this.props.restaurant.images[0].imageUrl : 'https://firebasestorage.googleapis.com/v0/b/first-served-c9197.appspot.com/o/restaurant_images%2Frestaurant.jpg?alt=media&token=b0ca19be-6594-4bb1-bfdb-3c9474a0b234'}} />
           <View style={[CommonStyle.notiView, {alignItems:'center',marginTop:13}]}>
-            <View style={{justifyContent:'center',alignItems:'center'}}><Text style={{textAlign:'center',fontSize:12,color:'#a79a95ff',fontWeight:'bold'}}>{this.props.restaurant.type.toUpperCase()}</Text></View>
+            <View style={{justifyContent:'center',alignItems:'center'}}><Text style={{textAlign:'center',fontSize:12,color:'#a79a95ff',fontWeight:'bold'}}>{this.props.restaurant.type ? this.props.restaurant.type.toUpperCase() : ""}</Text></View>
           </View>
 
           <View style={CommonStyle.notiView}>
