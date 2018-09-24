@@ -110,6 +110,7 @@ class UserHome extends Component {
       bookingTable: {pax: 2, startTime: 1489829490000, endTime: 1489829490000},
       bookingRestaurant: {images: [], name: 'rsgdvad', booking_message: 'vad  waefa asf', address: 'kjnvkqwneu asjn aqwegj asg'},
       mobile: '',
+      email:'',
       isLoading:true,
       saved:false,
       isModalVisibleForViewResurant:{},
@@ -125,12 +126,15 @@ class UserHome extends Component {
       hasToOpenBookingModal: false,
       isDisabled: false,
       mobileError: false,
+      emailError:false,
+      emailErrorText:'Please Enter Email',
       isFirstTime: this.props.navigation.state.params.isFirstTime,
       isFirstTimeNoti: true,
     };
 
     this._setUserNoti = this._setUserNoti.bind(this);
     this._setMobile = this._setMobile.bind(this);
+    this._email = this._email.bind(this);
     this._setPax = this._setPax.bind(this);
     this.save = this.save.bind(this);
     this._setFavourite = this._setFavourite.bind(this);
@@ -362,6 +366,7 @@ class UserHome extends Component {
           favourites: this.state.favourites,
           notificationOn: userSnap.val().notiOn,
           mobile: userSnap.val().phone_number ? userSnap.val().phone_number : '',
+          email:userSnap.val().email ? userSnap.val().email : '',
           selectedMember: userSnap.val().pax ? userSnap.val().pax : '0',
           UserNotifStartTime: userSnap.val().UserNotifStartTime ? userSnap.val().UserNotifStartTime:'SET START TIME' ,
           UserNotifEndTime: userSnap.val().UserNotifEndTime ? userSnap.val().UserNotifEndTime:'SET END TIME',
@@ -632,7 +637,7 @@ class UserHome extends Component {
               </View>
               <View style={[styles.rowContainer, {paddingTop: 10}]}>
                 <Text style={{color: '#023e4eff', fontSize: 16, textAlign:'center', paddingLeft: 10, paddingRight: 10}}>
-                  Join our waitingslists and get notified when tables open up. When notified, hurry up and book. First come – FirstServed.
+                  Join our waiting list and get notified when tables open up. When notified, hurry up and book. First come – FirstServed.
                 </Text>
               </View>
               <View style={[styles.rowContainer, {paddingTop: 10}]}>
@@ -694,6 +699,27 @@ class UserHome extends Component {
                   null
                 }
               </View>
+              <View style={styles.bottomBorder}>
+                <View style={[styles.rowContainer, {paddingTop: 15,paddingBottom:15, justifyContent: 'flex-start'}]}>
+                    <Icon
+                      size={25}
+                      style={{marginLeft:2}}
+                      name='envelope'
+                      type='font-awesome'
+                      color='#023e4eff'/>
+                      <TextInput
+                        style={{color: '#023e4eff', flex: 1, marginLeft: 22, marginRight: 100}}
+                        placeholder="Insert Email"
+                        keyboardType={'email-address'}
+                        onChangeText={(email) => this._email(email)}
+                        value={this.state.email}/>
+                </View>
+                {this.state.emailError?
+                  <Text style={{color:'red',fontSize:14,marginLeft:10,paddingBottom:5}}>{this.state.emailErrorText}</Text>
+                  :
+                  null
+                }
+              </View>
               <View style={[styles.bottomBorder,{marginTop:8,marginBottom:8}]} >
                 <View style={{flexDirection:'row'}} >
                   <Icon
@@ -747,11 +773,11 @@ class UserHome extends Component {
                   </Button>
                 </View>
               </View>
-              <View style={[styles.rowContainer, {paddingBottom: 25}]}>
+              {/* <View style={[styles.rowContainer, {paddingBottom: 25}]}>// REMOVE TEXT UNDER SAVE CHANGES
                 <Text style={{color: '#023e4eff', fontSize: 16, textAlign:'center', paddingLeft: 10, paddingRight: 10}}>
                   You can also use our app to explore great dining experiences, see which restaurants have available tables and book your table online – for this service, go straight to our list of restaurants.
                 </Text>
-              </View>
+              </View> */}
             </ScrollView>
           </View> :
           <View style={{flex:1,justifyContent:'center',flexDirection:'column',alignItems:'center'}}><Progress.Circle size={30} indeterminate={true} /></View>)}
@@ -802,8 +828,8 @@ class UserHome extends Component {
               />
               <Tab
                 barBackgroundColor="#023e4eff"
-                label="FirstServed"
-                icon={<Image resizeMode="contain" source={require('../images/ic_noti_icon.png')} style={{width:18,height:26,marginLeft:5}} />}
+                label="Waiting list"
+                icon={<Image resizeMode="contain" source={require('../images/hourglass.png')} style={{width:18,height:26,marginLeft:5}} />}
                 // icon={<Icon size={24} color="white" name="account-circle" />}
               />
             </BottomNavigation>
@@ -892,26 +918,36 @@ class UserHome extends Component {
     _setMobile(val){
       this.setState({mobile: val, mobileError: false});
     }
-
+    _email(val){
+      var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+       let emailCheck  = re.test(val);
+       if(emailCheck){
+        this.setState({email: val, emailError:false,emailErrorText: "Please Enter Email"})
+       }else {
+         this.setState({email: val, emailError:true , emailErrorText:'Please enter a correct email'})
+       }
+    }
     save(){
-      this.setState({isLoading: false, saved: true, mobileError: false, memberError: false});
-      if (this.state.mobile && this.state.selectedMember) {
+      this.setState({isLoading: false, saved: true, mobileError: false, memberError: false,emailError:false });
+      if (this.state.mobile && this.state.selectedMember && this.state.email) {
         if(this.state.UserNotifStartTime >= this.state.UserNotifEndTime){
-          this.setState({isLoading: true, mobileError: false})
+          this.setState({isLoading: true, mobileError: false,emailError:false })
           if (Platform.OS === 'android') {
             ToastAndroid.showWithGravity('Notification Start time should be less than End time.', ToastAndroid.SHORT, ToastAndroid.BOTTOM);
           } else if (Platform.OS === 'ios') {
             AlertIOS.alert('Notification Start time should be less than End time.');
           }
         }else{
-          Database.setUserData(this.props.navigation.state.params.userId, this.state.selectedMember, this.state.mobile, this.state.UserNotifStartTime, this.state.UserNotifEndTime).then(()=>{
-            this.setState({isLoading: true, mobileError: false})
+          Database.setUserData(this.props.navigation.state.params.userId, this.state.selectedMember, this.state.mobile, this.state.UserNotifStartTime, this.state.UserNotifEndTime, this.state.email).then(()=>{
+            this.setState({isLoading: true, mobileError: false, emailError:false})
           });
         }
       }else if(this.state.selectedMember == 0){
           this.setState({memberError: true, isLoading: true});
       }else if(this.state.mobile === ''){
           this.setState({mobileError: true, isLoading: true});
+      }else if(this.state.email === ''){
+        this.setState({emailError: true, isLoading: true});
       }else{
           this.setState({isLoading: true});
       }
