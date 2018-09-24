@@ -80,7 +80,7 @@ class FavouriteItem extends Component {
           </View>
           <View style={[styles.listNotiView, {paddingBottom: this.props.isAdmin ? 0 : 0}]}>
               <View style={styles.notiIconView}>
-                  <Text style={{color:'#023e4eff',fontWeight:'bold',fontSize:13}}>TABLE NOTIFICATIONS</Text>
+                  <Text style={{color:'#023e4eff',fontWeight:'bold',fontSize:13}}>GET FIRST SERVED</Text>
               </View>
           </View>
           <View style={{flexDirection:'row',justifyContent:'flex-end',marginTop:-25,marginBottom:24,marginRight:25}}>

@@ -92,30 +92,28 @@ class RestaurantListItem extends Component {
               </TouchableOpacity>
               </View>
             </View>
-            {/* <TouchableHighlight
+            <View style={[{flex: 1,flexDirection:'row',alignItems:'center',justifyContent: 'center'}, {paddingTop: 8,paddingBottom:10}]}>
+              <Text style={{fontSize: 13,textAlign:'center',paddingLeft:30,paddingRight:30,color:'#a79a95ff',fontWeight:'bold'}}>{this.props.restaurant.short_description}</Text>
+            </View>
+            <TouchableHighlight
               style={this.props.restaurant.fully_booked ? styles.submitDisable : styles.submit}
               onPress={() => {
                 if(this.props.restaurant.fully_booked){
                   console.log('Regular booking', 'fully booked');
                 }else{
-                  if(this.props.restaurant.website_url.length > 0){
-                    Linking.openURL(this.props.restaurant.website_url);
+                  if(this.props.restaurant.booking_url.length > 0){
+                    Linking.openURL(this.props.restaurant.booking_url.startsWith('http') ? this.props.restaurant.booking_url : 'http://' + this.props.restaurant.booking_url);
                   }else{
                     console.log('Website', "Url Not Present.");
                   }
                 }
               }}
               underlayColor='#fff'>
-                <Text style={this.props.restaurant.fully_booked ? styles.submitTextDisable : styles.submitText}>{this.props.restaurant.fully_booked ? 'FULLY BOOKED' : 'Regular booking'}</Text>
-            </TouchableHighlight> */}
-            <View>
-            </View>
-            <View style={[{flex: 1,flexDirection:'row',alignItems:'center',justifyContent: 'center'}, {paddingTop: 8,paddingBottom:10}]}>
-              <Text style={{fontSize: 13,textAlign:'center',paddingLeft:30,paddingRight:30,color:'#a79a95ff',fontWeight:'bold'}}>{this.props.restaurant.short_description}</Text>
-            </View>
+                <Text style={this.props.restaurant.fully_booked ? styles.submitTextDisable : styles.submitText}>{this.props.restaurant.fully_booked ? 'Fully booked' : 'Available'}</Text>
+            </TouchableHighlight>
             <View style={[styles.listNotiView, {paddingBottom: this.props.isAdmin ? 0 : 0}]}>
                 <View style={styles.notiIconView}>
-                    <Text style={{color:'#023e4eff',fontWeight:'bold',fontSize:13}}>TABLE NOTIFICATIONS</Text>
+                    <Text style={{color:'#023e4eff',fontWeight:'bold',fontSize:13}}>GET FIRST SERVED</Text>
                 </View>
             </View>
             <View style={{flexDirection:'row', justifyContent:'flex-end',marginTop:-24,marginBottom: this.props.isFirstTime ? 100 : 24,marginRight:25}}>
@@ -131,30 +129,30 @@ class RestaurantListItem extends Component {
                 activeButtonPressedColor='#023e4eff'
                 inactiveButtonColor='white'
                 inactiveButtonPressedColor='white'/>
-                {this.props.isFirstTime && <View style={{width:(Platform.OS === 'ios'? width - 45:320), justifyContent:'center', position: 'absolute', top: 30, right: 0}}>
-                  <View style={{flexDirection:'row', paddingRight: 20, justifyContent:'flex-end', alignItems:'center'}}>
-                    <Triangle
-                      width={25}
-                      height={25}
-                      color={'#F04847'}
-                      direction={'up'}/>
-                  </View>
-                  <View style={{flexDirection:'row', padding: 15, justifyContent:'center', alignItems:'center', backgroundColor: '#F04847'}}>
-                    <Text style={{flex: 1, color: '#FFF',fontSize:(Platform.OS === 'ios'?14:16)}}>Get notified when tables become available. When notified - hurry up and book to be FirstServed</Text>
-                    <TouchableHighlight
-                      style={{flexDirection: 'row'}}
-                      onPress={() => this.props.hideTooltip()}
-                      underlayColor='#F04847'>
-                        <View style={[styles.notiIconView, {marginLeft: 5}]}>
-                            <Icon
-                                size={15}
-                                name={'times'}
-                                type='font-awesome'
-                                color={'#FFF'}/>
-                        </View>
-                      </TouchableHighlight>
-                  </View>
-                </View>}
+              {this.props.isFirstTime && <View style={{width:(Platform.OS === 'ios'? width - 45:320), justifyContent:'center', position: 'absolute', top: 30, right: 0}}>
+                <View style={{flexDirection:'row', paddingRight: 20, justifyContent:'flex-end', alignItems:'center'}}>
+                  <Triangle
+                    width={25}
+                    height={25}
+                    color={'#F04847'}
+                    direction={'up'}/>
+                </View>
+                <View style={{flexDirection:'row', padding: 15, justifyContent:'center', alignItems:'center', backgroundColor: '#F04847'}}>
+                  <Text style={{flex: 1, color: '#FFF',fontSize:(Platform.OS === 'ios'?14:16)}}>Get notified when tables become available. When notified - hurry up and book to be FirstServed</Text>
+                  <TouchableHighlight
+                    style={{flexDirection: 'row'}}
+                    onPress={() => this.props.hideTooltip()}
+                    underlayColor='#F04847'>
+                      <View style={[styles.notiIconView, {marginLeft: 5}]}>
+                          <Icon
+                              size={15}
+                              name={'times'}
+                              type='font-awesome'
+                              color={'#FFF'}/>
+                      </View>
+                    </TouchableHighlight>
+                </View>
+              </View>}
             </View>
             {this.props.isAdmin && <View style={[styles.rowContainer, {paddingBottom: 58}]}>
               <TouchableHighlight

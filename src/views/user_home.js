@@ -21,8 +21,7 @@ import {
     Linking,
     Modal,
     NetInfo,
-    Alert,
-    AsyncStorage
+    Alert
 } from "react-native";
 
 import Button from "apsl-react-native-button";
@@ -125,10 +124,9 @@ class UserHome extends Component {
       isOnline: false,
       hasToOpenBookingModal: false,
       isDisabled: false,
-      mobileError:false,
+      mobileError: false,
       isFirstTime: this.props.navigation.state.params.isFirstTime,
       isFirstTimeNoti: true,
-      checkID:'',
     };
 
     this._setUserNoti = this._setUserNoti.bind(this);
@@ -146,11 +144,10 @@ class UserHome extends Component {
     this.unmountNetworkListner = this.unmountNetworkListner.bind(this);
     this._hideToolTip = this._hideToolTip.bind(this);
     this.handleNoti = this.handleNoti.bind(this);
-    this.testfunction = this.testfunction.bind(this);
 
     const th = this;
     FCM.on(FCMEvent.Notification, async (notif) => {
-        th.handleNoti(notif);
+      th.handleNoti(notif);
     });
     FCM.on(FCMEvent.RefreshToken, (token) => {
         console.log("RefreshToken", token)
@@ -160,134 +157,134 @@ class UserHome extends Component {
   }
 
   handleNoti(notif){
-    if(notif.tableId && this.state.restaurants !== undefined){
-        // firebase.database().ref("/checkingtables").push(notif)
-
-      // there are two parts of notif. notif.notification contains the notification payload, notif.data contains data payload
-      if(notif.local_notification){
-        //this is a local notification
-        console.log("notif.local_notification", notif.local_notification);
-      }
-      if(notif.opened_from_tray){
-        //app is open/resumed because user clicked banner
-        console.log("notif.opened_from_tray", notif.opened_from_tray);
-      }
-      if(this.state.tableId !== ''  && this.state.tableId === notif.tableId){
-        if(notif.byNotiChange){
-          this.setState({notif: true});
-        }else{
-          this.setState({notif: false});
+    try{
+      if(notif.tableId){
+        // there are two parts of notif. notif.notification contains the notification payload, notif.data contains data payload
+        console.log(notif,'notification');
+        if(notif.local_notification){
+          //this is a local notification
+          console.log("notif.local_notification", notif.local_notification);
         }
-      }else{
-        this.setState({notif: true});
-      }
-      notif.startTime = parseInt(notif.startTime);
-      notif.endTime = parseInt(notif.endTime);
-      var table = {
-        restaurantKey: notif.restaurantKey,
-        startTime: notif.startTime,
-        endTime: notif.endTime,
-        key: notif.tableId,
-        pax: notif.pax
-      };
-      var bookingRestaurantKey = notif.restaurantKey;
-      var rest = {images: [], name: '', booking_message: '', address: ''};
-      for(i = 0; i < this.state.restaurants.length; i++){
-        if(this.state.restaurants[i]._key == notif.restaurantKey){
-          rest = this.state.restaurants[i];
-          break;
+        if(notif.opened_from_tray){
+          //app is open/resumed because user clicked banner
+          console.log("notif.opened_from_tray", notif.opened_from_tray);
         }
-      }
-      var uEndTime = this.state.UserNotifEndTime;
-      var uStartTime = this.state.UserNotifStartTime;
-      var tDiff = uEndTime - uStartTime;
-      var curDate = new Date();
-      if(uEndTime && uEndTime !== 'SET END TIME'){
-        uEndTime = new Date(uEndTime);
-        uEndTime.setDate(curDate.getDate());
-        uEndTime.setMonth(curDate.getMonth());
-        uEndTime.setFullYear(curDate.getFullYear());
-        uEndTime = uEndTime.getTime();
-      }
-      uStartTime = uEndTime - tDiff;
-      if(uStartTime && uStartTime !== 'SET START TIME'){
-        uStartTime = new Date(uStartTime);
-        uStartTime.setDate(curDate.getDate());
-        uStartTime.setMonth(curDate.getMonth());
-        uStartTime.setFullYear(curDate.getFullYear());
-        uStartTime = uStartTime.getTime();
-      }
-
-      var chk = true;
-      if(uEndTime && uStartTime && (notif.endTime < uStartTime || notif.startTime > uEndTime)) chk = false;
-
-      var isAlert = false;
-      if(this.state.tables.length > 0 ){
-        for(i=0; i < this.state.tables.length; i++){
-          var currentBookingStartTime = parseInt(this.state.tables[i].startTime);
-          var currentBookingEndTime = parseInt(this.state.tables[i].endTime);
-          if((Moment(notif.startTime) <= Moment(currentBookingEndTime) && Moment(notif.startTime) >= Moment(currentBookingStartTime)) ||
-              Moment(notif.endTime) <= Moment(currentBookingEndTime) && Moment(notif.endTime) >= Moment(currentBookingStartTime)){
-            isAlert = true;
-            break;
-          }
-        }
-      }
-      var bookedRestaurant = [];
-      for(i = 0; i < this.state.tables.length; i++){
-        var tables = this.state.tables[i];
-        for(j = 0; j < this.state.restaurants.length; j++){
-          var restaurant = this.state.restaurants[j];
-          if(tables.restaurantKey == restaurant._key){
-            bookedRestaurant.push({
-             restaurant: restaurant,
-             table: tables
-           });
-          }
-        }
-      }
-      var isActiveBooking = bookedRestaurant.length > 0 ? true : false;
-      if(chk){
-        if(notif.restaurantKey !== undefined && this.state.notif){
-          if(isActiveBooking && isAlert){
-            Alert.alert('You already have an active booking','Please call the restaurant if you want to cancel your existing booking',[
-              {text:'OK',onPress:()=>{
-                this.setState({bookingTable: table, bookingRestaurant: rest, bookingRestaurantKey: bookingRestaurantKey, tableId: notif.tableId});
-                this.setBookingModalVisible(true)}
-              },
-              {text:'Close',onPress:()=>{console.log('cancel')}
-              }
-            ]);
+        // await someAsyncCall();
+        if(this.state.tableId !== ''  && this.state.tableId === notif.tableId){
+          if(notif.byNotiChange){
+            this.setState({notif: true});
           }else{
-            this.setState({bookingTable: table, bookingRestaurant: rest, bookingRestaurantKey: bookingRestaurantKey, tableId: notif.tableId});
-            this.setBookingModalVisible(true);
+            this.setState({notif: false});
+          }
+        }else{
+          this.setState({notif: true});
+        }
+        notif.startTime = parseInt(notif.startTime);
+        notif.endTime = parseInt(notif.endTime);
+        var table = {
+          restaurantKey: notif.restaurantKey,
+          startTime: notif.startTime,
+          endTime: notif.endTime,
+          key: notif.tableId,
+          pax: notif.pax
+        };
+        var bookingRestaurantKey = notif.restaurantKey;
+        var rest = {images: [], name: '', booking_message: '', address: ''};
+        for(i = 0; i < this.state.restaurants.length; i++){
+          if(this.state.restaurants[i]._key == notif.restaurantKey){
+            rest = this.state.restaurants[i];
+            break;
+          }
+        }
+        var uEndTime = this.state.UserNotifEndTime;
+        var uStartTime = this.state.UserNotifStartTime;
+        var tDiff = uEndTime - uStartTime;
+        var curDate = new Date();
+        if(uEndTime && uEndTime !== 'SET END TIME'){
+          uEndTime = new Date(uEndTime);
+          uEndTime.setDate(curDate.getDate());
+          uEndTime.setMonth(curDate.getMonth());
+          uEndTime.setFullYear(curDate.getFullYear());
+          uEndTime = uEndTime.getTime();
+        }
+        uStartTime = uEndTime - tDiff;
+        // if(uStartTime && uStartTime !== 'SET START TIME'){
+        //   uStartTime = new Date(uStartTime);
+        //   uStartTime.setDate(curDate.getDate());
+        //   uStartTime.setMonth(curDate.getMonth());
+        //   uStartTime.setFullYear(curDate.getFullYear());
+        //   uStartTime = uStartTime.getTime();
+        // }
+
+        var chk = true;
+        if(uEndTime && uStartTime && (notif.endTime < uStartTime || notif.startTime > uEndTime)) chk = false;
+
+        var isAlert = false;
+        if(this.state.tables.length > 0 ){
+          for(i=0; i < this.state.tables.length; i++){
+            var currentBookingStartTime = parseInt(this.state.tables[i].startTime);
+            var currentBookingEndTime = parseInt(this.state.tables[i].endTime);
+            if((Moment(notif.startTime) <= Moment(currentBookingEndTime) && Moment(notif.startTime) >= Moment(currentBookingStartTime)) ||
+                Moment(notif.endTime) <= Moment(currentBookingEndTime) && Moment(notif.endTime) >= Moment(currentBookingStartTime)){
+              isAlert = true;
+              break;
+            }
+          }
+        }
+        var bookedRestaurant = [];
+        for(i = 0; i < this.state.tables.length; i++){
+          var tables = this.state.tables[i];
+          for(j = 0; j < this.state.restaurants.length; j++){
+            var restaurant = this.state.restaurants[j];
+            if(tables.restaurantKey == restaurant._key){
+              bookedRestaurant.push({
+               restaurant: restaurant,
+               table: tables
+             });
+            }
+          }
+        }
+        var isActiveBooking = bookedRestaurant.length > 0 ? true : false;
+        if(chk){
+          if(notif.restaurantKey !== undefined && this.state.notif){
+            if(isActiveBooking && isAlert){
+              Alert.alert('You already have an active booking','Please call the restaurant if you want to cancel your existing booking',[
+                {text:'OK',onPress:()=>{
+                  this.setState({bookingTable: table, bookingRestaurant: rest, bookingRestaurantKey: bookingRestaurantKey, tableId: notif.tableId});
+                  this.setBookingModalVisible(true)}
+                }
+              ]);
+            }else{
+              this.setState({bookingTable: table, bookingRestaurant: rest, bookingRestaurantKey: bookingRestaurantKey, tableId: notif.tableId});
+              this.setBookingModalVisible(true);
+            }
+          }
+        }
+
+        if(os ==='ios'){
+          //optional
+          //iOS requires developers to call completionHandler to end notification process. If you do not call it your background remote notifications could be throttled, to read more about it see the above documentation link.
+          //This library handles it for you automatically with default behavior (for remote notification, finish with NoData; for WillPresent, finish depend on "show_in_foreground"). However if you want to return different result, follow the following code to override
+          //notif._notificationType is available for iOS platfrom
+          switch(notif._notificationType){
+            case NotificationType.Remote:
+              notif.finish(RemoteNotificationResult.NewData) //other types available: RemoteNotificationResult.NewData, RemoteNotificationResult.ResultFailed
+              break;
+            case NotificationType.NotificationResponse:
+              notif.finish();
+              break;
+            case NotificationType.WillPresent:
+              notif.finish(WillPresentNotificationResult.All) //other types available: WillPresentNotificationResult.None
+              break;
           }
         }
       }
-
-      if(os ==='ios'){
-        //optional
-        //iOS requires developers to call completionHandler to end notification process. If you do not call it your background remote notifications could be throttled, to read more about it see the above documentation link.
-        //This library handles it for you automatically with default behavior (for remote notification, finish with NoData; for WillPresent, finish depend on "show_in_foreground"). However if you want to return different result, follow the following code to override
-        //notif._notificationType is available for iOS platfrom
-        switch(notif._notificationType){
-          case NotificationType.Remote:
-            notif.finish(RemoteNotificationResult.NewData) //other types available: RemoteNotificationResult.NewData, RemoteNotificationResult.ResultFailed
-            break;
-          case NotificationType.NotificationResponse:
-            notif.finish();
-            break;
-          case NotificationType.WillPresent:
-            notif.finish(WillPresentNotificationResult.All) //other types available: WillPresentNotificationResult.None
-            break;
-        }
-      }
+    }catch(error){
+      console.log("do not know");
     }
   }
 
   componentWillMount() {
-    // firebase.database().ref("/userMobileTESSPath").push("componentWillMount");
-
     NetInfo.isConnected.fetch().then(isConnected => {
       console.log('First, is ' + (isConnected ? 'online' : 'offline'));
       this.setState({isOnline: isConnected});
@@ -303,8 +300,6 @@ class UserHome extends Component {
 
     try {
       Database.listenUser(this.state.userId, (userSnap) => {
-        // firebase.database().ref("/userMobileTESSPath").push("Inside the userSnap");
-        if (userSnap.val() !== undefined) {
         let isRestaurantNotiOn = {};
         if(userSnap.val().restaurants_noti){
           var keys = Object.keys(userSnap.val().restaurants_noti);
@@ -350,17 +345,13 @@ class UserHome extends Component {
         if(bookedRestaurant.length > 0) isNoBooked = false;
         var sourceB = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
         var selectedTab = this.state.currentTab;
-        if(userSnap.val().UserNotifStartTime && userSnap.val().UserNotifStartTime == 'SET START TIME'){
+        if(userSnap.val().UserNotifStartTime === undefined || (userSnap.val().UserNotifStartTime && userSnap.val().UserNotifStartTime == 'SET START TIME')){
           selectedTab = 3;
-        }else if(userSnap.val().UserNotifEndTime && userSnap.val().UserNotifEndTime == 'SET END TIME'){
+        }else if(userSnap.val().UserNotifEndTime === undefined || (userSnap.val().UserNotifEndTime && userSnap.val().UserNotifEndTime == 'SET END TIME')){
           selectedTab = 3;
-        }else if(!userSnap.val().pax || !userSnap.val().phone_number){
+        }else if(!userSnap.val().pax || !userSnap.val().phone_number || userSnap.val().pax == '0' || userSnap.val().phone_number == ''){
           selectedTab = 3;
         }
-        // firebase.database().ref("/userMobileTESSPath").push({favourites:this.state.favourites});
-        // firebase.database().ref("/userMobileTESSPath").push({state:this.state.toString()});
-        // firebase.database().ref("/userMobileTESSPath").push("Before State set function is called");
-        // firebase.database().ref("/userMobileTESSPath").push({pax:userSnap.val()});
 
         this.setState({
           currentTab: selectedTab,
@@ -377,8 +368,6 @@ class UserHome extends Component {
           favoriteDataSource: this.state.favoriteDataSource.cloneWithRows(favourites),
           bookedDataSource: sourceB.cloneWithRows(bookedRestaurant)
         });
-        // firebase.database().ref("/userMobileTESSPath").push("after setstate function called");
-      }
       });
       const th = this;
       this.ref = firebase.database().ref("tables");
@@ -413,37 +402,25 @@ class UserHome extends Component {
 
         var isNoBooked = true;
         if(bookedRestaurant.length > 0) isNoBooked = false;
-        // firebase.database().ref("/userMobileTESSPath").push("tables");
+
         th.setState({
           isNoBooked: isNoBooked,
           tables: tables,
           bookedDataSource: th.state.bookedDataSource.cloneWithRows(bookedRestaurant)
-        }, function stateUpdateComplete() {
-          FCM.getInitialNotification().then(notif => th.testfunction(notif));
-        }.bind(th));
+        });
+
         // initial notification contains the notification that launchs the app. If user launchs app by clicking banner, the banner notification info will be here rather than through FCM.on event
         // sometimes Android kills activity when app goes to background, and when resume it broadcasts notification before JS is run. You can use FCM.getInitialNotification() to capture those missed events.
-
         if(th.state.isFirstTimeNoti){
-          // firebase.database().ref("/userMobileTESSPath").push("before the timeout");
-          setTimeout(() => {FCM.getInitialNotification().then(notif => th.testfunction(notif))}, 22000);
+          setTimeout(() => {FCM.getInitialNotification().then(notif => th.handleNoti(notif))}, 1000);
+          th.setState({isFirstTimeNoti: false});
         }
       });
     } catch (error) {
       console.log(error);
     }
   }
-  testfunction(notif){
-    if (notif) {
-      if (this.state.isFirstTimeNoti) {
-       this.handleNoti(notif);
-       this.setState({isFirstTimeNoti: false });
-     }
-    }
-    // else {
-    //   firebase.database().ref("/userMobileTESSPath").push("Notify is not available");
-    // }
-  }
+
   componentDidMount(){
     const th = this;
     FCM.requestPermissions()
@@ -489,11 +466,9 @@ class UserHome extends Component {
 
     onItemSelect() {
       if (Platform.OS === 'ios') {
-        this.setState({selectedMember:this.state.selectedMember})
-        this.setState({isOpenWheelPicker: false});
+        this.setState({selectedMember: this.state.selectedMember, memberError: false, isOpenWheelPicker: false})
       }else {
-        this.setState({selectedMember: this.state.selectedindex})
-        this.setState({isOpenWheelPicker: false});
+        this.setState({selectedMember: this.state.selectedindex, memberError: false, isOpenWheelPicker: false})
       }
     }
     onCancel() {
@@ -508,6 +483,7 @@ class UserHome extends Component {
       this.setState({isOpenWheelPicker: value});
     }
   render() {
+    console.log(this.state);
     const buttonName = (this.state.saved  ? "Saved" : "Save Changes" )
     return (
       <View style={styles.container}>
@@ -627,28 +603,43 @@ class UserHome extends Component {
           </View>}
           {this.state.currentTab == 3 && (this.state.isLoading ?<View style={{flex:1, marginBottom:56}}>
             <ScrollView keyboardDismissMode={'none'}>
-            <View style={styles.container}>
-              <View style={styles.navBar}>
-                <TouchableHighlight
-                  style={[styles.headingRight]}
-                  onPress={() => this.logout(this, function(uh){
-                    DefaultPreference.clearAll();
-                    const resetAction = NavigationActions.reset({
-                      index: 0,
-                      actions: [NavigationActions.navigate({ routeName: 'Home'})]
-                    });
-                    uh.props.navigation.dispatch(resetAction);
-                  })}>
-                  <View style={[styles.headingRight]}>
-                    <Text style={{marginBottom:5, color: '#023e4eff', fontSize: 16, paddingRight: 10}}>Sign out</Text>
-                    <Icon
-                      name='sign-out'
-                      type='octicon'
-                      color='#023e4eff'/>
-                  </View>
-                </TouchableHighlight>
+              <View style={styles.container}>
+                <View style={styles.navBar}>
+                  <TouchableHighlight
+                    style={[styles.headingRight]}
+                    onPress={() => this.logout(this, function(uh){
+                      DefaultPreference.clearAll();
+                      const resetAction = NavigationActions.reset({
+                        index: 0,
+                        actions: [NavigationActions.navigate({ routeName: 'Home'})]
+                      });
+                      uh.props.navigation.dispatch(resetAction);
+                    })}>
+                    <View style={[styles.headingRight]}>
+                      <Text style={{marginBottom:5, color: '#023e4eff', fontSize: 16, paddingRight: 10}}>Sign out</Text>
+                      <Icon
+                        name='sign-out'
+                        type='octicon'
+                        color='#023e4eff'/>
+                    </View>
+                  </TouchableHighlight>
+                </View>
               </View>
-            </View>
+              <View style={[styles.rowContainer, {paddingTop: 10}]}>
+                <Text style={{color: '#023e4eff', fontSize: 16, textAlign:'center', paddingLeft: 10, paddingRight: 10}}>
+                  Is everything fully booked today?
+                </Text>
+              </View>
+              <View style={[styles.rowContainer, {paddingTop: 10}]}>
+                <Text style={{color: '#023e4eff', fontSize: 16, textAlign:'center', paddingLeft: 10, paddingRight: 10}}>
+                  Join our waitingslists and get notified when tables open up. When notified, hurry up and book. First come – FirstServed.
+                </Text>
+              </View>
+              <View style={[styles.rowContainer, {paddingTop: 10}]}>
+                <Text style={{color: '#023e4eff', fontSize: 16, textAlign:'center', paddingLeft: 10, paddingRight: 10}}>
+                  To get FirstServed, please fill out the following details. Then go to our list of restaurants and choose from which restaurants you would like to get notified.
+                </Text>
+              </View>
               <View style={[styles.rowContainer,{paddingTop:15,paddingBottom:5}]}>
                 <View style={[styles.avtarCircle]}>
                   <Image style={{position: 'absolute', width: 95, height: 95, borderRadius: 50}} source={{uri: this.props.navigation.state.params.photoUrl ? this.props.navigation.state.params.photoUrl : 'https://firebasestorage.googleapis.com/v0/b/first-served-c9197.appspot.com/o/both.jpg?alt=media&token=9c17e2cf-262f-4450-959a-91d8b109a6fe'}} />
@@ -664,19 +655,24 @@ class UserHome extends Component {
                     name='cutlery'
                     type='font-awesome'
                     color='#023e4eff'/>
-                    <View style={{flexDirection:'row',marginLeft:10}}>
-                      <Text style={{color: '#023e4eff', fontSize: 16, paddingLeft: 10}}>Table for</Text>
-                      <TouchableHighlight onPress={()=>{this.onSelectWheeler(true)}}>
-                        <View style={{flexDirection:'row',marginRight:3}}>
-                          <Text style={{fontSize: 16, color:'#023e4eff',marginLeft:8, marginRight:5 }}>
-                            {this.state.selectedMember}
-                          </Text>
-                          <Icon name='sort-desc' size={12} style={{marginTop:1}} type='font-awesome' color='#626262'/>
-                        </View>
-                      </TouchableHighlight>
-                      <Text style={{fontSize: 16, color:'#023e4eff'}}> people</Text>
-                    </View>
+                  <View style={{flexDirection:'row',marginLeft:10}}>
+                    <Text style={{color: '#023e4eff', fontSize: 16, paddingLeft: 10, marginRight: 3}}>Table for</Text>
+                    <TouchableHighlight onPress={()=>{this.onSelectWheeler(true)}}>
+                      <View style={{flexDirection:'row', marginRight: 3, paddingRight: 3, width: 40, height: 25, borderColor:'rgba(2,62,78,0.12)', borderWidth: 1}}>
+                        <Text style={{fontSize: 16, color:'#023e4eff', marginLeft: 8, marginRight: 5 }}>
+                          {this.state.selectedMember}
+                        </Text>
+                        <Icon name='sort-desc' size={20} style={{marginTop:-3}} type='font-awesome' color='#626262'/>
+                      </View>
+                    </TouchableHighlight>
+                    <Text style={{fontSize: 16, color:'#023e4eff'}}> people</Text>
+                  </View>
                 </View>
+                {this.state.memberError?
+                  <Text style={{color:'red', fontSize: 14, marginLeft: 10, paddingBottom: 5}}>Number of people per table should be more than 0.</Text>
+                  :
+                  null
+                }
                 <View style={styles.bottomBorder} >
                 <View style={[styles.rowContainer, {paddingTop: 9,paddingBottom:9, justifyContent: 'flex-start'}]}>
                   <Icon
@@ -691,63 +687,59 @@ class UserHome extends Component {
                       keyboardType={'phone-pad'}
                       onChangeText={(mobile) => this._setMobile(mobile)}
                       value={this.state.mobile}/>
-
-
                 </View>
                 {this.state.mobileError?
-                  <Text style={{color:'red',fontSize:14,marginLeft:10,paddingBottom:5}}>Enter Mobile Number</Text>
+                  <Text style={{color:'red',fontSize:14,marginLeft:10,paddingBottom:5}}>Please Enter Mobile Number</Text>
                   :
                   null
                 }
               </View>
-                <View style={[styles.bottomBorder,{marginTop:8,marginBottom:8}]} >
-                  <View style={{flexDirection:'row'}} >
-                    <Icon
-                      size={39}
-                      style={{marginTop:3}}
-                      name='md-time'
-                      type='ionicon'
-                      color='#023e4eff'/>
-                      <View style={{marginTop:7, marginLeft:19,flexDirection:'column'}}>
-                        <Text style={{marginTop:5,marginLeft:1,fontSize:16,color:'#023e4eff'}} >Notifiy me of tables between:</Text>
-                        <View style={{flexDirection:'row', paddingTop:10,marginTop:5}} >
-                            <Text style={{color:'#023e4eff',fontSize:16}} >
-                              From:
+              <View style={[styles.bottomBorder,{marginTop:8,marginBottom:8}]} >
+                <View style={{flexDirection:'row'}} >
+                  <Icon
+                    size={39}
+                    style={{marginTop:3}}
+                    name='md-time'
+                    type='ionicon'
+                    color='#023e4eff'/>
+                    <View style={{marginTop: 7, marginLeft: 19, marginRight: 5, flexDirection:'column'}}>
+                      <Text style={{marginTop:5,marginLeft:1,fontSize:16,color:'#023e4eff'}}>Notify me of tables available between:</Text>
+                      <View style={{flexDirection:'row', paddingTop:10,marginTop:5}} >
+                        <Text style={{color:'#023e4eff',fontSize:16}} >
+                          From:
+                        </Text>
+                        <TouchableHighlight
+                          onPress={() => this._showDateTimePicker(1)}
+                          underlayColor={HEXCOLOR.lightBrown}>
+                          <View >
+                            <Text style={{ color:'#023e4eff', fontSize: 16,fontWeight:'bold'}}>
+                              {this.state.UserNotifStartTime === 'SET START TIME' ? this.state.UserNotifStartTime : Moment(this.state.UserNotifStartTime).format(' HH:mm')}*
                             </Text>
-                            <TouchableHighlight
-                              onPress={() => this._showDateTimePicker(1)}
-                              underlayColor={HEXCOLOR.lightBrown}>
-                              <View >
-                                <Text style={{ color:'#023e4eff', fontSize: 16,fontWeight:'bold'}}>
-                                  {this.state.UserNotifStartTime === 'SET START TIME' ? this.state.UserNotifStartTime : Moment(this.state.UserNotifStartTime).format(' HH:mm')}*
-                                </Text>
-                              </View>
-                            </TouchableHighlight>
                           </View>
-                          <View style={{flexDirection:'row',marginTop:15,marginBottom:15}}>
-                            <Text style={{color:'#023e4eff',marginRight:5,fontSize:16}} >To:</Text>
-                            <TouchableHighlight
-                              onPress={() => this._showDateTimePicker(2)}
-                              underlayColor={HEXCOLOR.lightBrown}>
-                              <View style={{marginLeft:17}}>
-                                <Text style={{color:'#023e4eff', fontSize: 16,fontWeight:'bold'}}>
-                                  {this.state.UserNotifEndTime === 'SET END TIME' ? this.state.UserNotifEndTime : Moment(this.state.UserNotifEndTime).format('HH:mm')}*
-                                </Text>
-                              </View>
-                            </TouchableHighlight>
-                            <DateTimePicker
-                              titleIOS='Time'
-                              isVisible={this.state.isDateTimePickerVisible}
-                              onConfirm={this._handleDatePicked}
-                              onCancel={this._hideDateTimePicker}
-                              mode='time'/>
-                        </View>
+                        </TouchableHighlight>
                       </View>
+                      <View style={{flexDirection:'row',marginTop:15,marginBottom:15}}>
+                        <Text style={{color:'#023e4eff',marginRight:5,fontSize:16}} >To:</Text>
+                        <TouchableHighlight
+                          onPress={() => this._showDateTimePicker(2)}
+                          underlayColor={HEXCOLOR.lightBrown}>
+                          <View style={{marginLeft:17}}>
+                            <Text style={{color:'#023e4eff', fontSize: 16,fontWeight:'bold'}}>
+                              {this.state.UserNotifEndTime === 'SET END TIME' ? this.state.UserNotifEndTime : Moment(this.state.UserNotifEndTime).format('HH:mm')}*
+                            </Text>
+                          </View>
+                        </TouchableHighlight>
+                        <DateTimePicker
+                          titleIOS='Time'
+                          isVisible={this.state.isDateTimePickerVisible}
+                          onConfirm={this._handleDatePicked}
+                          onCancel={this._hideDateTimePicker}
+                          mode='time'/>
+                      </View>
+                    </View>
                   </View>
-
+                </View>
               </View>
-            </View>
-
               <View style={[{marginTop:10,marginBottom:20, alignItems:'center'}]}>
                 <View style={{marginLeft: 60, marginRight: 60}}>
                   <Button onPress={()=>{this.save()}} style={{width:165,backgroundColor: '#023e4eff',borderRadius:0}} textStyle={{color: '#FFF', fontSize: 15}}>
@@ -755,9 +747,14 @@ class UserHome extends Component {
                   </Button>
                 </View>
               </View>
-          </ScrollView>
-        </View>
-          :<View style={{flex:1,justifyContent:'center',flexDirection:'column',alignItems:'center'}}><Progress.Circle size={30} indeterminate={true} /></View>)}
+              <View style={[styles.rowContainer, {paddingBottom: 25}]}>
+                <Text style={{color: '#023e4eff', fontSize: 16, textAlign:'center', paddingLeft: 10, paddingRight: 10}}>
+                  You can also use our app to explore great dining experiences, see which restaurants have available tables and book your table online – for this service, go straight to our list of restaurants.
+                </Text>
+              </View>
+            </ScrollView>
+          </View> :
+          <View style={{flex:1,justifyContent:'center',flexDirection:'column',alignItems:'center'}}><Progress.Circle size={30} indeterminate={true} /></View>)}
           {this.state.restaurants.map((restaurant, key) => {
             return(
               <Modal
@@ -771,47 +768,48 @@ class UserHome extends Component {
                   setModalVisible={this._setModalVisible}
                   setValue={this._setValue}
                   isAdmin={false}
+                  isInfoIconHidden={true}
                   isRestaurantNotiOn={this.state.isRestaurantNotiOn}
                   setFavourite={this._setFavourite}
                   favourites={this.state.favourites}
                   openMap={this._openMapview}/>
-              </Modal>)
-            })
-          }
-          <BottomNavigation
-            labelColor="white"
-            rippleColor="white"
-            style={{ height: 56, elevation: 8, position: 'absolute', left: 0, bottom: 0, right: 0 }}
-            onTabChange={(newTabIndex) => this.tabChanged(newTabIndex)}
-            activeTab={this.state.currentTab}>
-            <Tab
-              barBackgroundColor="#023e4eff"
-              label="Restaurants"
-              icon={<Image resizeMode="contain" source={require('../images/restaurant-01.png')} style={{width:14,height:17,marginTop:2}} />}
-              // icon={<Icon size={24} color="white" name="restaurant" />}
-            />
-            <Tab
-              barBackgroundColor="#023e4eff"
-              label="Favourites"
-              icon={<Image resizeMode="contain" source={require('../images/favourite-01.png')} style={{width:18,height:24}} />}
-              // icon={<Icon size={24} color="white" name="favorite-border" />}
-            />
-            <Tab
-              barBackgroundColor="#023e4eff"
-              label="Bookings"
-              icon={<Image resizeMode="contain" source={require('../images/bookings-01.png')} style={{width:18,height:24}} />}
-              // icon={<Icon size={24} color="white" name="query-builder" />}
-            />
-            <Tab
-              barBackgroundColor="#023e4eff"
-              label="Start"
-              icon={<Image resizeMode="contain" source={require('../images/account-01.png')} style={{width:18,height:26,marginLeft:5}} />}
-              // icon={<Icon size={24} color="white" name="account-circle" />}
-            />
-          </BottomNavigation>
-        </View>
-      );
-    }
+                </Modal>)
+              })
+            }
+            <BottomNavigation
+              labelColor="white"
+              rippleColor="white"
+              style={{ height: 56, elevation: 8, position: 'absolute', left: 0, bottom: 0, right: 0 }}
+              onTabChange={(newTabIndex) => this.tabChanged(newTabIndex)}
+              activeTab={this.state.currentTab}>
+              <Tab
+                barBackgroundColor="#023e4eff"
+                label="Restaurants"
+                icon={<Image resizeMode="contain" source={require('../images/restaurant-01.png')} style={{width:14,height:17,marginTop:2}} />}
+                // icon={<Icon size={24} color="white" name="restaurant" />}
+              />
+              <Tab
+                barBackgroundColor="#023e4eff"
+                label="Favourites"
+                icon={<Image resizeMode="contain" source={require('../images/favourite-01.png')} style={{width:18,height:24}} />}
+                // icon={<Icon size={24} color="white" name="favorite-border" />}
+              />
+              <Tab
+                barBackgroundColor="#023e4eff"
+                label="Bookings"
+                icon={<Image resizeMode="contain" source={require('../images/bookings-01.png')} style={{width:18,height:24}} />}
+                // icon={<Icon size={24} color="white" name="query-builder" />}
+              />
+              <Tab
+                barBackgroundColor="#023e4eff"
+                label="FirstServed"
+                icon={<Image resizeMode="contain" source={require('../images/ic_noti_icon.png')} style={{width:18,height:26,marginLeft:5}} />}
+                // icon={<Icon size={24} color="white" name="account-circle" />}
+              />
+            </BottomNavigation>
+          </View>
+        );
+      }
     logout(th, callback){
       firestack.auth.signOut()
         .then(res => {
@@ -830,31 +828,41 @@ class UserHome extends Component {
     _handleDatePicked = (date) => {
       if(this.state.timePickerFor == 1 ){
         if(this.state.UserNotifEndTime !== 'SET END TIME'){
+          this._hideDateTimePicker();
           var eDate = new Date(this.state.UserNotifEndTime);
           eDate.setDate(date.getDate());
           eDate.setMonth(date.getMonth());
           eDate.setFullYear(date.getFullYear());
           this.setState({UserNotifStartTime: date.getTime(), UserNotifEndTime:  eDate.getTime()});
         }else{
+          console.log(date, date.getTime());
           this.setState({UserNotifStartTime: date.getTime() });
         }
-      }else if(this.state.timePickerFor == 2 && ( this.state.UserNotifStartTime && date.getTime() > this.state.UserNotifStartTime ) ){
-        this.setState({UserNotifEndTime: date.getTime()});
+        this._hideDateTimePicker();
+      }else if(this.state.timePickerFor == 2 && ( this.state.UserNotifStartTime !== 'SET START TIME' && date.getTime() > this.state.UserNotifStartTime ) ){
+        this._hideDateTimePicker();
+        var sDate = new Date(this.state.UserNotifStartTime);
+        sDate.setDate(date.getDate());
+        sDate.setMonth(date.getMonth());
+        sDate.setFullYear(date.getFullYear());
+        this.setState({UserNotifEndTime: date.getTime(), UserNotifStartTime:  sDate.getTime()});
       }else{
-        alert("End time must be more than Start time.");
+        this._hideDateTimePicker();
+        setTimeout(() => {Alert.alert('Notification Time', 'End time must be more than Start time.', [
+          {text: 'OK', onPress: () => {console.log("ok pressed.")}}
+        ]);}, 600);
       }
-      this._hideDateTimePicker();
     };
 
     tabChanged(idx){
-      if(this.state.pax == '0' || this.state.mobile == '' ){
-        // idx = 3;
-        if (Platform.OS === 'android') {
-          ToastAndroid.showWithGravity('Please complete your profile.', ToastAndroid.SHORT, ToastAndroid.BOTTOM);
-        } else if (Platform.OS === 'ios') {
-          AlertIOS.alert('Please complete your profile.');
-        }
-      }
+      // if(this.state.pax == '0' || this.state.mobile == '' ){
+      //   // idx = 3;
+      //   if (Platform.OS === 'android') {
+      //     ToastAndroid.showWithGravity('Please complete your profile.', ToastAndroid.SHORT, ToastAndroid.BOTTOM);
+      //   } else if (Platform.OS === 'ios') {
+      //     AlertIOS.alert('Please complete your profile.');
+      //   }
+      // }
       console.log("currentTab", idx);
       const {setParams} = this.props.navigation;
       let title = "Restaurants";
@@ -873,23 +881,23 @@ class UserHome extends Component {
     }
 
     _setUserNoti(val){
-        Database.setUserNotiSetting(this.state.userId, val);
-        this.setState({notificationOn: val});
+      Database.setUserNotiSetting(this.state.userId, val);
+      this.setState({notificationOn: val});
     }
 
     _setPax(val){
-        this.setState({pax: val});
+      this.setState({pax: val});
     }
 
     _setMobile(val){
-        this.setState({mobile: val});
+      this.setState({mobile: val, mobileError: false});
     }
 
     save(){
-      this.setState({isLoading: false, saved: true});
+      this.setState({isLoading: false, saved: true, mobileError: false, memberError: false});
       if (this.state.mobile && this.state.selectedMember) {
         if(this.state.UserNotifStartTime >= this.state.UserNotifEndTime){
-          this.setState({isLoading: true,mobileError:false})
+          this.setState({isLoading: true, mobileError: false})
           if (Platform.OS === 'android') {
             ToastAndroid.showWithGravity('Notification Start time should be less than End time.', ToastAndroid.SHORT, ToastAndroid.BOTTOM);
           } else if (Platform.OS === 'ios') {
@@ -897,13 +905,18 @@ class UserHome extends Component {
           }
         }else{
           Database.setUserData(this.props.navigation.state.params.userId, this.state.selectedMember, this.state.mobile, this.state.UserNotifStartTime, this.state.UserNotifEndTime).then(()=>{
-            this.setState({isLoading:true,mobileError:false})
+            this.setState({isLoading: true, mobileError: false})
           });
         }
-    }else if(this.state.mobile === ''){
-        this.setState({mobileError:true,isLoading:true});
+      }else if(this.state.selectedMember == 0){
+          this.setState({memberError: true, isLoading: true});
+      }else if(this.state.mobile === ''){
+          this.setState({mobileError: true, isLoading: true});
+      }else{
+          this.setState({isLoading: true});
+      }
     }
-}
+
     _renderItem(restaurant) {
         return (
             <RestaurantListItem restaurant={restaurant}
@@ -952,26 +965,32 @@ class UserHome extends Component {
 
     _setValue(id, value){
       console.log(value);
+      if(this.state.pax == '0' || this.state.UserNotifStartTime === 'SET START TIME' || this.state.UserNotifEndTime === 'SET END TIME'){
+        Alert.alert('Notification','In order to enable notifications, please fill out the details under the tab "FirstServed".',[
+          {text:'OK',onPress:()=>{console.log('ok pressed.')}}
+        ]);
+      }else{
         Database.setUserRestaurantNotiSetting(id, this.state.userId, value);
         this.state.isRestaurantNotiOn[id] = value;
-        var source = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
-        var sourceF = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
-        var keys = Object.keys(this.state.favourites);
-        var favourites = [];
-        for(i = 0; i < this.state.restaurants.length; i++){
-          if(keys.indexOf(this.state.restaurants[i]._key) > -1 && this.state.favourites[this.state.restaurants[i]._key]) favourites.push(this.state.restaurants[i]);
-        }
+      }
+      var source = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
+      var sourceF = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
+      var keys = Object.keys(this.state.favourites);
+      var favourites = [];
+      for(i = 0; i < this.state.restaurants.length; i++){
+        if(keys.indexOf(this.state.restaurants[i]._key) > -1 && this.state.favourites[this.state.restaurants[i]._key]) favourites.push(this.state.restaurants[i]);
+      }
 
-        var isNoFavourite = true;
-        if(favourites.length > 0) isNoFavourite = false;
+      var isNoFavourite = true;
+      if(favourites.length > 0) isNoFavourite = false;
 
-        this.setState({
-          isNoFavourite: isNoFavourite,
-          favourites: this.state.favourites,
-          isRestaurantNotiOn: this.state.isRestaurantNotiOn,
-          dataSource: source.cloneWithRows(this.state.restaurants),
-          favoriteDataSource: sourceF.cloneWithRows(favourites)
-        });
+      this.setState({
+        isNoFavourite: isNoFavourite,
+        favourites: this.state.favourites,
+        isRestaurantNotiOn: this.state.isRestaurantNotiOn,
+        dataSource: source.cloneWithRows(this.state.restaurants),
+        favoriteDataSource: sourceF.cloneWithRows(favourites)
+      });
     }
 
     _hideToolTip(){
@@ -1063,34 +1082,11 @@ class UserHome extends Component {
       var restaurantId = this.state.bookingRestaurant._key;
       Database.bookTable(this.state.bookingRestaurant, this.state.userId, this.state.tableId, function(isBooked){
         if(isBooked){
-          var isRestaurantNotiOn = this.state;
-          Database.resetUserRestaurantNotiSetting(UserId);
-          // isRestaurantNotiOn[restaurantId] = false;
-          var source = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
-          var sourceF = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
-          var favourites = th.state.favourites;
-          if(favourites !== undefined){
-
-          var keys = Object.keys(favourites);
-          var favourites = [];
-          for(i = 0; i < th.state.restaurants.length; i++){
-            if(keys.indexOf(th.state.restaurants[i]._key) > -1 && th.state.favourites[th.state.restaurants[i]._key]) favourites.push(th.state.restaurants[i]);
-          }
-
-          var isNoFavourite = true;
-          if(favourites.length > 0) isNoFavourite = false;
-
-          th.setState({
-            isNoFavourite: isNoFavourite,
-            favourites: th.state.favourites,
-            isRestaurantNotiOn: th.state.isRestaurantNotiOn,
-            dataSource: source.cloneWithRows(th.state.restaurants),
-            favoriteDataSource: sourceF.cloneWithRows(favourites)
-          });
-        }
           th.refs.modal3.open()
           th.setBookingModalVisible(false)
           th.setState({currentTab: 2});
+
+          Database.resetUserRestaurantNotiSetting(UserId);
         }else{
           console.log(isBooked,'fail');
           if (Platform.OS === 'android') {
@@ -1104,7 +1100,6 @@ class UserHome extends Component {
            ]);
           }
         }
-        FCM.cancelAllLocalNotifications();
         FCM.removeAllDeliveredNotifications();
       });
     }

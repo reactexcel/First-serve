@@ -11,7 +11,8 @@ import {
     Switch,
     NetInfo,
     Dimensions,
-    Platform
+    Platform,
+    ScrollView
 } from "react-native";
 
 import Button from "apsl-react-native-button";
@@ -163,12 +164,12 @@ class PublishTable extends Component {
       );
     }else{
       return (
-        <View style={{flex: 1,
-    		backgroundColor: HEXCOLOR.pureWhite,}}>
-          <View style={[CommonStyle.rowContainerHCenter, {marginTop: 50}]}>
+        <ScrollView style={{flex: 1, backgroundColor: HEXCOLOR.pureWhite}}>
+        <View>
+          <View style={[CommonStyle.rowContainerHCenter, {marginTop: 30}]}>
             <Text style={{fontSize:13,color: '#023e4eff'}}>Table available for :</Text>
           </View>
-          <View style={[CommonStyle.rowContainerHCenter, {marginTop: 20}]}>
+          <View style={[CommonStyle.rowContainerHCenter, {marginTop: 10}]}>
             <View style={[CommonStyle.rectangle, {width: (Platform.OS === 'ios'?null:210), height: (Platform.OS === 'ios'?null:38), flexDirection:'row'}]}>
               <TouchableHighlight
                 onPress={() => this.minus()}
@@ -189,10 +190,10 @@ class PublishTable extends Component {
               </TouchableHighlight>
             </View>
           </View>
-          <View style={[CommonStyle.rowContainerHCenter, {marginTop: 48}]}>
+          <View style={[CommonStyle.rowContainerHCenter, {marginTop: 30}]}>
             <Text style={{fontSize:13,color: '#023e4eff'}}>Table is available from:</Text>
           </View>
-          <View style={[CommonStyle.rowContainerHCenter, {marginTop: 20}]}>
+          <View style={[CommonStyle.rowContainerHCenter, {marginTop: 10}]}>
             <TouchableHighlight
               onPress={() => this._showDateTimePicker(1)}
               underlayColor={HEXCOLOR.lightBrown}>
@@ -209,10 +210,10 @@ class PublishTable extends Component {
           </View>
           :
           null}
-          <View style={[{flex:0.3,flexDirection:'row',justifyContent:'center', alignItems:'center', marginTop: 50}]}>
+          <View style={[{flex:0.3,flexDirection:'row',justifyContent:'center', alignItems:'center', marginTop: 30}]}>
             <Text style={{width:230,fontSize:13,color: '#023e4eff',textAlign:'center'}}>The latest the guest should leave the table:</Text>
           </View>
-          <View style={[CommonStyle.rowContainerHCenter, {marginTop: 20}]}>
+          <View style={[CommonStyle.rowContainerHCenter, {marginTop: 10}]}>
             <TouchableHighlight
               onPress={() => this._showDateTimePicker(2)}
               underlayColor={'#023e4eff'}>
@@ -223,7 +224,7 @@ class PublishTable extends Component {
               </View>
             </TouchableHighlight>
           </View>
-          <View style={{flexDirection:'row',justifyContent:'center',alignItems:'center',marginTop: 50,}}>
+          <View style={{flexDirection:'row',justifyContent:'center',alignItems:'center',marginTop: 30,}}>
             <TouchableHighlight
               style={[CommonStyle.publish, {alignItems:'center',width:155,backgroundColor:'#023e4eff',borderRadius:0}]}
               onPress={() => this.publishTable()}
@@ -239,6 +240,7 @@ class PublishTable extends Component {
             is24Hour={true}
             mode='time'/>
         </View>
+        </ScrollView>
       );
     }
   }

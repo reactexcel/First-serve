@@ -92,7 +92,7 @@ class RestaurantView extends Component {
         </View>
         <ScrollView keyboardDismissMode={'none'}>
           <View style={CommonStyle.swiperModal}>
-            <GallerySwiper {...this.props} openModel={() => {}} />
+            <GallerySwiper {...this.props} openModel={() => {}} isInfoIconHidden={this.props.isInfoIconHidden}/>
           </View>
           <View style={[{paddingLeft: 15, paddingRight: 15}]}>
             <Text style={[{color: '#023e4eff', paddingTop: 16, paddingBottom: 20}]}>{this.props.restaurant.long_description}</Text>
@@ -100,7 +100,7 @@ class RestaurantView extends Component {
             <View style={[CommonStyle.listNotiView, CommonStyle.bottomBorder,CommonStyle.topBorder, {paddingBottom: 33,paddingTop:30}]}>
               {/* <View style={[CommonStyle.listNotiView, {paddingBottom: this.props.isAdmin ? 0 : 0}]}> */}
                   <View style={CommonStyle.notiIconView}>
-                      <Text style={{paddingTop:3,color:'#023e4eff',fontWeight:'bold',fontSize:13}}>TABLE NOTIFICATIONS</Text>
+                      <Text style={{paddingTop:3,color:'#023e4eff',fontWeight:'bold',fontSize:13}}>GET FIRST SERVED</Text>
                   </View>
               {/* </View> */}
             </View>
