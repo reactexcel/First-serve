@@ -632,17 +632,17 @@ class UserHome extends Component {
               </View>
               <View style={[styles.rowContainer, {paddingTop: 10}]}>
                 <Text style={{color: '#023e4eff', fontSize: 16, textAlign:'center', paddingLeft: 10, paddingRight: 10}}>
-                  Is everything fully booked today?
+                  Notify me of tables with seating between:
                 </Text>
               </View>
               <View style={[styles.rowContainer, {paddingTop: 10}]}>
                 <Text style={{color: '#023e4eff', fontSize: 16, textAlign:'center', paddingLeft: 10, paddingRight: 10}}>
-                  Join our waiting list and get notified when tables open up. When notified, hurry up and book. First come – FirstServed.
+                Join our waiting list and get notified when tables open up. When notified, hurry up and book. First come – FirstServed.
                 </Text>
               </View>
               <View style={[styles.rowContainer, {paddingTop: 10}]}>
                 <Text style={{color: '#023e4eff', fontSize: 16, textAlign:'center', paddingLeft: 10, paddingRight: 10}}>
-                  To get FirstServed, please fill out the following details. Then go to our list of restaurants and choose from which restaurants you would like to get notified.
+                  To be FirstServed, please fill out the following details:
                 </Text>
               </View>
               <View style={[styles.rowContainer,{paddingTop:15,paddingBottom:5}]}>
@@ -729,7 +729,7 @@ class UserHome extends Component {
                     type='ionicon'
                     color='#023e4eff'/>
                     <View style={{marginTop: 7, marginLeft: 19, marginRight: 5, flexDirection:'column'}}>
-                      <Text style={{marginTop:5,marginLeft:1,fontSize:16,color:'#023e4eff'}}>Notify me of tables available between:</Text>
+                      <Text style={{marginTop:5,marginLeft:1,fontSize:16,color:'#023e4eff'}}>Notify me of tables with seating between:</Text>
                       <View style={{flexDirection:'row', paddingTop:10,marginTop:5}} >
                         <Text style={{color:'#023e4eff',fontSize:16}} >
                           From:
@@ -846,7 +846,16 @@ class UserHome extends Component {
           console.error('Uh oh... something weird happened error: ' + err);
         })
     }
-
+    _checkInterValTime(date){
+      let startTime = Moment(this.state.UserNotifStartTime);
+      let endTime = Moment(date.getTime());
+      var duration = Moment.duration(endTime.diff(startTime));
+      var days = duration.asMinutes();
+      if(Math.trunc( days ) !== 0 && Math.trunc( days ) <= 15   ){
+        return true
+      }
+      return false; 
+    }
     _showDateTimePicker = (openFor) => {this.setState({ timePickerFor: openFor, isDateTimePickerVisible: true})};
 
     _hideDateTimePicker = () => this.setState({timePickerFor: 0, isDateTimePickerVisible: false });
@@ -865,7 +874,7 @@ class UserHome extends Component {
           this.setState({UserNotifStartTime: date.getTime() });
         }
         this._hideDateTimePicker();
-      }else if(this.state.timePickerFor == 2 && ( this.state.UserNotifStartTime !== 'SET START TIME' && date.getTime() > this.state.UserNotifStartTime ) ){
+      }else if(this.state.timePickerFor == 2 && ( this.state.UserNotifStartTime !== 'SET START TIME' && this._checkInterValTime(date) ) ){
         this._hideDateTimePicker();
         var sDate = new Date(this.state.UserNotifStartTime);
         sDate.setDate(date.getDate());
@@ -874,7 +883,7 @@ class UserHome extends Component {
         this.setState({UserNotifEndTime: date.getTime(), UserNotifStartTime:  sDate.getTime()});
       }else{
         this._hideDateTimePicker();
-        setTimeout(() => {Alert.alert('Notification Time', 'End time must be more than Start time.', [
+        setTimeout(() => {Alert.alert('Notification Time', 'Time difference should be in 15 min interval.', [
           {text: 'OK', onPress: () => {console.log("ok pressed.")}}
         ]);}, 600);
       }
@@ -939,7 +948,7 @@ class UserHome extends Component {
           }
         }else{
           Database.setUserData(this.props.navigation.state.params.userId, this.state.selectedMember, this.state.mobile, this.state.UserNotifStartTime, this.state.UserNotifEndTime, this.state.email).then(()=>{
-            this.setState({isLoading: true, mobileError: false, emailError:false})
+            this.setState({isLoading: true, mobileError: false, emailError:false,currentTab:0 })
           });
         }
       }else if(this.state.selectedMember == 0){

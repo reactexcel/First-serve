@@ -113,7 +113,7 @@ class RestaurantListItem extends Component {
             </TouchableHighlight>
             <View style={[styles.listNotiView, {paddingBottom: this.props.isAdmin ? 0 : 0}]}>
                 <View style={styles.notiIconView}>
-                    <Text style={{color:'#023e4eff',fontWeight:'bold',fontSize:13}}>GET FIRST SERVED</Text>
+                    <Text style={{color:'#023e4eff',fontWeight:'bold',fontSize:13}}>WAITING LIST</Text>
                 </View>
             </View>
             <View style={{flexDirection:'row', justifyContent:'flex-end',marginTop:-24,marginBottom: this.props.isFirstTime ? 100 : 24,marginRight:25}}>
